@@ -59,7 +59,7 @@ function read_cls(cl)
 
     us = lastindex(va_)
 
-    sa_ = Omics.Simulation.label(us, "Sample")
+    sa_ = map(id -> "Sample $id", 1:us)
 
     if l1 == "#numeric"
 
