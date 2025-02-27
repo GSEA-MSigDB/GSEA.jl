@@ -12,90 +12,37 @@ using Random: seed!, shuffle!
 
 using StatsBase: mean, sample, std
 
-using Omics
-
-# TODO: Generalize.
-function _exponentiate(nu, ex)
-
-    ab = abs(nu)
-
-    isone(ex) ? ab : ab^ex
-
-end
-
-# TODO: Generalize.
-function _is_in(fe_, f1_)
-
-    map(in(Set(f1_)), fe_)
-
-end
-
-# TODO: Generalize.
-function _is_in!(ii_, fe_id, f1_)
-
-    for f1 in f1_
-
-        id = get(fe_id, f1, nothing)
-
-        if !isnothing(id)
-
-            ii_[id] = true
-
-        end
-
-    end
-
-end
+using Nucleus
 
 function read_cls(cl)
 
     l1, l2, l3 = readlines(cl)
 
-    np = "Phenotype"
+    l2 = l2[2:end]
 
-    ph = l2[2:end]
+    s3_ = split(l3)
 
-    va_ = split(l3)
+    na = "Phenotype"
 
-    us = lastindex(va_)
-
-    sa_ = map(id -> "Sample $id", 1:us)
+    na_ = map(id -> "Sample $id", eachindex(s3_))
 
     if l1 == "#numeric"
 
-        # TODO: Benchmark reshape.
-        Omics.Table.make(np, ph, sa_, [parse(Float64, va) for _ in 1:1, va in va_])
+        Nucleus.Table.make(na, l2, na_, [parse(Float64, st) for _ in 1:1, st in s3_])
 
     else
 
-        l1_ = split(l1)
+        s1_ = split(l1)
 
-        u1 = parse(Int, l1_[1])
+        s2_ = split(l2)
 
-        if u1 != us
+        @assert parse(Int, s1_[1]) == lastindex(s3_)
 
-            error("numbers of samples differ: $u1 and $us.")
+        @assert parse(Int, s1_[2]) == lastindex(s2_) == lastindex(unique(s3_))
 
-        end
+        di = Dict(st => id for (id, st) in enumerate(s2_))
 
-        u2 = parse(Int, l1_[2])
-
-        ph_ = split(ph)
-
-        up = lastindex(ph_)
-
-        uu = lastindex(unique(va_))
-
-        if !(u2 == up == uu)
-
-            error("numbers of groups differ: $u2, $up, and $uu.")
-
-        end
-
-        ph_id = Dict(ph => id for (id, ph) in enumerate(ph_))
-
-        # TODO: Benchmark reshape.
-        Omics.Table.make(np, join(ph_, '_'), sa_, [ph_id[va] for _ in 1:1, va in va_])
+        Nucleus.Table.make(na, join(s2_, '_'), na_, [di[st] for _ in 1:1, st in s3_])
 
     end
 
@@ -103,31 +50,27 @@ end
 
 function read_gct(gc)
 
-    Omics.Table.rea(gc; header = 3, drop = ["Description"])
+    Nucleus.Table.rea(gc; header = 3, drop = ["Description"])
 
 end
 
 function read_gmt(gm)
 
-    se_me_ = Dict{String, Vector{String}}()
+    di = Dict{String, Vector{String}}()
 
     for li in eachline(gm)
 
         sp_ = split(li, '\t')
 
-        se = sp_[1]
+        na = sp_[1]
 
-        if haskey(se_me_, se)
+        @assert !haskey(di, na)
 
-            error("there is more than one $se.")
-
-        end
-
-        se_me_[se] = filter!(!isempty, sp_[3:end])
+        di[na] = filter!(!isempty, sp_[3:end])
 
     end
 
-    se_me_
+    di
 
 end
 
@@ -141,15 +84,13 @@ Convert .cls to .tsv.
 """
 @cast function cls(tsv, cls)
 
-    ta = read_cls(cls)
+    an = read_cls(cls)
 
-    na_ = names(ta)
+    na_ = names(an)
 
-    va = Matrix(ta[!, 2:end])
-
-    Omics.Table.writ(
+    Nucleus.Table.writ(
         tsv,
-        Omics.Table.make(na_[1], ta[!, 1], na_[2:end], map!(nu -> nu - 1, va, va)),
+        Nucleus.Table.make(na_[1], an[!, 1], na_[2:end], Matrix(an[!, 2:end])),
     )
 
 end
@@ -164,11 +105,11 @@ Convert .gct to .tsv.
 """
 @cast function gct(tsv, gct)
 
-    ta = read_gct(gct)
+    an = read_gct(gct)
 
-    Omics.Table.writ(
+    Nucleus.Table.writ(
         tsv,
-        Omics.Table.make("Feature", ta[!, 1], names(ta)[2:end], Matrix(ta[!, 2:end])),
+        Nucleus.Table.make("Feature", an[!, 1], names(an)[2:end], Matrix(an[!, 2:end])),
     )
 
 end
@@ -183,9 +124,11 @@ Merge .gmts into .json.
 """
 @cast function gmt(json, gmt_...)
 
-    Omics.Dic.writ(json, reduce(merge!, (read_gmt(gm) for gm in gmt_)))
+    Nucleus.Dictionary.writ(json, reduce(merge!, (read_gmt(gm) for gm in gmt_)))
 
 end
+
+# TODO
 
 struct KS end
 
@@ -376,12 +319,15 @@ function _enrich!(al::KLioM, sc_, ex, ii_, mo_)
 
         ar +=
             mo =
-                Omics.Information.get_antisymmetric_kullback_leibler_divergence(
+                Nucleus.Information.get_antisymmetric_kullback_leibler_divergence(
                     r1,
                     r0,
                     ra,
-                ) -
-                Omics.Information.get_antisymmetric_kullback_leibler_divergence(l1, l0, la)
+                ) - Nucleus.Information.get_antisymmetric_kullback_leibler_divergence(
+                    l1,
+                    l0,
+                    la,
+                )
 
         if !isnothing(mo_)
 
@@ -447,8 +393,8 @@ function _enrich!(al::KLioP, sc_, ex, ii_, mo_)
 
         ar +=
             mo =
-                Omics.Information.get_symmetric_kullback_leibler_divergence(r1, r0, ra) -
-                Omics.Information.get_symmetric_kullback_leibler_divergence(l1, l0, la)
+                Nucleus.Information.get_symmetric_kullback_leibler_divergence(r1, r0, ra) -
+                Nucleus.Information.get_symmetric_kullback_leibler_divergence(l1, l0, la)
 
         if !isnothing(mo_)
 
@@ -495,7 +441,7 @@ function _enrich!(al::KLi, sc_, ex, ii_, mo_)
         l1 -= p1
 
         ar +=
-            mo = Omics.Information.get_antisymmetric_kullback_leibler_divergence(
+            mo = Nucleus.Information.get_antisymmetric_kullback_leibler_divergence(
                 r1,
                 l1,
                 ra,
@@ -547,7 +493,7 @@ function _enrich!(al::KLi1, sc_, ex, ii_, mo_)
         l1 -= p1
 
         ar +=
-            mo = Omics.Information.get_antisymmetric_kullback_leibler_divergence(
+            mo = Nucleus.Information.get_antisymmetric_kullback_leibler_divergence(
                 r1,
                 l1,
                 ra,
@@ -632,7 +578,7 @@ function plot(
                 "y" => sc_[ie_],
                 "x" => xc_[ie_],
                 "text" => fe_[ie_],
-                "fillcolor" => Omics.Color.BL,
+                "fillcolor" => Nucleus.Color.BL,
             ),
         ),
         merge(
@@ -642,7 +588,7 @@ function plot(
                 "y" => sc_[ip_],
                 "x" => xc_[ip_],
                 "text" => fe_[ip_],
-                "fillcolor" => Omics.Color.RE,
+                "fillcolor" => Nucleus.Color.RE,
             ),
         ),
         Dict(
@@ -657,7 +603,7 @@ function plot(
                 "size" => 24,
                 "line" => Dict(
                     "width" => 2,
-                    "color" => Omics.Color.hexify(Omics.Color.SG, 0.72),
+                    "color" => Nucleus.Color.hexify(Nucleus.Color.SG, 0.72),
                 ),
             ),
             "hoverinfo" => "x+text",
@@ -688,8 +634,10 @@ function plot(
                 "x" => xc_[ix_],
                 "text" => fe_[ix_],
                 "mode" => "markers",
-                "marker" =>
-                    Dict("size" => 32, "color" => Omics.Color.hexify(Omics.Color.HU, 0.72)),
+                "marker" => Dict(
+                    "size" => 32,
+                    "color" => Nucleus.Color.hexify(Nucleus.Color.HU, 0.72),
+                ),
             ),
         )
 
@@ -700,7 +648,7 @@ function plot(
         "font" => Dict("size" => 16),
         "borderpad" => 4.8,
         "borderwidth" => 2.64,
-        "bordercolor" => Omics.Color.LI,
+        "bordercolor" => Nucleus.Color.LI,
         "showarrow" => false,
     )
 
@@ -708,14 +656,14 @@ function plot(
 
     if haskey(la, "title") && haskey(la["title"], "text")
 
-        la["title"]["text"] = Omics.Strin.limit(la["title"]["text"], 56)
+        la["title"]["text"] = Nucleus.Strin.limit(la["title"]["text"], 56)
 
     end
 
-    Omics.Plot.plot(
+    Nucleus.Plot.plot(
         ht,
         da_,
-        Omics.Dic.merg(
+        Nucleus.Dic.merg(
             Dict(
                 "showlegend" => false,
                 "yaxis" => Dict("domain" => (0, 0.24), "title" => Dict("text" => ns)),
@@ -739,7 +687,7 @@ function plot(
                         "xref" => "paper",
                         "y" => 1.064,
                         "text" => "Enrichment = <b>$(@sprintf "%.4g" en)</b>",
-                        "font" => Dict("size" => 24, "color" => Omics.Color.BR),
+                        "font" => Dict("size" => 24, "color" => Nucleus.Color.BR),
                         "showarrow" => false,
                     ),
                     merge(
@@ -748,7 +696,7 @@ function plot(
                             "x" => 1.0 - ax,
                             "xanchor" => "right",
                             "text" => nh,
-                            "font" => Dict("color" => Omics.Color.RE),
+                            "font" => Dict("color" => Nucleus.Color.RE),
                         ),
                     ),
                     merge(
@@ -757,7 +705,7 @@ function plot(
                             "x" => uf + ax,
                             "xanchor" => "left",
                             "text" => nl,
-                            "font" => Dict("color" => Omics.Color.BL),
+                            "font" => Dict("color" => Nucleus.Color.BL),
                         ),
                     ),
                 ),
@@ -804,7 +752,6 @@ function enrich(al, fe_, sc_, me___; ex = 1.0, mi = 1, ma = 1000, fr = 0.0)
             ui < mi || ma < ui || ui / lastindex(me_) < fr ? NaN :
             _enrich!(al, sc_, ex, ii_, nothing)
 
-        # TODO: Avoid broadcasting.
         ii_[ii_] .= false
 
     end
@@ -853,7 +800,7 @@ function data_rank!(di, al, fe_, sc, ne, se_me_, ns, sa_; st = 0.0, up = 2, ke_a
 
     if !iszero(st)
 
-        foreach(sc_ -> Omics.Normalization.standardize_clamp!(sc_, st), eachcol(sc))
+        foreach(sc_ -> Nucleus.Normalization.standardize_clamp!(sc_, st), eachcol(sc))
 
     end
 
@@ -871,11 +818,11 @@ function data_rank!(di, al, fe_, sc, ne, se_me_, ns, sa_; st = 0.0, up = 2, ke_a
 
     pr = joinpath(di, "enrichment")
 
-    Omics.XSampleFeature.writ(pr, ne, se_, ns, sa_, strin(al), en)
+    Nucleus.XSampleFeature.writ(pr, ne, se_, ns, sa_, strin(al), en)
 
     ig_ = map(!isnan, en)
 
-    for id_ in CartesianIndices(en)[ig_][Omics.Extreme.ge(en[ig_], up)]
+    for id_ in CartesianIndices(en)[ig_][Nucleus.Extreme.ge(en[ig_], up)]
 
         is, ia = Tuple(id_)
 
@@ -884,7 +831,7 @@ function data_rank!(di, al, fe_, sc, ne, se_me_, ns, sa_; st = 0.0, up = 2, ke_a
         sa = sa_[ia]
 
         plot(
-            joinpath(di, "$(Omics.Numbe.shorten(en[is, ia])).$sa.$se.html"),
+            joinpath(di, "$(Nucleus.Numbe.shorten(en[is, ia])).$sa.$se.html"),
             al,
             _select_sort(fe_, sc[:, ia])...,
             me___[is];
@@ -934,7 +881,7 @@ Run data-rank (single-sample) GSEA.
     sample_name = "Sample",
 )
 
-    ta = Omics.Table.rea(feature_x_sample_x_score_tsv)
+    ta = Nucleus.Table.rea(feature_x_sample_x_score_tsv)
 
     data_rank!(
         output_directory,
@@ -942,7 +889,7 @@ Run data-rank (single-sample) GSEA.
         ta[!, 1],
         Matrix(ta[!, 2:end]),
         set_name,
-        Omics.Dic.rea(set_features_json),
+        Nucleus.Dic.rea(set_features_json),
         sample_name,
         names(ta)[2:end];
         st = standard_deviation,
@@ -994,7 +941,7 @@ function _normalize_enrichment!(al, en_, ra)
 
         ra_ = ra[id, :]
 
-        rn_, rp_ = Omics.Significance._separate(ra_)
+        rn_, rp_ = Nucleus.Significance._separate(ra_)
 
         mn = mean(rn_)
 
@@ -1028,11 +975,11 @@ function _write_plot(di, al, fe_, sc_, ex, se_, me___, en_, ra, up, pl_, nf, ns,
 
     no_ = _normalize_enrichment!(al, en_, ra)
 
-    pn_, qn_, pp_, qp_ = Omics.Significance.ge(ra, no_)
+    pn_, qn_, pp_, qp_ = Nucleus.Significance.ge(ra, no_)
 
-    Omics.Table.writ(
+    Nucleus.Table.writ(
         joinpath(di, "result.tsv"),
-        Omics.Table.make(
+        Nucleus.Table.make(
             "Set",
             se_,
             ["Enrichment", "Normalized Enrichment", "P-Value", "Q-Value"],
@@ -1043,12 +990,12 @@ function _write_plot(di, al, fe_, sc_, ex, se_, me___, en_, ra, up, pl_, nf, ns,
     fe_, sc_ = _select_sort(fe_, sc_)
 
     for is in
-        unique!(vcat(Omics.Extreme.ge(en_, up), filter!(!isnothing, indexin(pl_, se_))))
+        unique!(vcat(Nucleus.Extreme.ge(en_, up), filter!(!isnothing, indexin(pl_, se_))))
 
         se = se_[is]
 
         plot(
-            joinpath(di, "$(Omics.Numbe.shorten(en_[is])).$se.html"),
+            joinpath(di, "$(Nucleus.Numbe.shorten(en_[is])).$se.html"),
             al,
             fe_,
             sc_,
@@ -1139,11 +1086,11 @@ Run user-rank (pre-rank) GSEA.
 
     al = _set_algorithm(algorithm)
 
-    ta = Omics.Table.rea(feature_x_metric_x_score_tsv)
+    ta = Nucleus.Table.rea(feature_x_metric_x_score_tsv)
 
     fe_, sc_ = _select_sort(ta[!, 1], ta[!, 2])
 
-    se_, me___ = _separat(Omics.Dic.rea(set_features_json))
+    se_, me___ = _separat(Nucleus.Dic.rea(set_features_json))
 
     ke_ar = (ex = exponent, mi = minimum_set_size, ma = maximum_set_size, fr = set_fraction)
 
@@ -1219,9 +1166,9 @@ Run metric-rank (standard) GSEA.
     high_text = "High",
 )
 
-    tt = Omics.Table.rea(target_x_sample_x_number_tsv)
+    tt = Nucleus.Table.rea(target_x_sample_x_number_tsv)
 
-    tf = Omics.Table.rea(feature_x_sample_x_score_tsv)
+    tf = Nucleus.Table.rea(feature_x_sample_x_score_tsv)
 
     vt_ = convert(BitVector, collect(tt[1, 2:end]))
 
@@ -1232,7 +1179,7 @@ Run metric-rank (standard) GSEA.
     if !iszero(standard_deviation)
 
         foreach(
-            s1_ -> Omics.Normalization.standardize_clamp!(s1_, standard_deviation),
+            s1_ -> Nucleus.Normalization.standardize_clamp!(s1_, standard_deviation),
             eachcol(s1),
         )
 
@@ -1240,28 +1187,28 @@ Run metric-rank (standard) GSEA.
 
     fu = if metric == "mean-difference"
 
-        Omics.Target.get_mean_difference
+        Nucleus.Target.get_mean_difference
 
     elseif metric == "log-ratio"
 
-        Omics.Target.get_log_ratio
+        Nucleus.Target.get_log_ratio
 
     elseif metric == "signal-to-noise-ratio"
 
-        Omics.Target.get_signal_to_noise_ratio
+        Nucleus.Target.get_signal_to_noise_ratio
 
     end
 
-    s2_ = map(s1_ -> Omics.Target.go(fu, vt_, s1_), eachrow(s1))
+    s2_ = map(s1_ -> Nucleus.Target.go(fu, vt_, s1_), eachrow(s1))
 
-    Omics.Table.writ(
+    Nucleus.Table.writ(
         joinpath(output_directory, "metric.tsv"),
-        Omics.Table.make("Feature", fe_, [metric], reshape(s2_, :, 1)),
+        Nucleus.Table.make("Feature", fe_, [metric], reshape(s2_, :, 1)),
     )
 
     al = _set_algorithm(algorithm)
 
-    se_, me___ = _separat(Omics.Dic.rea(set_features_json))
+    se_, me___ = _separat(Nucleus.Dic.rea(set_features_json))
 
     ke_ar = (ex = exponent, mi = minimum_set_size, ma = maximum_set_size, fr = set_fraction)
 
@@ -1283,7 +1230,7 @@ Run metric-rank (standard) GSEA.
                 ra[:, id] = enrich(
                     al,
                     fe_,
-                    map(s1_ -> Omics.Target.go(fu, shuffle!(vt_), s1_), eachrow(s1)),
+                    map(s1_ -> Nucleus.Target.go(fu, shuffle!(vt_), s1_), eachrow(s1)),
                     me___;
                     ke_ar...,
                 )

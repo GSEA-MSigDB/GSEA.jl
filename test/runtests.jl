@@ -6,11 +6,11 @@ using GSEA
 
 using Random: seed!
 
-using Omics
+using Nucleus
 
 # ---- #
 
-const DD = pkgdir(GSEA, "data")
+const DI = pkgdir(GSEA, "data")
 
 const TE = joinpath(tempdir(), "Nucleus")
 
@@ -20,49 +20,49 @@ mkdir(TE)
 
 # ---- #
 
-# 481.334 μs (7160 allocations: 473.16 KiB)
-# 11.000 μs (116 allocations: 7.17 KiB)
-# 10.833 μs (114 allocations: 6.84 KiB)
+# 10.958 μs (114 allocations: 6.84 KiB)
+# 11.208 μs (116 allocations: 7.17 KiB)
+# 481.958 μs (7160 allocations: 473.16 KiB)
 
-for (cl, ph, re) in (
+for (cl, na, re) in (
+    ("1.cls", "CNTRL_LPS", [1, 1, 1, 2, 2, 2]),
+    ("GSE76137.cls", "Proliferating_Arrested", [1, 2, 1, 2, 1, 2]),
     (
         "CCLE_mRNA_20Q2_no_haem_phen.cls",
         "HER2",
         [1.087973, -1.358492, -1.178614, -0.77898, 0.157222, 1.168224, -0.360195, 0.608629],
     ),
-    ("GSE76137.cls", "Proliferating_Arrested", [1, 2, 1, 2, 1, 2]),
-    ("a.cls", "CNTRL_LPS", [1, 1, 1, 2, 2, 2]),
 )
 
-    cl = joinpath(DD, cl)
+    cl = joinpath(DI, cl)
 
-    ta = GSEA.read_cls(cl)
+    an = GSEA.read_cls(cl)
 
-    na_ = names(ta)
+    #@btime GSEA.read_cls($cl)
 
-    va = Matrix(ta[:, 2:end])
+    na_ = names(an)
 
-    @test ta[:, 1][] === ph
+    N = Matrix(an[:, 2:end])
 
     @test na_[1] === "Phenotype"
 
+    @test an[:, 1][] === na
+
     @test all(startswith("Sample "), na_[2:end])
 
-    @test eltype(va) === eltype(re)
+    @test eltype(N) === eltype(re)
 
-    @test va[1, eachindex(re)] == re
-
-    #@btime GSEA.read_cls($cl)
+    @test N[1, eachindex(re)] == re
 
 end
 
 # ---- #
 
-# 101.998 ms (71705 allocations: 23.67 MiB)
+# 101.089 ms (71705 allocations: 23.67 MiB)
 
-for (gc, re) in (("b.gct", (13321, 190)),)
+for (gc, re) in (("1.gct", (13321, 190)),)
 
-    gc = joinpath(DD, gc)
+    gc = joinpath(DI, gc)
 
     @test size(GSEA.read_gct(gc)) === re
 
@@ -72,36 +72,65 @@ end
 
 # ---- #
 
-# 289.208 μs (7984 allocations: 1.12 MiB)
-# 22.404 ms (537839 allocations: 62.61 MiB)
+# 289.791 μs (7984 allocations: 1.12 MiB)
+# 22.380 ms (537839 allocations: 62.61 MiB)
 
-for (gm, re) in (("c.gmt", 50), ("d.gmt", 5529))
+for (gm, re) in (("1.gmt", 50), ("2.gmt", 5529))
 
-    gm = joinpath(DD, gm)
+    gm = joinpath(DI, gm)
 
-    se_me_ = GSEA.read_gmt(gm)
-
-    @test typeof(se_me_) === Dict{String, Vector{String}}
-
-    @test length(se_me_) === re
+    di = GSEA.read_gmt(gm)
 
     #@btime GSEA.read_gmt($gm)
+
+    @test typeof(di) === Dict{String, Vector{String}}
+
+    @test length(di) === re
 
 end
 
 # ---- #
 
-GSEA.cls
+const TS = joinpath(TE, "_.tsv")
 
 # ---- #
 
-GSEA.gct
+for (cl, re) in (
+    ("1.cls", (1, 7)),
+    ("GSE76137.cls", (1, 7)),
+    ("CCLE_mRNA_20Q2_no_haem_phen.cls", (1, 900)),
+)
+
+    GSEA.cls(TS, joinpath(DI, cl))
+
+    @test size(Nucleus.Table.rea(TS)) === re
+
+end
 
 # ---- #
 
-GSEA.gmt
+for (gc, re) in (("1.gct", (13321, 190)),)
+
+    GSEA.gct(TS, joinpath(DI, gc))
+
+    @test size(Nucleus.Table.rea(TS)) === re
+
+end
 
 # ---- #
+
+const JS = joinpath(TE, "_.json")
+
+for (gm, re) in (("1.gmt", 50), ("2.gmt", 5529))
+
+    GSEA.gmt(JS, joinpath(DI, gm))
+
+    @test length(Nucleus.Dictionary.rea(JS)) === re
+
+end
+
+# ---- #
+# TODO
 
 const AL_ = GSEA.KS(), GSEA.KSa(), GSEA.KLioM(), GSEA.KLioP(), GSEA.KLi(), GSEA.KLi1()
 
@@ -187,7 +216,7 @@ end
 # ---- #
 
 const FM_, SM_ =
-    eachcol(reverse!(Omics.Table.rea(joinpath(DD, "myc.tsv"); select = [1, 2])))
+    eachcol(reverse!(Nucleus.Table.rea(joinpath(DI, "myc.tsv"); select = [1, 2])))
 
 # ---- #
 
@@ -229,7 +258,7 @@ for (fe_, sc_, me_, re_) in (
     (
         FM_,
         SM_,
-        GSEA.read_gmt(joinpath(DD, "c2.all.v7.1.symbols.gmt"))["COLLER_MYC_TARGETS_UP"],
+        GSEA.read_gmt(joinpath(DI, "c2.all.v7.1.symbols.gmt"))["COLLER_MYC_TARGETS_UP"],
         (
             0.7651927829281453,
             0.41482514169516305,
@@ -274,7 +303,7 @@ end
 
 # ---- #
 
-const SE_, ME___ = GSEA._separat(GSEA.read_gmt(joinpath(DD, "h.all.v7.1.symbols.gmt")))
+const SE_, ME___ = GSEA._separat(GSEA.read_gmt(joinpath(DI, "h.all.v7.1.symbols.gmt")))
 
 # ---- #
 
@@ -318,9 +347,9 @@ end
 
 mkdir(DG)
 
-const FS = joinpath(DD, "set.json")
+const FS = joinpath(DI, "set.json")
 
-const FD = joinpath(DD, "data.tsv")
+const FD = joinpath(DI, "data.tsv")
 
 # ---- #
 
@@ -364,9 +393,9 @@ end
 
 # ---- #
 
-function test_result(ta, US)
+function test_result(an, US)
 
-    @test size(ta, 1) === US
+    @test size(an, 1) === US
 
 end
 
@@ -376,12 +405,12 @@ const OU = mkpath(joinpath(DG, "user_rank"))
 
 GSEA.user_rank(
     OU,
-    joinpath(DD, "metric.tsv"),
+    joinpath(DI, "metric.tsv"),
     FS;
     more_sets_to_plot = "HALLMARK_MYC_TARGETS_V1;HALLMARK_UV_RESPONSE_DN;HALLMARK_UV_RESPONSE_UP;ALIEN",
 )
 
-const RU = Omics.Table.rea(joinpath(OU, "result.tsv"))
+const RU = Nucleus.Table.rea(joinpath(OU, "result.tsv"))
 
 test_result(RU, 50)
 
@@ -410,14 +439,14 @@ const OM = mkpath(joinpath(DG, "metric_rank"))
 
 GSEA.metric_rank(
     OM,
-    joinpath(DD, "target.tsv"),
+    joinpath(DI, "target.tsv"),
     FD,
     FS;
     minimum_set_size = 15,
     maximum_set_size = 500,
 )
 
-const ME = Omics.Table.rea(joinpath(OM, "metric.tsv"))
+const ME = Nucleus.Table.rea(joinpath(OM, "metric.tsv"))
 
 @test size(ME) === (1000, 2)
 
@@ -425,6 +454,6 @@ const ME = Omics.Table.rea(joinpath(OM, "metric.tsv"))
 
 @test isapprox(sort(ME, 2)[[1, end], 2], [-1.8372355409610066, 1.7411005104346835])
 
-const RU = Omics.Table.rea(joinpath(OM, "result.tsv"))
+const RU = Nucleus.Table.rea(joinpath(OM, "result.tsv"))
 
 test_result(RU, 8)
