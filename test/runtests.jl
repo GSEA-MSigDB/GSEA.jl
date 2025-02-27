@@ -12,6 +12,12 @@ using Omics
 
 const DD = pkgdir(GSEA, "data")
 
+const TE = joinpath(tempdir(), "Nucleus")
+
+rm(TE; recursive = true, force = true)
+
+mkdir(TE)
+
 # ---- #
 
 # 481.334 μs (7160 allocations: 473.16 KiB)
