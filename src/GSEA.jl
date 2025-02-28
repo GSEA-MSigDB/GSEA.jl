@@ -146,7 +146,7 @@ function text(al)
 
 end
 
-function _get_normalizer(::Union{KS, KSa}, nu_, ex, bo_)
+function make_normalizer(::Union{KS, KSa}, nu_, ex, bo_)
 
     s0 = s1 = 0.0
 
@@ -168,15 +168,13 @@ function _get_normalizer(::Union{KS, KSa}, nu_, ex, bo_)
 
 end
 
-function _get_normalizer(::Union{KLioM, KLioP, KLi}, nu_, ex, bo_)
+function make_normalizer(::Any, nu_, ex, bo_)
 
-    sa = s1 = 0.0
+    s1 = s2 = 0.0
 
     for id in eachindex(nu_)
 
-        am = Nucleus.Numbe.make_exponential(nu_[id], ex)
-
-        sa += am
+        s2 += am = Nucleus.Numbe.make_exponential(nu_[id], ex)
 
         if bo_[id]
 
@@ -186,37 +184,19 @@ function _get_normalizer(::Union{KLioM, KLioP, KLi}, nu_, ex, bo_)
 
     end
 
-    inv(sa), inv(s1)
+    inv(s1), inv(s2)
 
 end
 
-function _get_normalizer(na, n1)
+function make_normalizer(n1, n2)
 
-    inv(inv(na) - inv(n1))
-
-end
-
-function _get_normalizer(::KLi1, nu_, ex, bo_)
-
-    s1 = 0.0
-
-    for id in eachindex(nu_)
-
-        if bo_[id]
-
-            s1 += Nucleus.Numbe.make_exponential(nu_[id], ex)
-
-        end
-
-    end
-
-    inv(s1)
+    inv(inv(n2) - inv(n1))
 
 end
 
 function _enrich!(al::KS, nu_, ex, bo_, mo_)
 
-    n0, n1 = _get_normalizer(al, nu_, ex, bo_)
+    n0, n1 = make_normalizer(al, nu_, ex, bo_)
 
     mo = ba = bm = 0.0
 
@@ -248,7 +228,7 @@ end
 
 function _enrich!(al::KSa, nu_, ex, bo_, mo_)
 
-    n0, n1 = _get_normalizer(al, nu_, ex, bo_)
+    n0, n1 = make_normalizer(al, nu_, ex, bo_)
 
     mo = ar = 0.0
 
@@ -273,9 +253,9 @@ const ON = 1.0 + 1e-13
 
 function _enrich!(al::KLioM, nu_, ex, bo_, mo_)
 
-    na, n1 = _get_normalizer(al, nu_, ex, bo_)
+    n1, n2 = make_normalizer(al, nu_, ex, bo_)
 
-    n0 = _get_normalizer(na, n1)
+    n0 = make_normalizer(n1, n2)
 
     ra = r0 = r1 = eps()
 
@@ -287,7 +267,7 @@ function _enrich!(al::KLioM, nu_, ex, bo_, mo_)
 
         am = Nucleus.Numbe.make_exponential(nu_[id], ex)
 
-        da = am * na
+        da = am * n2
 
         if bo_[id]
 
@@ -347,9 +327,9 @@ end
 
 function _enrich!(al::KLioP, nu_, ex, bo_, mo_)
 
-    na, n1 = _get_normalizer(al, nu_, ex, bo_)
+    n1, n2 = make_normalizer(al, nu_, ex, bo_)
 
-    n0 = _get_normalizer(na, n1)
+    n0 = make_normalizer(n1, n2)
 
     ra = r0 = r1 = eps()
 
@@ -361,7 +341,7 @@ function _enrich!(al::KLioP, nu_, ex, bo_, mo_)
 
         am = Nucleus.Numbe.make_exponential(nu_[id], ex)
 
-        da = am * na
+        da = am * n2
 
         if bo_[id]
 
@@ -414,7 +394,9 @@ end
 
 function _enrich!(al::KLi, nu_, ex, bo_, mo_)
 
-    na, n1 = _get_normalizer(al, nu_, ex, bo_)
+    n1, n2 = make_normalizer(al, nu_, ex, bo_)
+
+    n0 = make_normalizer(n1, n2)
 
     ra = r1 = eps()
 
@@ -426,7 +408,7 @@ function _enrich!(al::KLi, nu_, ex, bo_, mo_)
 
         am = Nucleus.Numbe.make_exponential(nu_[id], ex)
 
-        da = am * na
+        da = am * n2
 
         d1 = bo_[id] ? am * n1 : 0.0
 
@@ -462,11 +444,12 @@ function _enrich!(al::KLi, nu_, ex, bo_, mo_)
 
 end
 
+# TODO
 function _enrich!(al::KLi1, nu_, ex, bo_, mo_)
 
     uf = lastindex(nu_)
 
-    n1 = _get_normalizer(al, nu_, ex, bo_)
+    n1, _ = make_normalizer(al, nu_, ex, bo_)
 
     da = inv(uf)
 

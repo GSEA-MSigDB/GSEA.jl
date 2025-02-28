@@ -20,9 +20,9 @@ mkdir(TE)
 
 # ---- #
 
-# 10.958 μs (114 allocations: 6.84 KiB)
-# 11.208 μs (116 allocations: 7.17 KiB)
-# 481.958 μs (7160 allocations: 473.16 KiB)
+# 10.292 μs (114 allocations: 6.84 KiB)
+# 10.583 μs (116 allocations: 7.17 KiB)
+# 439.208 μs (7160 allocations: 473.16 KiB)
 
 for (cl, na, re) in (
     ("1.cls", "CNTRL_LPS", [1, 1, 1, 2, 2, 2]),
@@ -38,7 +38,7 @@ for (cl, na, re) in (
 
     an = GSEA.read_cls(cl)
 
-    #@btime GSEA.read_cls($cl)
+    @btime GSEA.read_cls($cl)
 
     na_ = names(an)
 
@@ -58,7 +58,7 @@ end
 
 # ---- #
 
-# 101.089 ms (71705 allocations: 23.67 MiB)
+# 103.230 ms (71705 allocations: 23.67 MiB)
 
 for (gc, re) in (("1.gct", (13321, 190)),)
 
@@ -66,14 +66,14 @@ for (gc, re) in (("1.gct", (13321, 190)),)
 
     @test size(GSEA.read_gct(gc)) === re
 
-    #@btime GSEA.read_gct($gc)
+    @btime GSEA.read_gct($gc)
 
 end
 
 # ---- #
 
-# 289.791 μs (7984 allocations: 1.12 MiB)
-# 22.380 ms (537839 allocations: 62.61 MiB)
+# 287.084 μs (7984 allocations: 1.12 MiB)
+# 22.061 ms (537839 allocations: 62.61 MiB)
 
 for (gm, re) in (("1.gmt", 50), ("2.gmt", 5529))
 
@@ -81,7 +81,7 @@ for (gm, re) in (("1.gmt", 50), ("2.gmt", 5529))
 
     di = GSEA.read_gmt(gm)
 
-    #@btime GSEA.read_gmt($gm)
+    @btime GSEA.read_gmt($gm)
 
     @test typeof(di) === Dict{String, Vector{String}}
 
@@ -143,76 +143,77 @@ end
 
 # ---- #
 
-# 59.682 ns (0 allocations: 0 bytes)
-# 59.681 ns (0 allocations: 0 bytes)
-# 9.500 ns (0 allocations: 0 bytes)
-# 21.314 ns (0 allocations: 0 bytes)
-# 97.238 ns (0 allocations: 0 bytes)
-# 97.281 ns (0 allocations: 0 bytes)
-# 8.884 ns (0 allocations: 0 bytes)
-# 28.098 ns (0 allocations: 0 bytes)
-# 63.350 ns (0 allocations: 0 bytes)
-# 63.350 ns (0 allocations: 0 bytes)
-# 9.510 ns (0 allocations: 0 bytes)
-# 20.687 ns (0 allocations: 0 bytes)
-#
-# 69.629 ns (0 allocations: 0 bytes)
-# 69.586 ns (0 allocations: 0 bytes)
+const N1_ = [-2, -1, -0.5, 0, 0, 0.5, 1, 2, 3.4]
+
+const B1_ = [true, false, true, false, true, true, false, false, true]
+
+const N2_ = randn(100000)
+
+const B2_ = rand(Bool, lastindex(N2_))
+
+# ---- #
+
+# 70.312 ns (0 allocations: 0 bytes)
+# 70.226 ns (0 allocations: 0 bytes)
 # 8.299 ns (0 allocations: 0 bytes)
 # 19.809 ns (0 allocations: 0 bytes)
-# 115.695 ns (0 allocations: 0 bytes)
-# 115.741 ns (0 allocations: 0 bytes)
-# 8.291 ns (0 allocations: 0 bytes)
-# 25.016 ns (0 allocations: 0 bytes)
-# 78.832 ns (0 allocations: 0 bytes)
-# 78.827 ns (0 allocations: 0 bytes)
-# 10.761 ns (0 allocations: 0 bytes)
-# 17.242 ns (0 allocations: 0 bytes)
-
-const SG_ = [-2, -1, -0.5, 0, 0, 0.5, 1, 2, 3.4]
-
-const IG_ = [true, false, true, false, true, true, false, false, true]
+# 299.291 μs (0 allocations: 0 bytes)
 
 const N0 = -0.25
 
-for (al, re_) in zip(
-    AL_[[1, 3, 6]],
-    (
-        (
-            (N0, 0.24581982412836917),
-            (N0, 0.21402570288861142),
-            (N0, 0.15625),
-            (N0, 0.06226650062266501),
-        ),
-        (
-            (0.14006007078470165, 0.24581982412836917),
-            (0.12366213677204271, 0.21402570288861142),
-            (0.09615384615384615, 0.15625),
-            (0.04533091568449683, 0.06226650062266501),
-        ),
-        (0.24581982412836917, 0.21402570288861142, 0.15625, 0.06226650062266501),
-    ),
+for (nu_, ex, bo_, re) in (
+    (N1_, 0.1, B1_, (N0, 0.24581982412836917)),
+    (N1_, 0.5, B1_, (N0, 0.21402570288861142)),
+    (N1_, 1, B1_, (N0, 0.15625)),
+    (N1_, 2, B1_, (N0, 0.06226650062266501)),
+    (N2_, 1, B2_, nothing),
 )
 
-    for (ex, re) in zip((0.1, 0.5, 1, 2), re_)
+    al = GSEA.KS()
 
-        @test GSEA._get_normalizer(al, SG_, ex, IG_) === re
+    @test isnothing(re) || GSEA.make_normalizer(al, nu_, ex, bo_) === re
 
-        #@btime GSEA._get_normalizer($al, SG_, $ex, IG_)
-
-    end
+    @btime GSEA.make_normalizer($al, $nu_, $ex, $bo_)
 
 end
 
 # ---- #
 
-for (na, n1, re) in ((0.5, 1 / 3, -1.0),)
+# 116.993 ns (0 allocations: 0 bytes)
+# 117.039 ns (0 allocations: 0 bytes)
+# 7.375 ns (0 allocations: 0 bytes)
+# 25.033 ns (0 allocations: 0 bytes)
+# 92.875 μs (0 allocations: 0 bytes)
 
-    @test GSEA._get_normalizer(na, n1) === re
+for (nu_, ex, bo_, re) in (
+    (N1_, 0.1, B1_, (0.24581982412836917, 0.14006007078470165)),
+    (N1_, 0.5, B1_, (0.21402570288861142, 0.12366213677204271)),
+    (N1_, 1, B1_, (0.15625, 0.09615384615384615)),
+    (N1_, 2, B1_, (0.06226650062266501, 0.04533091568449683)),
+    (N2_, 1, B2_, nothing),
+)
+
+    al = GSEA.KLioM()
+
+    @test isnothing(re) || GSEA.make_normalizer(al, nu_, ex, bo_) === re
+
+    @btime GSEA.make_normalizer($al, $nu_, $ex, $bo_)
 
 end
 
 # ---- #
+
+for (n1, n2, re) in ((1 / 3, 0.5, -1.0),)
+
+    @test GSEA.make_normalizer(n1, n2) === re
+
+end
+
+# ---- #
+using Test: @test
+using GSEA
+using Random: seed!
+using Nucleus
 
 const FM_, SM_ =
     eachcol(reverse!(Nucleus.Table.rea(joinpath(DI, "myc.tsv"); select = [1, 2])))
