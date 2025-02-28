@@ -128,8 +128,6 @@ Merge .gmts into .json.
 
 end
 
-# TODO
-
 struct KS end
 
 struct KSa end
@@ -142,7 +140,7 @@ struct KLi end
 
 struct KLi1 end
 
-function strin(al)
+function text(al)
 
     string(al)[6:(end - 2)]
 
@@ -156,7 +154,7 @@ function _get_normalizer(::Union{KS, KSa}, sc_, ex, ii_)
 
         if ii_[id]
 
-            s1 += _exponentiate(sc_[id], ex)
+            s1 += Nucleus.Numbe.make_exponential(sc_[id], ex)
 
         else
 
@@ -176,7 +174,7 @@ function _get_normalizer(::Union{KLioM, KLioP, KLi}, sc_, ex, ii_)
 
     for id in eachindex(sc_)
 
-        am = _exponentiate(sc_[id], ex)
+        am = Nucleus.Numbe.make_exponential(sc_[id], ex)
 
         sa += am
 
@@ -206,7 +204,7 @@ function _get_normalizer(::KLi1, sc_, ex, ii_)
 
         if ii_[id]
 
-            s1 += _exponentiate(sc_[id], ex)
+            s1 += Nucleus.Numbe.make_exponential(sc_[id], ex)
 
         end
 
@@ -224,7 +222,7 @@ function _enrich!(al::KS, sc_, ex, ii_, mo_)
 
     for id in eachindex(sc_)
 
-        mo += ii_[id] ? _exponentiate(sc_[id], ex) * n1 : n0
+        mo += ii_[id] ? Nucleus.Numbe.make_exponential(sc_[id], ex) * n1 : n0
 
         if !isnothing(mo_)
 
@@ -256,7 +254,7 @@ function _enrich!(al::KSa, sc_, ex, ii_, mo_)
 
     for id in eachindex(sc_)
 
-        ar += mo += ii_[id] ? _exponentiate(sc_[id], ex) * n1 : n0
+        ar += mo += ii_[id] ? Nucleus.Numbe.make_exponential(sc_[id], ex) * n1 : n0
 
         if !isnothing(mo_)
 
@@ -287,7 +285,7 @@ function _enrich!(al::KLioM, sc_, ex, ii_, mo_)
 
     for id in eachindex(sc_)
 
-        am = _exponentiate(sc_[id], ex)
+        am = Nucleus.Numbe.make_exponential(sc_[id], ex)
 
         da = am * na
 
@@ -361,7 +359,7 @@ function _enrich!(al::KLioP, sc_, ex, ii_, mo_)
 
     for id in eachindex(sc_)
 
-        am = _exponentiate(sc_[id], ex)
+        am = Nucleus.Numbe.make_exponential(sc_[id], ex)
 
         da = am * na
 
@@ -426,7 +424,7 @@ function _enrich!(al::KLi, sc_, ex, ii_, mo_)
 
     for id in eachindex(sc_)
 
-        am = _exponentiate(sc_[id], ex)
+        am = Nucleus.Numbe.make_exponential(sc_[id], ex)
 
         da = am * na
 
@@ -482,7 +480,7 @@ function _enrich!(al::KLi1, sc_, ex, ii_, mo_)
 
     for id in eachindex(sc_)
 
-        d1 = ii_[id] ? _exponentiate(sc_[id], ex) * n1 : 0.0
+        d1 = ii_[id] ? Nucleus.Numbe.make_exponential(sc_[id], ex) * n1 : 0.0
 
         ra += da
 
@@ -556,7 +554,7 @@ function plot(
 
     xc_ = collect(1:uf)
 
-    ii_ = _is_in(fe_, me_)
+    ii_ = Nucleus.Collection.is_in(fe_, me_)
 
     mo_ = Vector{Float64}(undef, uf)
 
@@ -656,7 +654,7 @@ function plot(
 
     if haskey(la, "title") && haskey(la["title"], "text")
 
-        la["title"]["text"] = Nucleus.Strin.limit(la["title"]["text"], 56)
+        la["title"]["text"] = Nucleus.text.limit(la["title"]["text"], 56)
 
     end
 
@@ -744,7 +742,7 @@ function enrich(al, fe_, sc_, me___; ex = 1.0, mi = 1, ma = 1000, fr = 0.0)
 
         me_ = me___[is]
 
-        _is_in!(ii_, fe_ie, me_)
+        Nucleus.Collection.is_in!(ii_, fe_ie, me_)
 
         ui = sum(ii_)
 
@@ -760,7 +758,7 @@ function enrich(al, fe_, sc_, me___; ex = 1.0, mi = 1, ma = 1000, fr = 0.0)
 
 end
 
-function _set_algorithm(al)
+function make_algorithm(al)
 
     if al == "ks"
 
@@ -818,7 +816,7 @@ function data_rank!(di, al, fe_, sc, ne, se_me_, ns, sa_; st = 0.0, up = 2, ke_a
 
     pr = joinpath(di, "enrichment")
 
-    Nucleus.XSampleFeature.writ(pr, ne, se_, ns, sa_, strin(al), en)
+    Nucleus.XSampleFeature.writ(pr, ne, se_, ns, sa_, text(al), en)
 
     ig_ = map(!isnan, en)
 
@@ -885,7 +883,7 @@ Run data-rank (single-sample) GSEA.
 
     data_rank!(
         output_directory,
-        _set_algorithm(algorithm),
+        make_algorithm(algorithm),
         ta[!, 1],
         Matrix(ta[!, 2:end]),
         set_name,
@@ -1084,7 +1082,7 @@ Run user-rank (pre-rank) GSEA.
     high_text = "High",
 )
 
-    al = _set_algorithm(algorithm)
+    al = make_algorithm(algorithm)
 
     ta = Nucleus.Table.rea(feature_x_metric_x_score_tsv)
 
@@ -1206,7 +1204,7 @@ Run metric-rank (standard) GSEA.
         Nucleus.Table.make("Feature", fe_, [metric], reshape(s2_, :, 1)),
     )
 
-    al = _set_algorithm(algorithm)
+    al = make_algorithm(algorithm)
 
     se_, me___ = _separat(Nucleus.Dic.rea(set_features_json))
 

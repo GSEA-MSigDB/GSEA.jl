@@ -130,15 +130,14 @@ for (gm, re) in (("1.gmt", 50), ("2.gmt", 5529))
 end
 
 # ---- #
-# TODO
 
 const AL_ = GSEA.KS(), GSEA.KSa(), GSEA.KLioM(), GSEA.KLioP(), GSEA.KLi(), GSEA.KLi1()
 
+# ---- #
+
 for (al, re) in zip(AL_, ("KS", "KSa", "KLioM", "KLioP", "KLi", "KLi1"))
 
-    @test GSEA.strin(al) === re
-
-    @test GSEA._set_algorithm(lowercase(re)) === al
+    @test GSEA.text(al) === re
 
 end
 
@@ -350,6 +349,14 @@ mkdir(DG)
 const FS = joinpath(DI, "set.json")
 
 const FD = joinpath(DI, "data.tsv")
+
+# ---- #
+
+for (al, re) in zip(AL_, ("KS", "KSa", "KLioM", "KLioP", "KLi", "KLi1"))
+
+    @test GSEA._set_algorithm(lowercase(re)) === al
+
+end
 
 # ---- #
 
