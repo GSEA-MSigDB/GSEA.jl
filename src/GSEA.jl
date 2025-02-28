@@ -146,15 +146,15 @@ function text(al)
 
 end
 
-function _get_normalizer(::Union{KS, KSa}, sc_, ex, ii_)
+function _get_normalizer(::Union{KS, KSa}, nu_, ex, bo_)
 
     s0 = s1 = 0.0
 
-    for id in eachindex(sc_)
+    for id in eachindex(nu_)
 
-        if ii_[id]
+        if bo_[id]
 
-            s1 += Nucleus.Numbe.make_exponential(sc_[id], ex)
+            s1 += Nucleus.Numbe.make_exponential(nu_[id], ex)
 
         else
 
@@ -168,17 +168,17 @@ function _get_normalizer(::Union{KS, KSa}, sc_, ex, ii_)
 
 end
 
-function _get_normalizer(::Union{KLioM, KLioP, KLi}, sc_, ex, ii_)
+function _get_normalizer(::Union{KLioM, KLioP, KLi}, nu_, ex, bo_)
 
     sa = s1 = 0.0
 
-    for id in eachindex(sc_)
+    for id in eachindex(nu_)
 
-        am = Nucleus.Numbe.make_exponential(sc_[id], ex)
+        am = Nucleus.Numbe.make_exponential(nu_[id], ex)
 
         sa += am
 
-        if ii_[id]
+        if bo_[id]
 
             s1 += am
 
@@ -196,15 +196,15 @@ function _get_normalizer(na, n1)
 
 end
 
-function _get_normalizer(::KLi1, sc_, ex, ii_)
+function _get_normalizer(::KLi1, nu_, ex, bo_)
 
     s1 = 0.0
 
-    for id in eachindex(sc_)
+    for id in eachindex(nu_)
 
-        if ii_[id]
+        if bo_[id]
 
-            s1 += Nucleus.Numbe.make_exponential(sc_[id], ex)
+            s1 += Nucleus.Numbe.make_exponential(nu_[id], ex)
 
         end
 
@@ -214,15 +214,15 @@ function _get_normalizer(::KLi1, sc_, ex, ii_)
 
 end
 
-function _enrich!(al::KS, sc_, ex, ii_, mo_)
+function _enrich!(al::KS, nu_, ex, bo_, mo_)
 
-    n0, n1 = _get_normalizer(al, sc_, ex, ii_)
+    n0, n1 = _get_normalizer(al, nu_, ex, bo_)
 
     mo = ba = bm = 0.0
 
-    for id in eachindex(sc_)
+    for id in eachindex(nu_)
 
-        mo += ii_[id] ? Nucleus.Numbe.make_exponential(sc_[id], ex) * n1 : n0
+        mo += bo_[id] ? Nucleus.Numbe.make_exponential(nu_[id], ex) * n1 : n0
 
         if !isnothing(mo_)
 
@@ -246,15 +246,15 @@ function _enrich!(al::KS, sc_, ex, ii_, mo_)
 
 end
 
-function _enrich!(al::KSa, sc_, ex, ii_, mo_)
+function _enrich!(al::KSa, nu_, ex, bo_, mo_)
 
-    n0, n1 = _get_normalizer(al, sc_, ex, ii_)
+    n0, n1 = _get_normalizer(al, nu_, ex, bo_)
 
     mo = ar = 0.0
 
-    for id in eachindex(sc_)
+    for id in eachindex(nu_)
 
-        ar += mo += ii_[id] ? Nucleus.Numbe.make_exponential(sc_[id], ex) * n1 : n0
+        ar += mo += bo_[id] ? Nucleus.Numbe.make_exponential(nu_[id], ex) * n1 : n0
 
         if !isnothing(mo_)
 
@@ -264,16 +264,16 @@ function _enrich!(al::KSa, sc_, ex, ii_, mo_)
 
     end
 
-    ar / lastindex(sc_)
+    ar / lastindex(nu_)
 
 end
 
 # TODO: Clip.
 const ON = 1.0 + 1e-13
 
-function _enrich!(al::KLioM, sc_, ex, ii_, mo_)
+function _enrich!(al::KLioM, nu_, ex, bo_, mo_)
 
-    na, n1 = _get_normalizer(al, sc_, ex, ii_)
+    na, n1 = _get_normalizer(al, nu_, ex, bo_)
 
     n0 = _get_normalizer(na, n1)
 
@@ -283,13 +283,13 @@ function _enrich!(al::KLioM, sc_, ex, ii_, mo_)
 
     pa = p0 = p1 = ar = 0.0
 
-    for id in eachindex(sc_)
+    for id in eachindex(nu_)
 
-        am = Nucleus.Numbe.make_exponential(sc_[id], ex)
+        am = Nucleus.Numbe.make_exponential(nu_[id], ex)
 
         da = am * na
 
-        if ii_[id]
+        if bo_[id]
 
             d0 = 0.0
 
@@ -341,13 +341,13 @@ function _enrich!(al::KLioM, sc_, ex, ii_, mo_)
 
     end
 
-    ar / lastindex(sc_)
+    ar / lastindex(nu_)
 
 end
 
-function _enrich!(al::KLioP, sc_, ex, ii_, mo_)
+function _enrich!(al::KLioP, nu_, ex, bo_, mo_)
 
-    na, n1 = _get_normalizer(al, sc_, ex, ii_)
+    na, n1 = _get_normalizer(al, nu_, ex, bo_)
 
     n0 = _get_normalizer(na, n1)
 
@@ -357,13 +357,13 @@ function _enrich!(al::KLioP, sc_, ex, ii_, mo_)
 
     pa = p0 = p1 = ar = 0.0
 
-    for id in eachindex(sc_)
+    for id in eachindex(nu_)
 
-        am = Nucleus.Numbe.make_exponential(sc_[id], ex)
+        am = Nucleus.Numbe.make_exponential(nu_[id], ex)
 
         da = am * na
 
-        if ii_[id]
+        if bo_[id]
 
             d0 = 0.0
 
@@ -408,13 +408,13 @@ function _enrich!(al::KLioP, sc_, ex, ii_, mo_)
 
     end
 
-    ar / lastindex(sc_)
+    ar / lastindex(nu_)
 
 end
 
-function _enrich!(al::KLi, sc_, ex, ii_, mo_)
+function _enrich!(al::KLi, nu_, ex, bo_, mo_)
 
-    na, n1 = _get_normalizer(al, sc_, ex, ii_)
+    na, n1 = _get_normalizer(al, nu_, ex, bo_)
 
     ra = r1 = eps()
 
@@ -422,13 +422,13 @@ function _enrich!(al::KLi, sc_, ex, ii_, mo_)
 
     pa = p1 = ar = 0.0
 
-    for id in eachindex(sc_)
+    for id in eachindex(nu_)
 
-        am = Nucleus.Numbe.make_exponential(sc_[id], ex)
+        am = Nucleus.Numbe.make_exponential(nu_[id], ex)
 
         da = am * na
 
-        d1 = ii_[id] ? am * n1 : 0.0
+        d1 = bo_[id] ? am * n1 : 0.0
 
         ra += da
 
@@ -458,15 +458,15 @@ function _enrich!(al::KLi, sc_, ex, ii_, mo_)
 
     end
 
-    ar / lastindex(sc_)
+    ar / lastindex(nu_)
 
 end
 
-function _enrich!(al::KLi1, sc_, ex, ii_, mo_)
+function _enrich!(al::KLi1, nu_, ex, bo_, mo_)
 
-    uf = lastindex(sc_)
+    uf = lastindex(nu_)
 
-    n1 = _get_normalizer(al, sc_, ex, ii_)
+    n1 = _get_normalizer(al, nu_, ex, bo_)
 
     da = inv(uf)
 
@@ -478,9 +478,9 @@ function _enrich!(al::KLi1, sc_, ex, ii_, mo_)
 
     p1 = ar = 0.0
 
-    for id in eachindex(sc_)
+    for id in eachindex(nu_)
 
-        d1 = ii_[id] ? Nucleus.Numbe.make_exponential(sc_[id], ex) * n1 : 0.0
+        d1 = bo_[id] ? Nucleus.Numbe.make_exponential(nu_[id], ex) * n1 : 0.0
 
         ra += da
 
@@ -554,11 +554,11 @@ function plot(
 
     xc_ = collect(1:uf)
 
-    ii_ = Nucleus.Collection.is_in(fe_, me_)
+    bo_ = Nucleus.Collection.is_in(fe_, me_)
 
     mo_ = Vector{Float64}(undef, uf)
 
-    en = _enrich!(al, sc_, ex, ii_, mo_)
+    en = _enrich!(al, sc_, ex, bo_, mo_)
 
     tr = Dict("mode" => "lines", "line" => Dict("width" => 0), "fill" => "tozeroy")
 
@@ -592,9 +592,9 @@ function plot(
         Dict(
             "yaxis" => "y2",
             "name" => "Set",
-            "y" => zeros(sum(ii_)),
-            "x" => xc_[ii_],
-            "text" => fe_[ii_],
+            "y" => zeros(sum(bo_)),
+            "x" => xc_[bo_],
+            "text" => fe_[bo_],
             "mode" => "markers",
             "marker" => Dict(
                 "symbol" => "line-ns",
@@ -734,7 +734,7 @@ function enrich(al, fe_, sc_, me___; ex = 1.0, mi = 1, ma = 1000, fr = 0.0)
 
     en_ = Vector{Float64}(undef, lastindex(me___))
 
-    ii_ = falses(lastindex(fe_))
+    bo_ = falses(lastindex(fe_))
 
     fe_ie = Dict(fe_[ie] => ie for ie in eachindex(fe_))
 
@@ -742,15 +742,15 @@ function enrich(al, fe_, sc_, me___; ex = 1.0, mi = 1, ma = 1000, fr = 0.0)
 
         me_ = me___[is]
 
-        Nucleus.Collection.is_in!(ii_, fe_ie, me_)
+        Nucleus.Collection.is_in!(bo_, fe_ie, me_)
 
-        ui = sum(ii_)
+        ui = sum(bo_)
 
         en_[is] =
             ui < mi || ma < ui || ui / lastindex(me_) < fr ? NaN :
-            _enrich!(al, sc_, ex, ii_, nothing)
+            _enrich!(al, sc_, ex, bo_, nothing)
 
-        ii_[ii_] .= false
+        bo_[bo_] .= false
 
     end
 
