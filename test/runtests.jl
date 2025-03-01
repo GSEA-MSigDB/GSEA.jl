@@ -210,6 +210,15 @@ for (n1, n2, re) in ((1 / 3, 0.5, -1.0),)
 end
 
 # ---- #
+using Test: @test
+using GSEA
+using Random: seed!
+using Nucleus
+const DI = pkgdir(GSEA, "data")
+const TE = joinpath(tempdir(), "GSEA")
+rm(TE; recursive = true, force = true)
+mkdir(TE)
+const AL_ = GSEA.KS(), GSEA.KSa(), GSEA.KLioM(), GSEA.KLioP(), GSEA.KLi(), GSEA.KLi1()
 
 const A1_, N3_ =
     eachcol(reverse!(Nucleus.Table.rea(joinpath(DI, "myc.tsv"); select = [1, 2])))
@@ -276,14 +285,7 @@ for (na_, nu_, me_, re_) in (
 
         @btime GSEA._enrich!($al, $nu_, $ex, $bo_, nothing)
 
-        GSEA.plot(
-            "",
-            al,
-            na_,
-            nu_,
-            me_;
-            la = Dict("title" => Dict("text" => GSEA.text(al))),
-        )
+        GSEA.plot("", al, na_, nu_, me_, Dict("title" => Dict("text" => GSEA.text(al)));)
 
     end
 

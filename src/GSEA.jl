@@ -507,43 +507,43 @@ end
 function plot(
     ht,
     al,
-    fe_,
-    sc_,
-    me_;
-    ex = 1.0,
-    nf = "Feature",
-    ns = "Score",
-    nl = "Low",
-    nh = "High",
-    la = Dict{String, Any}(),
+    na_,
+    nu_,
+    me_,
+    la = Dict{String, Any}();
+    ex = 1,
+    xa = "Feature",
+    y1 = "Score",
+    a1 = "Low",
+    a2 = "High",
 )
 
-    uf = lastindex(fe_)
+    um = lastindex(na_)
 
-    xc_ = collect(1:uf)
+    xc_ = collect(1:um)
 
-    bo_ = Nucleus.Collection.is_in(fe_, me_)
+    bo_ = Nucleus.Collection.is_in(na_, me_)
 
-    cu_ = Vector{Float64}(undef, uf)
+    cu_ = Vector{Float64}(undef, um)
 
-    en = _enrich!(al, sc_, ex, bo_, cu_)
+    en = _enrich!(al, nu_, ex, bo_, cu_)
 
     tr = Dict("mode" => "lines", "line" => Dict("width" => 0), "fill" => "tozeroy")
 
-    ie_ = map(<(0.0), sc_)
+    i1_ = map(<(0.0), nu_)
 
-    ip_ = map(>=(0.0), sc_)
+    i2_ = map(>=(0.0), nu_)
 
-    ny = "Δ Enrichment"
+    y2 = "Δ Enrichment"
 
-    da_ = [
+    tr_ = [
         merge(
             tr,
             Dict(
                 "name" => "- Score",
-                "y" => sc_[ie_],
-                "x" => xc_[ie_],
-                "text" => fe_[ie_],
+                "y" => nu_[i1_],
+                "x" => xc_[i1_],
+                "text" => na_[i1_],
                 "fillcolor" => Nucleus.Color.BL,
             ),
         ),
@@ -551,9 +551,9 @@ function plot(
             tr,
             Dict(
                 "name" => "+ Score",
-                "y" => sc_[ip_],
-                "x" => xc_[ip_],
-                "text" => fe_[ip_],
+                "y" => nu_[i2_],
+                "x" => xc_[i2_],
+                "text" => na_[i2_],
                 "fillcolor" => Nucleus.Color.RE,
             ),
         ),
@@ -562,14 +562,14 @@ function plot(
             "name" => "Set",
             "y" => zeros(sum(bo_)),
             "x" => xc_[bo_],
-            "text" => fe_[bo_],
+            "text" => na_[bo_],
             "mode" => "markers",
             "marker" => Dict(
                 "symbol" => "line-ns",
                 "size" => 24,
                 "line" => Dict(
                     "width" => 2,
-                    "color" => Nucleus.Color.hexify(Nucleus.Color.SG, 0.72),
+                    "color" => Nucleus.Color.make(Nucleus.Color.S2, 0.72),
                 ),
             ),
             "hoverinfo" => "x+text",
@@ -578,10 +578,10 @@ function plot(
             tr,
             Dict(
                 "yaxis" => "y3",
-                "name" => ny,
+                "name" => y2,
                 "y" => cu_,
                 "x" => xc_,
-                "text" => fe_,
+                "text" => na_,
                 "fillcolor" => "#07fa07",
             ),
         ),
@@ -589,20 +589,20 @@ function plot(
 
     if typeof(al) == KS
 
-        ix_ = map(in(_get_extreme(cu_)), cu_)
+        i3_ = map(in(_get_extreme(cu_)), cu_)
 
         push!(
-            da_,
+            tr_,
             Dict(
                 "yaxis" => "y3",
                 "name" => "Extrema",
-                "y" => cu_[ix_],
-                "x" => xc_[ix_],
-                "text" => fe_[ix_],
+                "y" => cu_[i3_],
+                "x" => xc_[i3_],
+                "text" => na_[i3_],
                 "mode" => "markers",
                 "marker" => Dict(
                     "size" => 32,
-                    "color" => Nucleus.Color.hexify(Nucleus.Color.HU, 0.72),
+                    "color" => Nucleus.Color.make(Nucleus.Color.HU, 0.72),
                 ),
             ),
         )
@@ -618,29 +618,23 @@ function plot(
         "showarrow" => false,
     )
 
-    ax = uf * 0.008
+    ax = um * 0.008
 
-    if haskey(la, "title") && haskey(la["title"], "text")
-
-        la["title"]["text"] = Nucleus.text.limit(la["title"]["text"], 56)
-
-    end
-
-    Nucleus.Plot.plot(
+    Nucleus.Plotly.writ(
         ht,
-        da_,
-        Nucleus.Dic.merg(
+        tr_,
+        Nucleus.Dictionary.make(
             Dict(
                 "showlegend" => false,
-                "yaxis" => Dict("domain" => (0, 0.24), "title" => Dict("text" => ns)),
+                "yaxis3" => Dict("domain" => (0.328, 1), "title" => Dict("text" => y2)),
                 "yaxis2" => Dict(
                     "domain" => (0.248, 0.32),
                     "title" => Dict("text" => "Set"),
                     "tickvals" => (),
                 ),
-                "yaxis3" => Dict("domain" => (0.328, 1), "title" => Dict("text" => ny)),
+                "yaxis" => Dict("domain" => (0, 0.24), "title" => Dict("text" => y1)),
                 "xaxis" => Dict(
-                    "title" => Dict("text" => "$nf ($uf)"),
+                    "title" => Dict("text" => "$xa ($um)"),
                     "showspikes" => true,
                     "spikemode" => "across",
                     "spikedash" => "solid",
@@ -653,24 +647,24 @@ function plot(
                         "xref" => "paper",
                         "y" => 1.064,
                         "text" => "Enrichment = <b>$(@sprintf "%.4g" en)</b>",
-                        "font" => Dict("size" => 24, "color" => Nucleus.Color.BR),
+                        "font" => Dict("size" => 24, "color" => Nucleus.Color.DA),
                         "showarrow" => false,
                     ),
                     merge(
                         an,
                         Dict(
-                            "x" => 1.0 - ax,
+                            "x" => 1 - ax,
                             "xanchor" => "right",
-                            "text" => nh,
+                            "text" => a2,
                             "font" => Dict("color" => Nucleus.Color.RE),
                         ),
                     ),
                     merge(
                         an,
                         Dict(
-                            "x" => uf + ax,
+                            "x" => um + ax,
                             "xanchor" => "left",
-                            "text" => nl,
+                            "text" => a1,
                             "font" => Dict("color" => Nucleus.Color.BL),
                         ),
                     ),
