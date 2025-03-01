@@ -12,7 +12,7 @@ using Nucleus
 
 const DI = pkgdir(GSEA, "data")
 
-const TE = joinpath(tempdir(), "Nucleus")
+const TE = joinpath(tempdir(), "GSEA")
 
 rm(TE; recursive = true, force = true)
 
@@ -20,9 +20,9 @@ mkdir(TE)
 
 # ---- #
 
-# 10.292 μs (114 allocations: 6.84 KiB)
-# 10.583 μs (116 allocations: 7.17 KiB)
-# 439.208 μs (7160 allocations: 473.16 KiB)
+# 10.000 μs (114 allocations: 6.84 KiB)
+# 10.291 μs (116 allocations: 7.17 KiB)
+# 403.875 μs (7160 allocations: 473.16 KiB)
 
 for (cl, na, re) in (
     ("1.cls", "CNTRL_LPS", [1, 1, 1, 2, 2, 2]),
@@ -58,7 +58,7 @@ end
 
 # ---- #
 
-# 103.230 ms (71705 allocations: 23.67 MiB)
+# 100.965 ms (71705 allocations: 23.67 MiB)
 
 for (gc, re) in (("1.gct", (13321, 190)),)
 
@@ -72,8 +72,8 @@ end
 
 # ---- #
 
-# 287.084 μs (7984 allocations: 1.12 MiB)
-# 22.061 ms (537839 allocations: 62.61 MiB)
+# 287.417 μs (7984 allocations: 1.12 MiB)
+# 21.892 ms (537839 allocations: 62.61 MiB)
 
 for (gm, re) in (("1.gmt", 50), ("2.gmt", 5529))
 
@@ -153,11 +153,11 @@ const B2_ = rand(Bool, lastindex(N2_))
 
 # ---- #
 
-# 70.312 ns (0 allocations: 0 bytes)
-# 70.226 ns (0 allocations: 0 bytes)
-# 8.299 ns (0 allocations: 0 bytes)
-# 19.809 ns (0 allocations: 0 bytes)
-# 299.291 μs (0 allocations: 0 bytes)
+# 70.385 ns (0 allocations: 0 bytes)
+# 70.385 ns (0 allocations: 0 bytes)
+# 8.291 ns (0 allocations: 0 bytes)
+# 19.767 ns (0 allocations: 0 bytes)
+# 309.958 μs (0 allocations: 0 bytes)
 
 const N0 = -0.25
 
@@ -179,10 +179,10 @@ end
 
 # ---- #
 
-# 116.993 ns (0 allocations: 0 bytes)
 # 117.039 ns (0 allocations: 0 bytes)
+# 117.011 ns (0 allocations: 0 bytes)
 # 7.375 ns (0 allocations: 0 bytes)
-# 25.033 ns (0 allocations: 0 bytes)
+# 25.016 ns (0 allocations: 0 bytes)
 # 92.875 μs (0 allocations: 0 bytes)
 
 for (nu_, ex, bo_, re) in (
@@ -210,13 +210,11 @@ for (n1, n2, re) in ((1 / 3, 0.5, -1.0),)
 end
 
 # ---- #
-using Test: @test
-using GSEA
-using Random: seed!
-using Nucleus
 
-const FM_, SM_ =
+const A1_, N3_ =
     eachcol(reverse!(Nucleus.Table.rea(joinpath(DI, "myc.tsv"); select = [1, 2])))
+
+const M1_ = GSEA.read_gmt(joinpath(DI, "c2.all.v7.1.symbols.gmt"))["COLLER_MYC_TARGETS_UP"]
 
 # ---- #
 
@@ -233,32 +231,30 @@ const FM_, SM_ =
 # 186.208 μs (0 allocations: 0 bytes)
 # 164.833 μs (0 allocations: 0 bytes)
 #
-# 231.971 ns (6 allocations: 400 bytes)
-# 17.285 ns (0 allocations: 0 bytes)
-# 16.658 ns (0 allocations: 0 bytes)
-# 284.155 ns (0 allocations: 0 bytes)
-# 284.063 ns (0 allocations: 0 bytes)
-# 155.717 ns (0 allocations: 0 bytes)
-# 143.797 ns (0 allocations: 0 bytes)
-# 460.334 μs (7 allocations: 20.42 KiB)
-# 43.333 μs (0 allocations: 0 bytes)
-# 37.500 μs (0 allocations: 0 bytes)
-# 412.833 μs (0 allocations: 0 bytes)
-# 414.041 μs (0 allocations: 0 bytes)
-# 243.250 μs (0 allocations: 0 bytes)
-# 210.291 μs (0 allocations: 0 bytes)
+# 16.825 ns (0 allocations: 0 bytes)
+# 16.325 ns (0 allocations: 0 bytes)
+# 281.034 ns (0 allocations: 0 bytes)
+# 281.034 ns (0 allocations: 0 bytes)
+# 155.565 ns (0 allocations: 0 bytes)
+# 155.050 ns (0 allocations: 0 bytes)
+# 45.833 μs (0 allocations: 0 bytes)
+# 37.541 μs (0 allocations: 0 bytes)
+# 410.750 μs (0 allocations: 0 bytes)
+# 410.833 μs (0 allocations: 0 bytes)
+# 243.375 μs (0 allocations: 0 bytes)
+# 222.541 μs (0 allocations: 0 bytes)
 
-for (fe_, sc_, me_, re_) in (
+for (na_, nu_, me_, re_) in (
     (
-        ["K", "Q", "J", "X", "9", "8", "7", "6", "5", "4", "3", "2", "A"],
-        [6.0, 5, 4, 3, 2, 1, 0, -1, -2, -3, -4, -5, -6],
-        ["K", "A"],
+        ['K', 'Q', 'J', 'X', '9', '8', '7', '6', '5', '4', '3', '2', 'A'],
+        [6, 5, 4, 3, 2, 1, 0, -1, -2, -3, -4, -5, -6.0],
+        ['K', 'A'],
         (-0.5, 0.0, 0.0, 0.0, 0.0, 0.0),
     ),
     (
-        FM_,
-        SM_,
-        GSEA.read_gmt(joinpath(DI, "c2.all.v7.1.symbols.gmt"))["COLLER_MYC_TARGETS_UP"],
+        A1_,
+        N3_,
+        M1_,
         (
             0.7651927829281453,
             0.41482514169516305,
@@ -270,27 +266,23 @@ for (fe_, sc_, me_, re_) in (
     ),
 )
 
-    ii_ = GSEA._is_in(fe_, me_)
-
-    @test typeof(ii_) === Vector{Bool}
-
-    #@btime GSEA._is_in($fe_, $me_)
+    bo_ = Nucleus.Collection.is_in(na_, me_)
 
     for (al, re) in zip(AL_, re_)
 
-        ex = 1.0
+        ex = 1
 
-        @test isapprox(GSEA._enrich!(al, sc_, ex, ii_, nothing), re; atol = 1e-11)
+        @test isapprox(GSEA._enrich!(al, nu_, ex, bo_, nothing), re; atol = 1e-11)
 
-        #@btime GSEA._enrich!($al, $sc_, $ex, $ii_, nothing)
+        @btime GSEA._enrich!($al, $nu_, $ex, $bo_, nothing)
 
         GSEA.plot(
             "",
             al,
-            fe_,
-            sc_,
+            na_,
+            nu_,
             me_;
-            la = Dict("title" => Dict("text" => GSEA.strin(al))),
+            la = Dict("title" => Dict("text" => GSEA.text(al))),
         )
 
     end
@@ -323,7 +315,7 @@ const SE_, ME___ = GSEA._separat(GSEA.read_gmt(joinpath(DI, "h.all.v7.1.symbols.
 
 for al in AL_
 
-    en_ = GSEA.enrich(al, FM_, SM_, ME___)
+    en_ = GSEA.enrich(al, A1_, N3_, ME___)
 
     @test !issorted(en_)
 
@@ -331,7 +323,7 @@ for al in AL_
 
     @test se_[1:2] == ["HALLMARK_MYC_TARGETS_V2", "HALLMARK_MYC_TARGETS_V1"]
 
-    #@btime GSEA.enrich($al, FM_, SM_, ME___)
+    #@btime GSEA.enrich($al, A1_, N3_, ME___)
 
 end
 

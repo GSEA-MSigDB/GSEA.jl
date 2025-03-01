@@ -174,11 +174,11 @@ function make_normalizer(::Any, nu_, ex, bo_)
 
     for id in eachindex(nu_)
 
-        s2 += am = Nucleus.Numbe.make_exponential(nu_[id], ex)
+        s2 += ab = Nucleus.Numbe.make_exponential(nu_[id], ex)
 
         if bo_[id]
 
-            s1 += am
+            s1 += ab
 
         end
 
@@ -188,302 +188,287 @@ function make_normalizer(::Any, nu_, ex, bo_)
 
 end
 
-function make_normalizer(n1, n2)
+function make_normalizer(o1, o2)
 
-    inv(inv(n2) - inv(n1))
+    inv(inv(o2) - inv(o1))
 
 end
 
-function _enrich!(al::KS, nu_, ex, bo_, mo_)
+function _enrich!(al::KS, nu_, ex, bo_, cu_)
 
-    n0, n1 = make_normalizer(al, nu_, ex, bo_)
+    o0, o1 = make_normalizer(al, nu_, ex, bo_)
 
-    mo = ba = bm = 0.0
+    c2 = a2 = c1 = 0.0
 
     for id in eachindex(nu_)
 
-        mo += bo_[id] ? Nucleus.Numbe.make_exponential(nu_[id], ex) * n1 : n0
+        c1 += bo_[id] ? Nucleus.Numbe.make_exponential(nu_[id], ex) * o1 : o0
 
-        if !isnothing(mo_)
+        if !isnothing(cu_)
 
-            mo_[id] = mo
+            cu_[id] = c1
 
         end
 
-        ab = abs(mo)
+        a1 = abs(c1)
 
-        if ba < ab
+        if a2 < a1
 
-            ba = ab
+            a2 = a1
 
-            bm = mo
+            c2 = c1
 
         end
 
     end
 
-    bm
+    c2
 
 end
 
-function _enrich!(al::KSa, nu_, ex, bo_, mo_)
+function _enrich!(al::KSa, nu_, ex, bo_, cu_)
 
-    n0, n1 = make_normalizer(al, nu_, ex, bo_)
+    o0, o1 = make_normalizer(al, nu_, ex, bo_)
 
-    mo = ar = 0.0
+    cu = su = 0.0
 
     for id in eachindex(nu_)
 
-        ar += mo += bo_[id] ? Nucleus.Numbe.make_exponential(nu_[id], ex) * n1 : n0
+        su += cu += bo_[id] ? Nucleus.Numbe.make_exponential(nu_[id], ex) * o1 : o0
 
-        if !isnothing(mo_)
+        if !isnothing(cu_)
 
-            mo_[id] = mo
+            cu_[id] = cu
 
         end
 
     end
 
-    ar / lastindex(nu_)
+    su / lastindex(nu_)
 
 end
 
 # TODO: Clip.
 const ON = 1.0 + 1e-13
 
-function _enrich!(al::KLioM, nu_, ex, bo_, mo_)
+function _enrich!(al::KLioM, nu_, ex, bo_, cu_)
 
-    n1, n2 = make_normalizer(al, nu_, ex, bo_)
+    o1, o2 = make_normalizer(al, nu_, ex, bo_)
 
-    n0 = make_normalizer(n1, n2)
+    o0 = make_normalizer(o1, o2)
 
-    ra = r0 = r1 = eps()
+    r0 = r1 = r2 = eps()
 
-    la = l0 = l1 = ON
+    l0 = l1 = l2 = ON
 
-    pa = p0 = p1 = ar = 0.0
+    p0 = p1 = p2 = su = 0.0
 
     for id in eachindex(nu_)
 
-        am = Nucleus.Numbe.make_exponential(nu_[id], ex)
-
-        da = am * n2
+        ab = Nucleus.Numbe.make_exponential(nu_[id], ex)
 
         if bo_[id]
 
             d0 = 0.0
 
-            d1 = am * n1
+            d1 = ab * o1
 
         else
 
-            d0 = am * n0
+            d0 = ab * o0
 
             d1 = 0.0
 
         end
 
-        ra += da
-
-        r0 += d0
-
-        r1 += d1
-
-        la -= pa
+        d2 = ab * o2
 
         l0 -= p0
 
         l1 -= p1
 
-        ar +=
-            mo =
-                Nucleus.Information.get_antisymmetric_kullback_leibler_divergence(
+        l2 -= p2
+
+        r0 += p0 = d0
+
+        r1 += p1 = d1
+
+        r2 += p2 = d2
+
+        su +=
+            cu =
+                Nucleus.Information.make_antisymmetric_kullback_leibler_divergence(
                     r1,
                     r0,
-                    ra,
-                ) - Nucleus.Information.get_antisymmetric_kullback_leibler_divergence(
+                    r2,
+                ) - Nucleus.Information.make_antisymmetric_kullback_leibler_divergence(
                     l1,
                     l0,
-                    la,
+                    l2,
                 )
 
-        if !isnothing(mo_)
+        if !isnothing(cu_)
 
-            mo_[id] = mo
+            cu_[id] = cu
 
         end
 
-        pa = da
-
-        p0 = d0
-
-        p1 = d1
-
     end
 
-    ar / lastindex(nu_)
+    su / lastindex(nu_)
 
 end
 
-function _enrich!(al::KLioP, nu_, ex, bo_, mo_)
+function _enrich!(al::KLioP, nu_, ex, bo_, cu_)
 
-    n1, n2 = make_normalizer(al, nu_, ex, bo_)
+    o1, o2 = make_normalizer(al, nu_, ex, bo_)
 
-    n0 = make_normalizer(n1, n2)
+    o0 = make_normalizer(o1, o2)
 
-    ra = r0 = r1 = eps()
+    r0 = r1 = r2 = eps()
 
-    la = l0 = l1 = ON
+    l0 = l1 = l2 = ON
 
-    pa = p0 = p1 = ar = 0.0
+    p0 = p1 = p2 = su = 0.0
 
     for id in eachindex(nu_)
 
-        am = Nucleus.Numbe.make_exponential(nu_[id], ex)
-
-        da = am * n2
+        ab = Nucleus.Numbe.make_exponential(nu_[id], ex)
 
         if bo_[id]
 
             d0 = 0.0
 
-            d1 = am * n1
+            d1 = ab * o1
 
         else
 
-            d0 = am * n0
+            d0 = ab * o0
 
             d1 = 0.0
 
         end
 
-        ra += da
-
-        r0 += d0
-
-        r1 += d1
-
-        la -= pa
+        d2 = ab * o2
 
         l0 -= p0
 
         l1 -= p1
 
-        ar +=
-            mo =
-                Nucleus.Information.get_symmetric_kullback_leibler_divergence(r1, r0, ra) -
-                Nucleus.Information.get_symmetric_kullback_leibler_divergence(l1, l0, la)
+        l2 -= p2
 
-        if !isnothing(mo_)
+        r0 += p0 = d0
 
-            mo_[id] = mo
+        r1 += p1 = d1
+
+        r2 += p2 = d2
+
+        su +=
+            cu =
+                Nucleus.Information.make_symmetric_kullback_leibler_divergence(r1, r0, r2) -
+                Nucleus.Information.make_symmetric_kullback_leibler_divergence(l1, l0, l2)
+
+        if !isnothing(cu_)
+
+            cu_[id] = cu
 
         end
 
-        pa = da
-
-        p0 = d0
-
-        p1 = d1
-
     end
 
-    ar / lastindex(nu_)
+    su / lastindex(nu_)
 
 end
 
-function _enrich!(al::KLi, nu_, ex, bo_, mo_)
+function _enrich!(al::KLi, nu_, ex, bo_, cu_)
 
-    n1, n2 = make_normalizer(al, nu_, ex, bo_)
+    o1, o2 = make_normalizer(al, nu_, ex, bo_)
 
-    n0 = make_normalizer(n1, n2)
+    r1 = r2 = eps()
 
-    ra = r1 = eps()
+    l1 = l2 = ON
 
-    la = l1 = ON
-
-    pa = p1 = ar = 0.0
+    p1 = p2 = su = 0.0
 
     for id in eachindex(nu_)
 
-        am = Nucleus.Numbe.make_exponential(nu_[id], ex)
+        ab = Nucleus.Numbe.make_exponential(nu_[id], ex)
 
-        da = am * n2
+        d1 = bo_[id] ? ab * o1 : 0.0
 
-        d1 = bo_[id] ? am * n1 : 0.0
-
-        ra += da
+        d2 = ab * o2
 
         r1 += d1
 
-        la -= pa
+        r2 += d2
 
         l1 -= p1
 
-        ar +=
-            mo = Nucleus.Information.get_antisymmetric_kullback_leibler_divergence(
+        l2 -= p2
+
+        su +=
+            cu = Nucleus.Information.make_antisymmetric_kullback_leibler_divergence(
                 r1,
                 l1,
-                ra,
-                la,
+                r2,
+                l2,
             )
 
-        if !isnothing(mo_)
+        if !isnothing(cu_)
 
-            mo_[id] = mo
+            cu_[id] = cu
 
         end
 
-        pa = da
-
         p1 = d1
+
+        p2 = d2
 
     end
 
-    ar / lastindex(nu_)
+    su / lastindex(nu_)
 
 end
 
-# TODO
-function _enrich!(al::KLi1, nu_, ex, bo_, mo_)
+function _enrich!(al::KLi1, nu_, ex, bo_, cu_)
 
-    uf = lastindex(nu_)
+    um = lastindex(nu_)
 
-    n1, _ = make_normalizer(al, nu_, ex, bo_)
+    o1, _ = make_normalizer(al, nu_, ex, bo_)
 
-    da = inv(uf)
+    d2 = inv(um)
 
-    ra = r1 = eps()
-
-    la = ON + da
+    r1 = r2 = eps()
 
     l1 = ON
 
-    p1 = ar = 0.0
+    l2 = ON + d2
+
+    p1 = su = 0.0
 
     for id in eachindex(nu_)
 
-        d1 = bo_[id] ? Nucleus.Numbe.make_exponential(nu_[id], ex) * n1 : 0.0
-
-        ra += da
+        d1 = bo_[id] ? Nucleus.Numbe.make_exponential(nu_[id], ex) * o1 : 0.0
 
         r1 += d1
 
-        la -= da
+        r2 += d2
 
         l1 -= p1
 
-        ar +=
-            mo = Nucleus.Information.get_antisymmetric_kullback_leibler_divergence(
+        l2 -= d2
+
+        su +=
+            cu = Nucleus.Information.make_antisymmetric_kullback_leibler_divergence(
                 r1,
                 l1,
-                ra,
-                la,
+                r2,
+                l2,
             )
 
-        if !isnothing(mo_)
+        if !isnothing(cu_)
 
-            mo_[id] = mo
+            cu_[id] = cu
 
         end
 
@@ -491,13 +476,13 @@ function _enrich!(al::KLi1, nu_, ex, bo_, mo_)
 
     end
 
-    ar / uf
+    su / um
 
 end
 
-function _get_extreme(mo_)
+function _get_extreme(cu_)
 
-    mi, ma = extrema(mo_)
+    mi, ma = extrema(cu_)
 
     ai = abs(mi)
 
@@ -539,9 +524,9 @@ function plot(
 
     bo_ = Nucleus.Collection.is_in(fe_, me_)
 
-    mo_ = Vector{Float64}(undef, uf)
+    cu_ = Vector{Float64}(undef, uf)
 
-    en = _enrich!(al, sc_, ex, bo_, mo_)
+    en = _enrich!(al, sc_, ex, bo_, cu_)
 
     tr = Dict("mode" => "lines", "line" => Dict("width" => 0), "fill" => "tozeroy")
 
@@ -594,7 +579,7 @@ function plot(
             Dict(
                 "yaxis" => "y3",
                 "name" => ny,
-                "y" => mo_,
+                "y" => cu_,
                 "x" => xc_,
                 "text" => fe_,
                 "fillcolor" => "#07fa07",
@@ -604,14 +589,14 @@ function plot(
 
     if typeof(al) == KS
 
-        ix_ = map(in(_get_extreme(mo_)), mo_)
+        ix_ = map(in(_get_extreme(cu_)), cu_)
 
         push!(
             da_,
             Dict(
                 "yaxis" => "y3",
                 "name" => "Extrema",
-                "y" => mo_[ix_],
+                "y" => cu_[ix_],
                 "x" => xc_[ix_],
                 "text" => fe_[ix_],
                 "mode" => "markers",
@@ -910,7 +895,7 @@ function _normalize_enrichment(::Any, en, mn, mp, sn, sp)
 
 end
 
-function _normalize_enrichment!(al, en_, ra)
+function _normalize_enrichment!(al, en_, R)
 
     us = lastindex(en_)
 
@@ -920,7 +905,7 @@ function _normalize_enrichment!(al, en_, ra)
 
         en = en_[id]
 
-        ra_ = ra[id, :]
+        ra_ = R[id, :]
 
         rn_, rp_ = Nucleus.Significance._separate(ra_)
 
@@ -934,7 +919,7 @@ function _normalize_enrichment!(al, en_, ra)
 
         no_[id] = _normalize_enrichment(al, en, mn, mp, sn, sp)
 
-        ra[id, :] = map(ra -> _normalize_enrichment(al, ra, mn, mp, sn, sp), ra_)
+        R[id, :] = map(R -> _normalize_enrichment(al, R, mn, mp, sn, sp), ra_)
 
     end
 
@@ -942,7 +927,7 @@ function _normalize_enrichment!(al, en_, ra)
 
 end
 
-function _write_plot(di, al, fe_, sc_, ex, se_, me___, en_, ra, up, pl_, nf, ns, nl, nh)
+function _write_plot(di, al, fe_, sc_, ex, se_, me___, en_, R, up, pl_, nf, ns, nl, nh)
 
     ig_ = map(!isnan, en_)
 
@@ -952,11 +937,11 @@ function _write_plot(di, al, fe_, sc_, ex, se_, me___, en_, ra, up, pl_, nf, ns,
 
     en_ = en_[ig_]
 
-    ra = ra[ig_, :]
+    R = R[ig_, :]
 
-    no_ = _normalize_enrichment!(al, en_, ra)
+    no_ = _normalize_enrichment!(al, en_, R)
 
-    pn_, qn_, pp_, qp_ = Nucleus.Significance.ge(ra, no_)
+    pn_, qn_, pp_, qp_ = Nucleus.Significance.ge(R, no_)
 
     Nucleus.Table.writ(
         joinpath(di, "result.tsv"),
@@ -995,7 +980,7 @@ end
 
 function _permute_set(ur, sd, al, fe_, sc_, me___; ke_ar...)
 
-    ra = Matrix{Float64}(undef, lastindex(me___), ur)
+    R = Matrix{Float64}(undef, lastindex(me___), ur)
 
     if !iszero(ur)
 
@@ -1005,7 +990,7 @@ function _permute_set(ur, sd, al, fe_, sc_, me___; ke_ar...)
 
         @showprogress for id in 1:ur
 
-            ra[:, id] = enrich(
+            R[:, id] = enrich(
                 al,
                 fe_,
                 sc_,
@@ -1017,7 +1002,7 @@ function _permute_set(ur, sd, al, fe_, sc_, me___; ke_ar...)
 
     end
 
-    ra
+    R
 
 end
 
@@ -1195,12 +1180,11 @@ Run metric-rank (standard) GSEA.
 
     if permutation == "set"
 
-        ra =
-            _permute_set(number_of_permutations, random_seed, al, fe_, s2_, me___; ke_ar...)
+        R = _permute_set(number_of_permutations, random_seed, al, fe_, s2_, me___; ke_ar...)
 
     elseif permutation == "sample"
 
-        ra = Matrix{Float64}(undef, lastindex(se_), number_of_permutations)
+        R = Matrix{Float64}(undef, lastindex(se_), number_of_permutations)
 
         if 0 < number_of_permutations
 
@@ -1208,7 +1192,7 @@ Run metric-rank (standard) GSEA.
 
             @showprogress for id in 1:number_of_permutations
 
-                ra[:, id] = enrich(
+                R[:, id] = enrich(
                     al,
                     fe_,
                     map(s1_ -> Nucleus.Target.go(fu, shuffle!(vt_), s1_), eachrow(s1)),
@@ -1231,7 +1215,7 @@ Run metric-rank (standard) GSEA.
         se_,
         me___,
         enrich(al, fe_, s2_, me___; ke_ar...),
-        ra,
+        R,
         number_of_sets_to_plot,
         split(more_sets_to_plot, ';'),
         feature_name,
