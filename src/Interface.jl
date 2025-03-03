@@ -2,31 +2,7 @@ module Interface
 
 using Nucleus
 
-function _get_extreme(cu_)
-
-    mi, ma = extrema(cu_)
-
-    ai = abs(mi)
-
-    aa = abs(ma)
-
-    if isapprox(ai, aa)
-
-        (mi, ma)
-
-    elseif aa < ai
-
-        (mi,)
-
-    else
-
-        (ma,)
-
-    end
-
-end
-
-function _select_sort(fe_, sc_)
+function update_sort(fe_, sc_)
 
     id_ = findall(!isnan, sc_)
 
@@ -40,9 +16,9 @@ function _select_sort(fe_, sc_)
 
 end
 
-function enrich(al, fe_, sc_, me___; ex = 1.0, mi = 1, ma = 1000, fr = 0.0)
+function make(al, fe_, sc_, me___; ex = 1.0, mi = 1, ma = 1000, fr = 0.0)
 
-    fe_, sc_ = _select_sort(fe_, sc_)
+    fe_, sc_ = update_sort(fe_, sc_)
 
     en_ = Vector{Float64}(undef, lastindex(me___))
 
@@ -70,13 +46,7 @@ function enrich(al, fe_, sc_, me___; ex = 1.0, mi = 1, ma = 1000, fr = 0.0)
 
 end
 
-function _separat(se_me_)
-
-    collect(keys(se_me_)), collect(values(se_me_))
-
-end
-
-function data_rank!(di, al, fe_, sc, ne, se_me_, ns, sa_; st = 0.0, up = 2, ke_ar...)
+function make!(di, al, fe_, sc, ne, se_me_, ns, sa_; st = 0.0, up = 2, ke_ar...)
 
     if !iszero(st)
 
@@ -84,9 +54,11 @@ function data_rank!(di, al, fe_, sc, ne, se_me_, ns, sa_; st = 0.0, up = 2, ke_a
 
     end
 
-    se_, me___ = _separat(se_me_)
+    se_ = collect(keys(se_me_))
 
-    en = stack((enrich(al, fe_, sc_, me___; ke_ar...) for sc_ in eachcol(sc)))
+    me___ = collect(values(se_me_))
+
+    en = stack((make(al, fe_, sc_, me___; ke_ar...) for sc_ in eachcol(sc)))
 
     ig_ = map(en_ -> all(!isnan, en_), eachrow(en))
 
@@ -113,7 +85,7 @@ function data_rank!(di, al, fe_, sc, ne, se_me_, ns, sa_; st = 0.0, up = 2, ke_a
         plot(
             joinpath(di, "$(Nucleus.Numbe.shorten(en[is, ia])).$sa.$se.html"),
             al,
-            _select_sort(fe_, sc[:, ia])...,
+            update_sort(fe_, sc[:, ia])...,
             me___[is];
             ns = sa,
             la = Dict("title" => Dict("text" => se)),

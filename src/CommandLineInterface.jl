@@ -138,7 +138,7 @@ Run data-rank (single-sample) GSEA.
         ta[!, 1],
         Matrix(ta[!, 2:end]),
         set_name,
-        Nucleus.Dic.rea(set_features_json),
+        Nucleus.Dictionary.rea(set_features_json),
         sample_name,
         names(ta)[2:end];
         st = standard_deviation,
@@ -151,13 +151,13 @@ Run data-rank (single-sample) GSEA.
 
 end
 
-function _normalize_enrichment(::Union{KS, KSa}, en, mn, mp, ::Any, ::Any)
+function make_normalized(::Union{KS, KSa}, en, mn, mp, ::Any, ::Any)
 
     en / (en < 0.0 ? -mn : mp)
 
 end
 
-function _normalize_enrichment(::Any, en, mn, mp, sn, sp)
+function make_normalized(::Any, en, mn, mp, sn, sp)
 
     if en < 0.0
 
@@ -178,7 +178,7 @@ function _normalize_enrichment(::Any, en, mn, mp, sn, sp)
 
 end
 
-function _normalize_enrichment!(al, en_, R)
+function make_normalized!(al, en_, R)
 
     us = lastindex(en_)
 
@@ -200,9 +200,9 @@ function _normalize_enrichment!(al, en_, R)
 
         sp = std(rp_)
 
-        no_[id] = _normalize_enrichment(al, en, mn, mp, sn, sp)
+        no_[id] = make_normalized(al, en, mn, mp, sn, sp)
 
-        R[id, :] = map(R -> _normalize_enrichment(al, R, mn, mp, sn, sp), ra_)
+        R[id, :] = map(R -> make_normalized(al, R, mn, mp, sn, sp), ra_)
 
     end
 
@@ -210,19 +210,47 @@ function _normalize_enrichment!(al, en_, R)
 
 end
 
-function _write_plot(di, al, fe_, sc_, ex, se_, me___, en_, R, up, pl_, nf, ns, nl, nh)
+function make_random(ur, sd, al, fe_, sc_, me__; ke_ar...)
+
+    R = Matrix{Float64}(undef, lastindex(me__), ur)
+
+    if !iszero(ur)
+
+        um_ = map(lastindex, me__)
+
+        seed!(sd)
+
+        @showprogress for id in 1:ur
+
+            R[:, id] = enrich(
+                al,
+                fe_,
+                sc_,
+                map(um -> sample(fe_, um; replace = false), um_);
+                ke_ar...,
+            )
+
+        end
+
+    end
+
+    R
+
+end
+
+function writ(di, al, fe_, sc_, ex, se_, me__, en_, R, up, pl_, nf, ns, nl, nh)
 
     ig_ = map(!isnan, en_)
 
     se_ = se_[ig_]
 
-    me___ = me___[ig_]
+    me__ = me__[ig_]
 
     en_ = en_[ig_]
 
     R = R[ig_, :]
 
-    no_ = _normalize_enrichment!(al, en_, R)
+    no_ = make_normalized!(al, en_, R)
 
     pn_, qn_, pp_, qp_ = Nucleus.Significance.ge(R, no_)
 
@@ -248,7 +276,7 @@ function _write_plot(di, al, fe_, sc_, ex, se_, me___, en_, R, up, pl_, nf, ns, 
             al,
             fe_,
             sc_,
-            me___[is];
+            me__[is];
             ex,
             nf,
             ns,
@@ -258,34 +286,6 @@ function _write_plot(di, al, fe_, sc_, ex, se_, me___, en_, R, up, pl_, nf, ns, 
         )
 
     end
-
-end
-
-function _permute_set(ur, sd, al, fe_, sc_, me___; ke_ar...)
-
-    R = Matrix{Float64}(undef, lastindex(me___), ur)
-
-    if !iszero(ur)
-
-        um_ = map(lastindex, me___)
-
-        seed!(sd)
-
-        @showprogress for id in 1:ur
-
-            R[:, id] = enrich(
-                al,
-                fe_,
-                sc_,
-                map(um -> sample(fe_, um; replace = false), um_);
-                ke_ar...,
-            )
-
-        end
-
-    end
-
-    R
 
 end
 
@@ -339,20 +339,24 @@ Run user-rank (pre-rank) GSEA.
 
     fe_, sc_ = _select_sort(ta[!, 1], ta[!, 2])
 
-    se_, me___ = _separat(Nucleus.Dic.rea(set_features_json))
+    se_me_ = Nucleus.Dictionary.rea(set_features_json)
+
+    se_ = collect(keys(se_me_))
+
+    me__ = collect(values(se_me_))
 
     ke_ar = (ex = exponent, mi = minimum_set_size, ma = maximum_set_size, fr = set_fraction)
 
-    _write_plot(
+    writ(
         output_directory,
         al,
         fe_,
         sc_,
         exponent,
         se_,
-        me___,
-        enrich(al, fe_, sc_, me___; ke_ar...),
-        _permute_set(number_of_permutations, random_seed, al, fe_, sc_, me___; ke_ar...),
+        me__,
+        enrich(al, fe_, sc_, me__; ke_ar...),
+        make_random(number_of_permutations, random_seed, al, fe_, sc_, me__; ke_ar...),
         number_of_sets_to_plot,
         split(more_sets_to_plot, ';'),
         feature_name,
@@ -457,13 +461,17 @@ Run metric-rank (standard) GSEA.
 
     al = make_algorithm(algorithm)
 
-    se_, me___ = _separat(Nucleus.Dic.rea(set_features_json))
+    se_me_ = Nucleus.Dictionary.rea(set_features_json)
+
+    se_ = collect(keys(se_me_))
+
+    me__ = collect(values(se_me_))
 
     ke_ar = (ex = exponent, mi = minimum_set_size, ma = maximum_set_size, fr = set_fraction)
 
     if permutation == "set"
 
-        R = _permute_set(number_of_permutations, random_seed, al, fe_, s2_, me___; ke_ar...)
+        R = make_random(number_of_permutations, random_seed, al, fe_, s2_, me__; ke_ar...)
 
     elseif permutation == "sample"
 
@@ -479,7 +487,7 @@ Run metric-rank (standard) GSEA.
                     al,
                     fe_,
                     map(s1_ -> Nucleus.Target.go(fu, shuffle!(vt_), s1_), eachrow(s1)),
-                    me___;
+                    me__;
                     ke_ar...,
                 )
 
@@ -489,15 +497,15 @@ Run metric-rank (standard) GSEA.
 
     end
 
-    _write_plot(
+    writ(
         output_directory,
         al,
         fe_,
         s2_,
         exponent,
         se_,
-        me___,
-        enrich(al, fe_, s2_, me___; ke_ar...),
+        me__,
+        enrich(al, fe_, s2_, me__; ke_ar...),
         R,
         number_of_sets_to_plot,
         split(more_sets_to_plot, ';'),

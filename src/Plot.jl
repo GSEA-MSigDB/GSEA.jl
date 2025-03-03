@@ -12,7 +12,7 @@ using StatsBase: mean, sample, std
 
 using Nucleus
 
-function plot(
+function writ(
     ht,
     al,
     na_,
@@ -97,7 +97,7 @@ function plot(
 
     if typeof(al) == KS
 
-        i3_ = map(in(_get_extreme(cu_)), cu_)
+        i3_ = map(in(get_extreme(cu_)), cu_)
 
         push!(
             tr_,
