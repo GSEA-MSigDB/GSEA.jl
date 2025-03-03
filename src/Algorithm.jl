@@ -14,12 +14,6 @@ struct KLi end
 
 struct KLi1 end
 
-function text(al)
-
-    string(al)[6:(end - 2)]
-
-end
-
 function make_normalizer(::Union{KS, KSa}, nu_, ex, bo_)
 
     s0 = s1 = 0.0
@@ -163,6 +157,8 @@ function make!(al::KLioM, nu_, ex, bo_, cu_)
 
         l2 -= p2
 
+        # TODO: Clip.
+
         r0 += p0 = d0
 
         r1 += p1 = d1
@@ -231,6 +227,8 @@ function make!(al::KLioP, nu_, ex, bo_, cu_)
 
         l2 -= p2
 
+        # TODO: Clip.
+
         r0 += p0 = d0
 
         r1 += p1 = d1
@@ -272,13 +270,15 @@ function make!(al::KLi, nu_, ex, bo_, cu_)
 
         d2 = ab * o2
 
-        r1 += d1
-
-        r2 += d2
-
         l1 -= p1
 
         l2 -= p2
+
+        # TODO: Clip.
+
+        r1 += p1 = d1
+
+        r2 += p2 = d2
 
         su +=
             cu = Nucleus.Information.make_antisymmetric_kullback_leibler_divergence(
@@ -293,10 +293,6 @@ function make!(al::KLi, nu_, ex, bo_, cu_)
             cu_[id] = cu
 
         end
-
-        p1 = d1
-
-        p2 = d2
 
     end
 
@@ -306,31 +302,29 @@ end
 
 function make!(al::KLi1, nu_, ex, bo_, cu_)
 
-    um = lastindex(nu_)
-
     o1, _ = make_normalizer(al, nu_, ex, bo_)
-
-    d2 = inv(um)
 
     r1 = r2 = eps()
 
-    l1 = ON
-
-    l2 = ON + d2
+    l1 = l2 = ON
 
     p1 = su = 0.0
+
+    l2 += d2 = inv(lastindex(nu_))
 
     for id in eachindex(nu_)
 
         d1 = bo_[id] ? Nucleus.Numbe.make_exponential(nu_[id], ex) * o1 : 0.0
 
-        r1 += d1
-
-        r2 += d2
-
         l1 -= p1
 
         l2 -= d2
+
+        # TODO: Clip.
+
+        r1 += p1 = d1
+
+        r2 += d2
 
         su +=
             cu = Nucleus.Information.make_antisymmetric_kullback_leibler_divergence(
@@ -346,11 +340,9 @@ function make!(al::KLi1, nu_, ex, bo_, cu_)
 
         end
 
-        p1 = d1
-
     end
 
-    su / um
+    su / lastindex(nu_)
 
 end
 

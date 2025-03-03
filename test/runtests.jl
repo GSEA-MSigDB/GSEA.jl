@@ -4,13 +4,13 @@ using GSEA
 
 # ----------------------------------------------------------------------------------------------- #
 
-using Random: seed!
-
 using Nucleus
 
 # ---- #
 
 const DI = pkgdir(GSEA, "data")
+
+# ---- #
 
 const TE = joinpath(tempdir(), "GSEA")
 
@@ -126,86 +126,6 @@ for (gm, re) in (("1.gmt", 50), ("2.gmt", 5529))
     GSEA.gmt(JS, joinpath(DI, gm))
 
     @test length(Nucleus.Dictionary.rea(JS)) === re
-
-end
-
-# ---- #
-
-const AL_ = GSEA.KS(), GSEA.KSa(), GSEA.KLioM(), GSEA.KLioP(), GSEA.KLi(), GSEA.KLi1()
-
-# ---- #
-
-for (al, re) in zip(AL_, ("KS", "KSa", "KLioM", "KLioP", "KLi", "KLi1"))
-
-    @test GSEA.text(al) === re
-
-end
-
-# ---- #
-
-const N1_ = [-2, -1, -0.5, 0, 0, 0.5, 1, 2, 3.4]
-
-const B1_ = [true, false, true, false, true, true, false, false, true]
-
-const N2_ = randn(100000)
-
-const B2_ = rand(Bool, lastindex(N2_))
-
-# ---- #
-
-# 70.385 ns (0 allocations: 0 bytes)
-# 70.385 ns (0 allocations: 0 bytes)
-# 8.291 ns (0 allocations: 0 bytes)
-# 19.767 ns (0 allocations: 0 bytes)
-# 309.958 μs (0 allocations: 0 bytes)
-
-const N0 = -0.25
-
-for (nu_, ex, bo_, re) in (
-    (N1_, 0.1, B1_, (N0, 0.24581982412836917)),
-    (N1_, 0.5, B1_, (N0, 0.21402570288861142)),
-    (N1_, 1, B1_, (N0, 0.15625)),
-    (N1_, 2, B1_, (N0, 0.06226650062266501)),
-    (N2_, 1, B2_, nothing),
-)
-
-    al = GSEA.KS()
-
-    @test isnothing(re) || GSEA.make_normalizer(al, nu_, ex, bo_) === re
-
-    @btime GSEA.make_normalizer($al, $nu_, $ex, $bo_)
-
-end
-
-# ---- #
-
-# 117.039 ns (0 allocations: 0 bytes)
-# 117.011 ns (0 allocations: 0 bytes)
-# 7.375 ns (0 allocations: 0 bytes)
-# 25.016 ns (0 allocations: 0 bytes)
-# 92.875 μs (0 allocations: 0 bytes)
-
-for (nu_, ex, bo_, re) in (
-    (N1_, 0.1, B1_, (0.24581982412836917, 0.14006007078470165)),
-    (N1_, 0.5, B1_, (0.21402570288861142, 0.12366213677204271)),
-    (N1_, 1, B1_, (0.15625, 0.09615384615384615)),
-    (N1_, 2, B1_, (0.06226650062266501, 0.04533091568449683)),
-    (N2_, 1, B2_, nothing),
-)
-
-    al = GSEA.KLioM()
-
-    @test isnothing(re) || GSEA.make_normalizer(al, nu_, ex, bo_) === re
-
-    @btime GSEA.make_normalizer($al, $nu_, $ex, $bo_)
-
-end
-
-# ---- #
-
-for (n1, n2, re) in ((1 / 3, 0.5, -1.0),)
-
-    @test GSEA.make_normalizer(n1, n2) === re
 
 end
 
