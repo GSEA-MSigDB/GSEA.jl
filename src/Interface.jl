@@ -2,41 +2,43 @@ module Interface
 
 using Nucleus
 
-function update_sort(fe_, sc_)
+using ..GSEA
 
-    id_ = findall(!isnan, sc_)
+function make_sort(na_, nu_)
 
-    fe_ = fe_[id_]
+    id_ = findall(!isnan, nu_)
 
-    sc_ = sc_[id_]
+    na_ = na_[id_]
 
-    sortperm!(id_, sc_; rev = true)
+    nu_ = nu_[id_]
 
-    fe_[id_], sc_[id_]
+    sortperm!(id_, nu_; rev = true)
+
+    na_[id_], nu_[id_]
 
 end
 
-function make(al, fe_, sc_, me___; ex = 1.0, mi = 1, ma = 1000, fr = 0.0)
+function make(al, n1_, nu_, n2__; ex = 1, mi = 1, ma = 1000, fr = 0)
 
-    fe_, sc_ = update_sort(fe_, sc_)
+    n1_, nu_ = make_sort(n1_, nu_)
 
-    en_ = Vector{Float64}(undef, lastindex(me___))
+    en_ = Vector{Float64}(undef, lastindex(n2__))
 
-    bo_ = falses(lastindex(fe_))
+    bo_ = falses(lastindex(n1_))
 
-    fe_ie = Dict(fe_[ie] => ie for ie in eachindex(fe_))
+    di = Dict(n1_[id] => id for id in eachindex(n1_))
 
-    for is in eachindex(me___)
+    for id in eachindex(n2__)
 
-        me_ = me___[is]
+        n2_ = n2__[id]
 
-        Nucleus.Collection.is_in!(bo_, fe_ie, me_)
+        Nucleus.Collection.is_in!(bo_, di, n2_)
 
-        ui = sum(bo_)
+        um = sum(bo_)
 
-        en_[is] =
-            ui < mi || ma < ui || ui / lastindex(me_) < fr ? NaN :
-            _enrich!(al, sc_, ex, bo_, nothing)
+        en_[id] =
+            um < mi || ma < um || um / lastindex(n2_) < fr ? NaN :
+            GSEA.Algorithm.make!(al, nu_, ex, bo_, nothing)
 
         bo_[bo_] .= false
 
@@ -46,25 +48,26 @@ function make(al, fe_, sc_, me___; ex = 1.0, mi = 1, ma = 1000, fr = 0.0)
 
 end
 
-function make!(di, al, fe_, sc, ne, se_me_, ns, sa_; st = 0.0, up = 2, ke_ar...)
+# TODO: Pick up.
+function make!(di, al, n1_, sc, ne, ic, ns, sa_; st = 0.0, up = 2, ke_ar...)
 
     if !iszero(st)
 
-        foreach(sc_ -> Nucleus.Normalization.standardize_clamp!(sc_, st), eachcol(sc))
+        foreach(nu_ -> Nucleus.Normalization.standardize_clamp!(nu_, st), eachcol(sc))
 
     end
 
-    se_ = collect(keys(se_me_))
+    se_ = collect(keys(ic))
 
-    me___ = collect(values(se_me_))
+    n2__ = collect(values(ic))
 
-    en = stack((make(al, fe_, sc_, me___; ke_ar...) for sc_ in eachcol(sc)))
+    en = stack((make(al, n1_, nu_, n2__; ke_ar...) for nu_ in eachcol(sc)))
 
-    ig_ = map(en_ -> all(!isnan, en_), eachrow(en))
+    ig_ = findall(en_ -> all(!isnan, en_), eachrow(en))
 
     se_ = se_[ig_]
 
-    me___ = me___[ig_]
+    n2__ = n2__[ig_]
 
     en = en[ig_, :]
 
@@ -72,7 +75,7 @@ function make!(di, al, fe_, sc, ne, se_me_, ns, sa_; st = 0.0, up = 2, ke_ar...)
 
     Nucleus.XSampleFeature.writ(pr, ne, se_, ns, sa_, text(al), en)
 
-    ig_ = map(!isnan, en)
+    ig_ = findall(!isnan, en)
 
     for id_ in CartesianIndices(en)[ig_][Nucleus.Extreme.ge(en[ig_], up)]
 
@@ -85,8 +88,8 @@ function make!(di, al, fe_, sc, ne, se_me_, ns, sa_; st = 0.0, up = 2, ke_ar...)
         plot(
             joinpath(di, "$(Nucleus.Numbe.shorten(en[is, ia])).$sa.$se.html"),
             al,
-            update_sort(fe_, sc[:, ia])...,
-            me___[is];
+            make_sort(n1_, sc[:, ia])...,
+            n2__[is];
             ns = sa,
             la = Dict("title" => Dict("text" => se)),
         )

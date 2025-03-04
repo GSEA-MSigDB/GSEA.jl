@@ -9,9 +9,9 @@ using ..GSEA
 function writ(
     ht,
     al,
-    na_,
+    n1_,
     nu_,
-    me_,
+    n2_,
     la = Dict{String, Any}();
     ex = 1,
     xa = "Feature",
@@ -20,11 +20,11 @@ function writ(
     a2 = "High",
 )
 
-    um = lastindex(na_)
+    um = lastindex(n1_)
 
     xc_ = collect(1:um)
 
-    bo_ = Nucleus.Collection.is_in(na_, me_)
+    bo_ = Nucleus.Collection.is_in(n1_, n2_)
 
     cu_ = Vector{Float64}(undef, um)
 
@@ -44,7 +44,7 @@ function writ(
             Dict(
                 "y" => nu_[i1_],
                 "x" => xc_[i1_],
-                "text" => na_[i1_],
+                "text" => n1_[i1_],
                 "fillcolor" => Nucleus.Color.BL,
             ),
         ),
@@ -53,7 +53,7 @@ function writ(
             Dict(
                 "y" => nu_[i2_],
                 "x" => xc_[i2_],
-                "text" => na_[i2_],
+                "text" => n1_[i2_],
                 "fillcolor" => Nucleus.Color.RE,
             ),
         ),
@@ -61,7 +61,7 @@ function writ(
             "yaxis" => "y2",
             "y" => zeros(sum(bo_)),
             "x" => xc_[bo_],
-            "text" => na_[bo_],
+            "text" => n1_[bo_],
             "mode" => "markers",
             "marker" => Dict(
                 "symbol" => "line-ns",
@@ -79,7 +79,7 @@ function writ(
                 "yaxis" => "y3",
                 "y" => cu_,
                 "x" => xc_,
-                "text" => na_,
+                "text" => n1_,
                 "fillcolor" => "#07fa07",
             ),
         ),

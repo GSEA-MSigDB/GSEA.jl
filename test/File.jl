@@ -6,9 +6,7 @@ using GSEA
 
 using Nucleus
 
-# ---- #
-
-const DI = pkgdir(GSEA, "data")
+include("_.jl")
 
 # ---- #
 
