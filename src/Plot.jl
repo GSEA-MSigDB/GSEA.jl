@@ -1,14 +1,6 @@
 module Plot
 
-using Comonicon: @cast, @main
-
 using Printf: @sprintf
-
-using ProgressMeter: @showprogress
-
-using Random: seed!, shuffle!
-
-using StatsBase: mean, sample, std
 
 using Nucleus
 
