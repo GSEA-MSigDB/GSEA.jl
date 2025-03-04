@@ -10,14 +10,6 @@ include("_.jl")
 
 # ---- #
 
-const TE = joinpath(tempdir(), "GSEA")
-
-rm(TE; recursive = true, force = true)
-
-mkdir(TE)
-
-# ---- #
-
 const TS = joinpath(TE, "_.tsv")
 
 # ---- #

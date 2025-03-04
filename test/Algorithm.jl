@@ -103,8 +103,7 @@ end
 # 246.583 μs (0 allocations: 0 bytes)
 # 224.542 μs (0 allocations: 0 bytes)
 
-const NA_, N3_ =
-    eachcol(reverse!(Nucleus.Table.rea(joinpath(DI, "myc.tsv"); select = [1, 2])))
+GE_, EX_ = GSEA.Interface.update(GE_, EX_)
 
 for (nu_, bo_, re_) in (
         (
@@ -116,11 +115,8 @@ for (nu_, bo_, re_) in (
             (-0.5, 0.0, 0.0, 0.0, 0.0, 0.0),
         ),
         (
-            N3_,
-            Nucleus.Collection.is_in(
-                NA_,
-                GSEA.File.read_gmt(joinpath(DI, "c2.all.v7.1.symbols.gmt"))["COLLER_MYC_TARGETS_UP"],
-            ),
+            EX_,
+            Nucleus.Collection.is_in(GE_, D2["COLLER_MYC_TARGETS_UP"]),
             (
                 0.7651927829281453,
                 0.41482514169516305,

@@ -152,4 +152,51 @@ function writ(
 
 end
 
+function writ(pr, al, n1_, N, n3_, n2__, E, xc_, um = 2; ke_...)
+
+    i1_ = findall(en_ -> all(!isnan, en_), eachrow(E))
+
+    n3_ = n3_[i1_]
+
+    n2__ = n2__[i1_]
+
+    E = E[i1_, :]
+
+    Nucleus.Table.writ("$pr.tsv", Nucleus.Table.make("Set", n3_, xc_, E))
+
+    Nucleus.HeatPlot.writ(
+        "$pr.html",
+        n3_,
+        xc_,
+        E,
+        Dict(
+            "title" => Dict("text" => string(al)),
+            "yaxis" => Dict("title" => "Set"),
+            "xaxis" => Dict("title" => "Sample"),
+        ),
+    )
+
+    i2_ = findall(!isnan, E)
+
+    for i3_ in CartesianIndices(E)[i2_][Nucleus.Extreme.index(E[i2_], um)]
+
+        i4, i5 = Tuple(i3_)
+
+        n3 = n3_[i4]
+
+        y1 = xc_[i5]
+
+        GSEA.Plot.writ(
+            "$pr$(Nucleus.Numbe.text(E[i3_])).$y1.$n3.html",
+            al,
+            GSEA.Interface.update(n1_, N[:, i5])...,
+            n2__[i4],
+            Dict("title" => Dict("text" => n3));
+            y1,
+        )
+
+    end
+
+end
+
 end

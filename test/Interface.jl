@@ -12,40 +12,34 @@ include("_.jl")
 
 for (na_, nu_, re) in (('a':'f', [1, NaN, 3, NaN, 5], (['e', 'c', 'a'], [5.0, 3.0, 1.0])),)
 
-    @test GSEA.Interface.make_sort(na_, nu_) == re
+    @test GSEA.Interface.update(na_, nu_) == re
 
 end
 
 # ---- #
 
-const N1_, NU_ =
-    eachcol(reverse!(Nucleus.Table.rea(joinpath(DI, "myc.tsv"); select = [1, 2])))
+# 3.105 ms (13 allocations: 803.23 KiB)
+# 2.648 ms (13 allocations: 803.23 KiB)
+# 21.606 ms (13 allocations: 803.23 KiB)
+# 21.629 ms (13 allocations: 803.23 KiB)
+# 13.191 ms (13 allocations: 803.23 KiB)
+# 11.943 ms (13 allocations: 803.23 KiB)
 
-const IC = GSEA.File.read_gmt(joinpath(DI, "h.all.v7.1.symbols.gmt"))
+const N3_ = collect(keys(D1))
 
-const N3_ = collect(keys(IC))
+const N2__ = collect(values(D1))
 
-const N2__ = collect(values(IC))
-
-# ---- #
-
-# 3.202 ms (32 allocations: 1.86 MiB)
-# 2.743 ms (32 allocations: 1.86 MiB)
-# 21.579 ms (32 allocations: 1.86 MiB)
-# 21.581 ms (32 allocations: 1.86 MiB)
-# 13.273 ms (32 allocations: 1.86 MiB)
-# 12.055 ms (32 allocations: 1.86 MiB)
+GE_, EX_ = GSEA.Interface.update(GE_, EX_)
 
 for al in AL_
 
-    en_ = GSEA.Interface.make(al, N1_, NU_, N2__)
+    en_ = GSEA.Interface.make(al, GE_, EX_, N2__)
 
-    #@btime GSEA.Interface.make($al, N1_, NU_, N2__)
+    #@btime GSEA.Interface.make($al, GE_, EX_, N2__)
 
     @test !issorted(en_)
 
-    n3_, en_ = GSEA.Interface.make_sort(N3_, en_)
-
-    @test n3_[1:2] == ["HALLMARK_MYC_TARGETS_V2", "HALLMARK_MYC_TARGETS_V1"]
+    @test N3_[sortperm(en_)][(end - 1):end] ==
+          ["HALLMARK_MYC_TARGETS_V1", "HALLMARK_MYC_TARGETS_V2"]
 
 end
