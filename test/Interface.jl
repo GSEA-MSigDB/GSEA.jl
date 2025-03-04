@@ -40,7 +40,7 @@ for al in AL_
 
     en_ = GSEA.Interface.make(al, N1_, NU_, N2__)
 
-    @btime GSEA.Interface.make($al, N1_, NU_, N2__)
+    #@btime GSEA.Interface.make($al, N1_, NU_, N2__)
 
     @test !issorted(en_)
 
