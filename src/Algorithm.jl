@@ -62,6 +62,14 @@ function make_normalizer(o1, o2)
 
 end
 
+function make_eps(nu)
+
+    ep = eps()
+
+    nu < ep ? ep : nu
+
+end
+
 function make!(al::KS, nu_, ex, bo_, cu_)
 
     o0, o1 = make_normalizer(al, nu_, ex, bo_)
@@ -116,9 +124,6 @@ function make!(al::KSa, nu_, ex, bo_, cu_)
 
 end
 
-# TODO: Clip.
-const ON = 1.0 + 1e-13
-
 function make!(al::KLioM, nu_, ex, bo_, cu_)
 
     o1, o2 = make_normalizer(al, nu_, ex, bo_)
@@ -127,7 +132,7 @@ function make!(al::KLioM, nu_, ex, bo_, cu_)
 
     r0 = r1 = r2 = eps()
 
-    l0 = l1 = l2 = ON
+    l0 = l1 = l2 = 1.0
 
     p0 = p1 = p2 = su = 0.0
 
@@ -157,7 +162,11 @@ function make!(al::KLioM, nu_, ex, bo_, cu_)
 
         l2 -= p2
 
-        # TODO: Clip.
+        l0 = make_eps(l0)
+
+        l1 = make_eps(l1)
+
+        l2 = make_eps(l2)
 
         r0 += p0 = d0
 
@@ -197,7 +206,7 @@ function make!(al::KLioP, nu_, ex, bo_, cu_)
 
     r0 = r1 = r2 = eps()
 
-    l0 = l1 = l2 = ON
+    l0 = l1 = l2 = 1.0
 
     p0 = p1 = p2 = su = 0.0
 
@@ -227,7 +236,11 @@ function make!(al::KLioP, nu_, ex, bo_, cu_)
 
         l2 -= p2
 
-        # TODO: Clip.
+        l0 = make_eps(l0)
+
+        l1 = make_eps(l1)
+
+        l2 = make_eps(l2)
 
         r0 += p0 = d0
 
@@ -258,7 +271,7 @@ function make!(al::KLi, nu_, ex, bo_, cu_)
 
     r1 = r2 = eps()
 
-    l1 = l2 = ON
+    l1 = l2 = 1.0
 
     p1 = p2 = su = 0.0
 
@@ -274,7 +287,9 @@ function make!(al::KLi, nu_, ex, bo_, cu_)
 
         l2 -= p2
 
-        # TODO: Clip.
+        l1 = make_eps(l1)
+
+        l2 = make_eps(l2)
 
         r1 += p1 = d1
 
@@ -306,7 +321,7 @@ function make!(al::KLi1, nu_, ex, bo_, cu_)
 
     r1 = r2 = eps()
 
-    l1 = l2 = ON
+    l1 = l2 = 1.0
 
     p1 = su = 0.0
 
@@ -320,7 +335,9 @@ function make!(al::KLi1, nu_, ex, bo_, cu_)
 
         l2 -= d2
 
-        # TODO: Clip.
+        l1 = make_eps(l1)
+
+        l2 = make_eps(l2)
 
         r1 += p1 = d1
 

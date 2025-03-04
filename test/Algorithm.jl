@@ -91,31 +91,28 @@ end
 
 # ---- #
 
-# 19.433 ns (0 allocations: 0 bytes)
-# 17.869 ns (0 allocations: 0 bytes)
-# 225.103 ns (0 allocations: 0 bytes)
-# 225.069 ns (0 allocations: 0 bytes)
-# 126.633 ns (0 allocations: 0 bytes)
-# 118.359 ns (0 allocations: 0 bytes)
-# 45.208 μs (0 allocations: 0 bytes)
-# 37.500 μs (0 allocations: 0 bytes)
-# 325.833 μs (0 allocations: 0 bytes)
-# 326.042 μs (0 allocations: 0 bytes)
-# 186.208 μs (0 allocations: 0 bytes)
-# 164.833 μs (0 allocations: 0 bytes)
-#
-# 16.825 ns (0 allocations: 0 bytes)
+const EP = eps()
+
+for (nu, re) in ((-EP, EP), (0.0, EP))
+
+    @test GSEA.Algorithm.make_eps(nu) === re
+
+end
+
+# ---- #
+
+# 16.784 ns (0 allocations: 0 bytes)
 # 16.324 ns (0 allocations: 0 bytes)
-# 281.530 ns (0 allocations: 0 bytes)
-# 281.534 ns (0 allocations: 0 bytes)
-# 155.822 ns (0 allocations: 0 bytes)
-# 153.118 ns (0 allocations: 0 bytes)
-# 45.417 μs (0 allocations: 0 bytes)
-# 37.500 μs (0 allocations: 0 bytes)
-# 408.958 μs (0 allocations: 0 bytes)
-# 408.833 μs (0 allocations: 0 bytes)
-# 242.583 μs (0 allocations: 0 bytes)
-# 222.500 μs (0 allocations: 0 bytes)
+# 283.186 ns (0 allocations: 0 bytes)
+# 283.039 ns (0 allocations: 0 bytes)
+# 157.326 ns (0 allocations: 0 bytes)
+# 155.055 ns (0 allocations: 0 bytes)
+# 45.333 μs (0 allocations: 0 bytes)
+# 37.583 μs (0 allocations: 0 bytes)
+# 411.958 μs (0 allocations: 0 bytes)
+# 411.875 μs (0 allocations: 0 bytes)
+# 246.583 μs (0 allocations: 0 bytes)
+# 224.542 μs (0 allocations: 0 bytes)
 
 const NA_, N3_ =
     eachcol(reverse!(Nucleus.Table.rea(joinpath(DI, "myc.tsv"); select = [1, 2])))
@@ -149,8 +146,8 @@ for (nu_, bo_, re_) in (
 
     ex = 1
 
-    @test isapprox(GSEA.Algorithm.make!(al, nu_, ex, bo_, nothing), re; atol = 1e-11)
+    @test isapprox(GSEA.Algorithm.make!(al, nu_, ex, bo_, nothing), re; atol = 1e-15)
 
-    @btime GSEA.Algorithm.make!($al, $nu_, $ex, $bo_, nothing)
+    #@btime GSEA.Algorithm.make!($al, $nu_, $ex, $bo_, nothing)
 
 end
