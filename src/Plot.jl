@@ -4,6 +4,8 @@ using Printf: @sprintf
 
 using Nucleus
 
+using ..GSEA
+
 function writ(
     ht,
     al,
@@ -26,13 +28,13 @@ function writ(
 
     cu_ = Vector{Float64}(undef, um)
 
-    en = _enrich!(al, nu_, ex, bo_, cu_)
+    en = GSEA.Algorithm.make!(al, nu_, ex, bo_, cu_)
 
     tr = Dict("mode" => "lines", "line" => Dict("width" => 0), "fill" => "tozeroy")
 
-    i1_ = map(<(0.0), nu_)
+    i1_ = findall(<(0.0), nu_)
 
-    i2_ = map(>=(0.0), nu_)
+    i2_ = findall(>=(0.0), nu_)
 
     y2 = "Δ Enrichment"
 
@@ -40,7 +42,6 @@ function writ(
         merge(
             tr,
             Dict(
-                "name" => "- Score",
                 "y" => nu_[i1_],
                 "x" => xc_[i1_],
                 "text" => na_[i1_],
@@ -50,7 +51,6 @@ function writ(
         merge(
             tr,
             Dict(
-                "name" => "+ Score",
                 "y" => nu_[i2_],
                 "x" => xc_[i2_],
                 "text" => na_[i2_],
@@ -59,7 +59,6 @@ function writ(
         ),
         Dict(
             "yaxis" => "y2",
-            "name" => "Set",
             "y" => zeros(sum(bo_)),
             "x" => xc_[bo_],
             "text" => na_[bo_],
@@ -78,7 +77,6 @@ function writ(
             tr,
             Dict(
                 "yaxis" => "y3",
-                "name" => y2,
                 "y" => cu_,
                 "x" => xc_,
                 "text" => na_,
@@ -86,28 +84,6 @@ function writ(
             ),
         ),
     ]
-
-    if typeof(al) == KS
-
-        i3_ = map(in(get_extreme(cu_)), cu_)
-
-        push!(
-            tr_,
-            Dict(
-                "yaxis" => "y3",
-                "name" => "Extrema",
-                "y" => cu_[i3_],
-                "x" => xc_[i3_],
-                "text" => na_[i3_],
-                "mode" => "markers",
-                "marker" => Dict(
-                    "size" => 32,
-                    "color" => Nucleus.Color.make(Nucleus.Color.HU, 0.72),
-                ),
-            ),
-        )
-
-    end
 
     an = Dict(
         "y" => 0,

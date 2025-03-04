@@ -6,8 +6,8 @@ for na in (
     "Algorithm",
     #"CommandLineInterface",
     "File",
-    #"Interface",
-    #"Plot",
+    "Interface",
+    "Plot",
 )
 
     include("$na.jl")
