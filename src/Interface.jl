@@ -18,13 +18,13 @@ function update(na_, nu_)
 
 end
 
-function make(al, n1_, nu_, n2__; ex = 1, mi = 1, ma = 1000, fr = 0)
-
-    en_ = Vector{Float64}(undef, lastindex(n2__))
+function make(al, n1_, nu_, n2__; mi = 1, ma = 1000, fr = 0)
 
     bo_ = falses(lastindex(n1_))
 
     di = Dict(n1_[id] => id for id in eachindex(n1_))
+
+    en_ = Vector{Float64}(undef, lastindex(n2__))
 
     for id in eachindex(n2__)
 
@@ -36,7 +36,7 @@ function make(al, n1_, nu_, n2__; ex = 1, mi = 1, ma = 1000, fr = 0)
 
         en_[id] =
             um < mi || ma < um || um / lastindex(n2_) < fr ? NaN :
-            GSEA.Algorithm.make!(al, nu_, ex, bo_, nothing)
+            GSEA.Algorithm.make!(al, nu_, bo_, nothing)
 
         bo_[bo_] .= false
 

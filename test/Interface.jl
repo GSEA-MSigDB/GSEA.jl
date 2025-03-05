@@ -18,12 +18,12 @@ end
 
 # ---- #
 
-# 3.105 ms (13 allocations: 803.23 KiB)
-# 2.648 ms (13 allocations: 803.23 KiB)
-# 21.606 ms (13 allocations: 803.23 KiB)
-# 21.629 ms (13 allocations: 803.23 KiB)
-# 13.191 ms (13 allocations: 803.23 KiB)
-# 11.943 ms (13 allocations: 803.23 KiB)
+# 3.103 ms (13 allocations: 803.23 KiB)
+# 2.656 ms (13 allocations: 803.23 KiB)
+# 21.366 ms (13 allocations: 803.23 KiB)
+# 21.389 ms (13 allocations: 803.23 KiB)
+# 13.123 ms (13 allocations: 803.23 KiB)
+# 11.968 ms (13 allocations: 803.23 KiB)
 
 const N3_ = collect(keys(D1))
 
