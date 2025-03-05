@@ -10,6 +10,8 @@ using StatsBase: mean, sample, std
 
 using Nucleus
 
+using ..GSEA
+
 """
 Convert .cls to .tsv.
 
@@ -20,7 +22,7 @@ Convert .cls to .tsv.
 """
 @cast function cls(tsv, cls)
 
-    an = read_cls(cls)
+    an = GSEA.File.read_cls(cls)
 
     na_ = names(an)
 
@@ -41,7 +43,7 @@ Convert .gct to .tsv.
 """
 @cast function gct(tsv, gct)
 
-    an = read_gct(gct)
+    an = GSEA.File.read_gct(gct)
 
     Nucleus.Table.writ(
         tsv,
@@ -60,7 +62,7 @@ Merge .gmts into .json.
 """
 @cast function gmt(json, gmt_...)
 
-    Nucleus.Dictionary.writ(json, reduce(merge!, (read_gmt(gm) for gm in gmt_)))
+    Nucleus.Dictionary.writ(json, reduce(merge!, (GSEA.File.read_gmt(gm) for gm in gmt_)))
 
 end
 
@@ -68,32 +70,33 @@ function make_algorithm(al)
 
     if al == "ks"
 
-        KS()
+        GSEA.Algorithm.KS()
 
     elseif al == "ksa"
 
-        KSa()
+        GSEA.Algorithm.KSa()
 
     elseif al == "kliom"
 
-        KLioM()
+        GSEA.Algorithm.KLioM()
 
     elseif al == "kliop"
 
-        KLioP()
+        GSEA.Algorithm.KLioP()
 
     elseif al == "kli"
 
-        KLi()
+        GSEA.Algorithm.KLi()
 
     elseif al == "kli1"
 
-        KLi1()
+        GSEA.Algorithm.KLi1()
 
     end
 
 end
 
+# TODO: Pick up.
 """
 Run data-rank (single-sample) GSEA.
 
@@ -151,7 +154,14 @@ Run data-rank (single-sample) GSEA.
 
 end
 
-function make_normalized(::Union{KS, KSa}, en, mn, mp, ::Any, ::Any)
+function make_normalized(
+    ::Union{GSEA.Algorithm.KS, GSEA.Algorithm.KSa},
+    en,
+    mn,
+    mp,
+    ::Any,
+    ::Any,
+)
 
     en / (en < 0.0 ? -mn : mp)
 

@@ -20,7 +20,7 @@ for (cl, re) in (
     ("CCLE_mRNA_20Q2_no_haem_phen.cls", (1, 900)),
 )
 
-    GSEA.cls(TS, joinpath(DI, cl))
+    GSEA.CommandLineInterface.cls(TS, joinpath(DI, cl))
 
     @test size(Nucleus.Table.rea(TS)) === re
 
@@ -30,7 +30,7 @@ end
 
 for (gc, re) in (("1.gct", (13321, 190)),)
 
-    GSEA.gct(TS, joinpath(DI, gc))
+    GSEA.CommandLineInterface.gct(TS, joinpath(DI, gc))
 
     @test size(Nucleus.Table.rea(TS)) === re
 
@@ -42,7 +42,7 @@ const JS = joinpath(TE, "_.json")
 
 for (gm, re) in (("1.gmt", 50), ("2.gmt", 5529))
 
-    GSEA.gmt(JS, joinpath(DI, gm))
+    GSEA.CommandLineInterface.gmt(JS, joinpath(DI, gm))
 
     @test length(Nucleus.Dictionary.rea(JS)) === re
 
@@ -50,17 +50,18 @@ end
 
 # ---- #
 
+for (al, re) in zip(("ks", "ksa", "kliom", "kliop", "kli", "kli1"), AL_)
+
+    @test GSEA.CommandLineInterface.make_algorithm(al) === re
+
+end
+
+# ---- #
+# TODO: Pick up.
+
 const FS = joinpath(DI, "set.json")
 
 const FD = joinpath(DI, "data.tsv")
-
-# ---- #
-
-for (al, re) in zip(AL_, ("KS", "KSa", "KLioM", "KLioP", "KLi", "KLi1"))
-
-    @test GSEA._set_algorithm(lowercase(re)) === al
-
-end
 
 # ---- #
 
