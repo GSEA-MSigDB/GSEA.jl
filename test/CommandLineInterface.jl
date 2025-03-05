@@ -10,7 +10,7 @@ include("_.jl")
 
 # ---- #
 
-const TS = joinpath(TE, "_.tsv")
+const T1 = joinpath(TE, "_.tsv")
 
 # ---- #
 
@@ -20,9 +20,9 @@ for (cl, re) in (
     ("CCLE_mRNA_20Q2_no_haem_phen.cls", (1, 900)),
 )
 
-    GSEA.CommandLineInterface.cls(TS, joinpath(DI, cl))
+    GSEA.CommandLineInterface.cls(T1, joinpath(DI, cl))
 
-    @test size(Nucleus.Table.rea(TS)) === re
+    @test size(Nucleus.Table.rea(T1)) === re
 
 end
 
@@ -30,21 +30,21 @@ end
 
 for (gc, re) in (("1.gct", (13321, 190)),)
 
-    GSEA.CommandLineInterface.gct(TS, joinpath(DI, gc))
+    GSEA.CommandLineInterface.gct(T1, joinpath(DI, gc))
 
-    @test size(Nucleus.Table.rea(TS)) === re
+    @test size(Nucleus.Table.rea(T1)) === re
 
 end
 
 # ---- #
 
-const JS = joinpath(TE, "_.json")
+const J1 = joinpath(TE, "_.json")
 
 for (gm, re) in (("1.gmt", 50), ("2.gmt", 5529))
 
-    GSEA.CommandLineInterface.gmt(JS, joinpath(DI, gm))
+    GSEA.CommandLineInterface.gmt(J1, joinpath(DI, gm))
 
-    @test length(Nucleus.Dictionary.rea(JS)) === re
+    @test length(Nucleus.Dictionary.rea(J1)) === re
 
 end
 
@@ -57,21 +57,26 @@ for (al, re) in zip(("ks", "ksa", "kliom", "kliop", "kli", "kli1"), AL_)
 end
 
 # ---- #
-# TODO: Pick up.
 
-const FS = joinpath(DI, "set.json")
+const J2 = joinpath(DI, "set.json")
 
-const FD = joinpath(DI, "data.tsv")
+const T2 = joinpath(DI, "data.tsv")
 
 # ---- #
 
-const OD = mkpath(joinpath(TE, "data_rank"))
+const D4 = mkpath(joinpath(TE, "data_rank"))
 
-const SD_, ED = GSEA.data_rank(OD, FD, FS; minimum_set_size = 15, maximum_set_size = 500)
+GSEA.CommandLineInterface.data_rank(
+    D4,
+    T2,
+    J2;
+    minimum_set_size = 15,
+    maximum_set_size = 500,
+)
 
-@test isfile(joinpath(OD, "enrichment.tsv"))
+const A1 = Nucleus.Table.rea(joinpath(D4, "data_rank.tsv"))
 
-@test SD_ == [
+@test A1[!, 1] == [
     "HALLMARK_ESTROGEN_RESPONSE_LATE",
     "HALLMARK_EPITHELIAL_MESENCHYMAL_TRANSITION",
     "HALLMARK_ESTROGEN_RESPONSE_EARLY",
@@ -82,7 +87,7 @@ const SD_, ED = GSEA.data_rank(OD, FD, FS; minimum_set_size = 15, maximum_set_si
     "HALLMARK_GLYCOLYSIS",
 ]
 
-@test findmax(ED) === (0.756249206577638, CartesianIndex(2, 2))
+@test findmax(Matrix(A1[!, 2:end])) === (0.756249206577638, CartesianIndex(2, 2))
 
 # ---- #
 
@@ -118,7 +123,7 @@ const OU = mkpath(joinpath(TE, "user_rank"))
 GSEA.user_rank(
     OU,
     joinpath(DI, "metric.tsv"),
-    FS;
+    J2;
     more_sets_to_plot = "HALLMARK_MYC_TARGETS_V1;HALLMARK_UV_RESPONSE_DN;HALLMARK_UV_RESPONSE_UP;ALIEN",
 )
 
@@ -152,8 +157,8 @@ const OM = mkpath(joinpath(TE, "metric_rank"))
 GSEA.metric_rank(
     OM,
     joinpath(DI, "target.tsv"),
-    FD,
-    FS;
+    T2,
+    J2;
     minimum_set_size = 15,
     maximum_set_size = 500,
 )

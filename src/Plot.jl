@@ -152,7 +152,7 @@ function writ(
 
 end
 
-function writ(pr, al, n1_, N, n3_, n2__, E, xc_, um = 2; ke_...)
+function writ(pr, al, n1_, N, n3_, n2__, E, xc_, ex = 1, um = 2)
 
     i1_ = findall(en_ -> all(!isnan, en_), eachrow(E))
 
@@ -169,11 +169,7 @@ function writ(pr, al, n1_, N, n3_, n2__, E, xc_, um = 2; ke_...)
         n3_,
         xc_,
         E,
-        Dict(
-            "title" => Dict("text" => string(al)),
-            "yaxis" => Dict("title" => "Set"),
-            "xaxis" => Dict("title" => "Sample"),
-        ),
+        Dict("yaxis" => Dict("title" => "Set"), "xaxis" => Dict("title" => "Sample")),
     )
 
     i2_ = findall(!isnan, E)
@@ -186,12 +182,13 @@ function writ(pr, al, n1_, N, n3_, n2__, E, xc_, um = 2; ke_...)
 
         y1 = xc_[i5]
 
-        GSEA.Plot.writ(
-            "$pr$(Nucleus.Numbe.text(E[i3_])).$y1.$n3.html",
+        writ(
+            "$pr.$(Nucleus.Numbe.text(E[i3_])).$y1.$n3.html",
             al,
             GSEA.Interface.update(n1_, N[:, i5])...,
             n2__[i4],
             Dict("title" => Dict("text" => n3));
+            ex,
             y1,
         )
 

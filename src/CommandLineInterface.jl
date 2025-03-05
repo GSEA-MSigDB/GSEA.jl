@@ -96,7 +96,6 @@ function make_algorithm(al)
 
 end
 
-# TODO: Pick up.
 """
 Run data-rank (single-sample) GSEA.
 
@@ -115,41 +114,64 @@ Run data-rank (single-sample) GSEA.
   - `--maximum-set-size`: = 1000.
   - `--set-fraction`: = 0.0.
   - `--number-of-sets-to-plot`: = 2.
-  - `--set-name`: = "Set".
-  - `--sample-name`: = "Sample".
 """
 @cast function data_rank(
     output_directory,
     feature_x_sample_x_score_tsv,
     set_features_json;
-    standard_deviation::Float64 = 0.0,
+    standard_deviation::Real = 0,
     algorithm = "ks",
-    exponent::Float64 = 1.0,
+    exponent::Real = 1,
     minimum_set_size::Int = 1,
     maximum_set_size::Int = 1000,
-    set_fraction::Float64 = 0.0,
+    set_fraction::Real = 0,
     number_of_sets_to_plot::Int = 2,
-    set_name = "Set",
-    sample_name = "Sample",
 )
 
-    ta = Nucleus.Table.rea(feature_x_sample_x_score_tsv)
+    an = Nucleus.Table.rea(feature_x_sample_x_score_tsv)
 
-    data_rank!(
-        output_directory,
-        make_algorithm(algorithm),
-        ta[!, 1],
-        Matrix(ta[!, 2:end]),
-        set_name,
-        Nucleus.Dictionary.rea(set_features_json),
-        sample_name,
-        names(ta)[2:end];
-        st = standard_deviation,
-        up = number_of_sets_to_plot,
-        ex = exponent,
-        mi = minimum_set_size,
-        ma = maximum_set_size,
-        fr = set_fraction,
+    n1_ = an[!, 1]
+
+    N = Matrix(an[!, 2:end])
+
+    if !iszero(standard_deviation)
+
+        foreach(
+            nu_ -> Nucleus.Normalization.update_0_clamp!(nu_, standard_deviation),
+            eachcol(N),
+        )
+
+    end
+
+    di = Nucleus.Dictionary.rea(set_features_json)
+
+    n2__ = collect(values(di))
+
+    al = make_algorithm(algorithm)
+
+    GSEA.Plot.writ(
+        joinpath(output_directory, "data_rank"),
+        al,
+        n1_,
+        N,
+        collect(keys(di)),
+        n2__,
+        hcat(
+            (
+                GSEA.Interface.make(
+                    al,
+                    GSEA.Interface.update(n1_, nu_)...,
+                    n2__;
+                    ex = exponent,
+                    mi = minimum_set_size,
+                    ma = maximum_set_size,
+                    fr = set_fraction,
+                ) for nu_ in eachcol(N)
+            )...,
+        ),
+        names(an)[2:end],
+        exponent,
+        number_of_sets_to_plot,
     )
 
 end
@@ -345,9 +367,9 @@ Run user-rank (pre-rank) GSEA.
 
     al = make_algorithm(algorithm)
 
-    ta = Nucleus.Table.rea(feature_x_metric_x_score_tsv)
+    an = Nucleus.Table.rea(feature_x_metric_x_score_tsv)
 
-    fe_, sc_ = _select_sort(ta[!, 1], ta[!, 2])
+    fe_, sc_ = _select_sort(an[!, 1], an[!, 2])
 
     se_me_ = Nucleus.Dictionary.rea(set_features_json)
 
