@@ -14,7 +14,7 @@ struct KLi end
 
 struct KLi1 end
 
-function make_normalizer(::Union{KS, KSa}, nu_, ex, bo_)
+function make_normalizer(::Union{KS, KSa}, nu_, bo_)
 
     s0 = s1 = 0.0
 
@@ -22,7 +22,7 @@ function make_normalizer(::Union{KS, KSa}, nu_, ex, bo_)
 
         if bo_[id]
 
-            s1 += Nucleus.Numbe.make_exponential(nu_[id], ex)
+            s1 += abs(nu_[id])
 
         else
 
@@ -36,13 +36,13 @@ function make_normalizer(::Union{KS, KSa}, nu_, ex, bo_)
 
 end
 
-function make_normalizer(::Any, nu_, ex, bo_)
+function make_normalizer(::Any, nu_, bo_)
 
     s1 = s2 = 0.0
 
     for id in eachindex(nu_)
 
-        s2 += ab = Nucleus.Numbe.make_exponential(nu_[id], ex)
+        s2 += ab = abs(nu_[id])
 
         if bo_[id]
 
@@ -70,15 +70,15 @@ function make_eps(nu)
 
 end
 
-function make!(al::KS, nu_, ex, bo_, cu_)
+function make!(al::KS, nu_, bo_, cu_)
 
-    o0, o1 = make_normalizer(al, nu_, ex, bo_)
+    o0, o1 = make_normalizer(al, nu_, bo_)
 
     c2 = a2 = c1 = 0.0
 
     for id in eachindex(nu_)
 
-        c1 += bo_[id] ? Nucleus.Numbe.make_exponential(nu_[id], ex) * o1 : o0
+        c1 += bo_[id] ? abs(nu_[id]) * o1 : o0
 
         if !isnothing(cu_)
 
@@ -102,15 +102,15 @@ function make!(al::KS, nu_, ex, bo_, cu_)
 
 end
 
-function make!(al::KSa, nu_, ex, bo_, cu_)
+function make!(al::KSa, nu_, bo_, cu_)
 
-    o0, o1 = make_normalizer(al, nu_, ex, bo_)
+    o0, o1 = make_normalizer(al, nu_, bo_)
 
     cu = su = 0.0
 
     for id in eachindex(nu_)
 
-        su += cu += bo_[id] ? Nucleus.Numbe.make_exponential(nu_[id], ex) * o1 : o0
+        su += cu += bo_[id] ? abs(nu_[id]) * o1 : o0
 
         if !isnothing(cu_)
 
@@ -124,9 +124,9 @@ function make!(al::KSa, nu_, ex, bo_, cu_)
 
 end
 
-function make!(al::KLioM, nu_, ex, bo_, cu_)
+function make!(al::KLioM, nu_, bo_, cu_)
 
-    o1, o2 = make_normalizer(al, nu_, ex, bo_)
+    o1, o2 = make_normalizer(al, nu_, bo_)
 
     o0 = make_normalizer(o1, o2)
 
@@ -138,7 +138,7 @@ function make!(al::KLioM, nu_, ex, bo_, cu_)
 
     for id in eachindex(nu_)
 
-        ab = Nucleus.Numbe.make_exponential(nu_[id], ex)
+        ab = abs(nu_[id])
 
         if bo_[id]
 
@@ -198,9 +198,9 @@ function make!(al::KLioM, nu_, ex, bo_, cu_)
 
 end
 
-function make!(al::KLioP, nu_, ex, bo_, cu_)
+function make!(al::KLioP, nu_, bo_, cu_)
 
-    o1, o2 = make_normalizer(al, nu_, ex, bo_)
+    o1, o2 = make_normalizer(al, nu_, bo_)
 
     o0 = make_normalizer(o1, o2)
 
@@ -212,7 +212,7 @@ function make!(al::KLioP, nu_, ex, bo_, cu_)
 
     for id in eachindex(nu_)
 
-        ab = Nucleus.Numbe.make_exponential(nu_[id], ex)
+        ab = abs(nu_[id])
 
         if bo_[id]
 
@@ -265,9 +265,9 @@ function make!(al::KLioP, nu_, ex, bo_, cu_)
 
 end
 
-function make!(al::KLi, nu_, ex, bo_, cu_)
+function make!(al::KLi, nu_, bo_, cu_)
 
-    o1, o2 = make_normalizer(al, nu_, ex, bo_)
+    o1, o2 = make_normalizer(al, nu_, bo_)
 
     r1 = r2 = eps()
 
@@ -277,7 +277,7 @@ function make!(al::KLi, nu_, ex, bo_, cu_)
 
     for id in eachindex(nu_)
 
-        ab = Nucleus.Numbe.make_exponential(nu_[id], ex)
+        ab = abs(nu_[id])
 
         d1 = bo_[id] ? ab * o1 : 0.0
 
@@ -315,9 +315,9 @@ function make!(al::KLi, nu_, ex, bo_, cu_)
 
 end
 
-function make!(al::KLi1, nu_, ex, bo_, cu_)
+function make!(al::KLi1, nu_, bo_, cu_)
 
-    o1, _ = make_normalizer(al, nu_, ex, bo_)
+    o1, _ = make_normalizer(al, nu_, bo_)
 
     r1 = r2 = eps()
 
@@ -329,7 +329,7 @@ function make!(al::KLi1, nu_, ex, bo_, cu_)
 
     for id in eachindex(nu_)
 
-        d1 = bo_[id] ? Nucleus.Numbe.make_exponential(nu_[id], ex) * o1 : 0.0
+        d1 = bo_[id] ? abs(nu_[id]) * o1 : 0.0
 
         l1 -= p1
 

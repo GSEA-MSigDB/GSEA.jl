@@ -1,5 +1,9 @@
 using GSEA
 
+const C1_ = ['K', 'Q', 'J', 'X', '9', '8', '7', '6', '5', '4', '3', '2', 'A']
+
+const C2_ = ['K', 'A']
+
 const DI = pkgdir(GSEA, "data")
 
 const GE_, EX_ = eachcol(Nucleus.Table.rea(joinpath(DI, "myc.tsv"); select = [1, 2]))
