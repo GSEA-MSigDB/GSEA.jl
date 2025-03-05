@@ -6,11 +6,11 @@ function read_cls(cl)
 
     l1, l2, l3 = readlines(cl)
 
+    na = "Phenotype"
+
     l2 = l2[2:end]
 
     s3_ = split(l3)
-
-    na = "Phenotype"
 
     na_ = map(id -> "Sample $id", eachindex(s3_))
 
