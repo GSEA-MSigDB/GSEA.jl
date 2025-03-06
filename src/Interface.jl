@@ -4,21 +4,9 @@ using Nucleus
 
 using ..GSEA
 
-function update(na_, nu_)
-
-    id_ = findall(!isnan, nu_)
-
-    na_ = na_[id_]
-
-    nu_ = nu_[id_]
-
-    sortperm!(id_, nu_; rev = true)
-
-    na_[id_], nu_[id_]
-
-end
-
 function make(al, n1_, nu_, n2__; mi = 1, ma = 1000, fr = 0)
+
+    n1_, nu_ = GSEA.update(n1_, nu_)
 
     bo_ = falses(lastindex(n1_))
 

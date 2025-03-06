@@ -160,7 +160,8 @@ Run data-rank (single-sample) GSEA.
             (
                 GSEA.Interface.make(
                     al,
-                    GSEA.Interface.update(n1_, nu_)...,
+                    n1_,
+                    nu_,
                     n2__;
                     ex = exponent,
                     mi = minimum_set_size,

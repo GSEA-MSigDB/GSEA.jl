@@ -85,7 +85,7 @@ end
 # 245.375 μs (0 allocations: 0 bytes)
 # 224.541 μs (0 allocations: 0 bytes)
 
-GE_, EX_ = GSEA.Interface.update(GE_, EX_)
+GE_, EX_ = GSEA.update(GE_, EX_)
 
 for (nu_, bo_, re_) in (
         (

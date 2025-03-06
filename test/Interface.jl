@@ -10,26 +10,16 @@ include("_.jl")
 
 # ---- #
 
-for (na_, nu_, re) in (('a':'f', [1, NaN, 3, NaN, 5], (['e', 'c', 'a'], [5.0, 3.0, 1.0])),)
-
-    @test GSEA.Interface.update(na_, nu_) == re
-
-end
-
-# ---- #
-
-# 3.103 ms (13 allocations: 803.23 KiB)
-# 2.656 ms (13 allocations: 803.23 KiB)
-# 21.366 ms (13 allocations: 803.23 KiB)
-# 21.389 ms (13 allocations: 803.23 KiB)
-# 13.123 ms (13 allocations: 803.23 KiB)
-# 11.968 ms (13 allocations: 803.23 KiB)
+# 3.419 ms (35 allocations: 1.94 MiB)
+# 2.975 ms (35 allocations: 1.94 MiB)
+# 21.604 ms (35 allocations: 1.94 MiB)
+# 21.615 ms (35 allocations: 1.94 MiB)
+# 13.392 ms (35 allocations: 1.94 MiB)
+# 12.282 ms (35 allocations: 1.94 MiB)
 
 const N3_ = collect(keys(D1))
 
 const N2__ = collect(values(D1))
-
-GE_, EX_ = GSEA.Interface.update(GE_, EX_)
 
 for al in AL_
 
