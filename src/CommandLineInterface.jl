@@ -101,34 +101,32 @@ Run data-rank (single-sample) GSEA.
 
 # Arguments
 
-  - `output_directory`:
-  - `feature_x_sample_x_score_tsv`:
-  - `set_features_json`:
+  - `directory`:
+  - `tsv`:
+  - `json`:
 
 # Options
 
-  - `--standard-deviation`: = 0.0. For normalization by column. 0.0 skips normalization.
+  - `--standard-deviation`: = 0. For normalization by column. 0 skips normalization.
   - `--algorithm`: = "ks". "ks" | "ksa" | "kliom" | "kliop" | "kli" | "kli1".
-  - `--exponent`: = 1.0.
-  - `--minimum-set-size`: = 1.
-  - `--maximum-set-size`: = 1000.
-  - `--set-fraction`: = 0.0.
-  - `--number-of-sets-to-plot`: = 2.
+  - `--minimum`: = 1.
+  - `--maximum`: = 1000.
+  - `--fraction`: = 0.
+  - `--number-of-plots`: = 2.
 """
 @cast function data_rank(
-    output_directory,
-    feature_x_sample_x_score_tsv,
-    set_features_json;
+    directory,
+    tsv,
+    json;
     standard_deviation::Real = 0,
     algorithm = "ks",
-    exponent::Real = 1,
-    minimum_set_size::Int = 1,
-    maximum_set_size::Int = 1000,
-    set_fraction::Real = 0,
-    number_of_sets_to_plot::Int = 2,
+    minimum::Int = 1,
+    maximum::Int = 1000,
+    fraction::Real = 0,
+    number_of_plots::Int = 2,
 )
 
-    an = Nucleus.Table.rea(feature_x_sample_x_score_tsv)
+    an = Nucleus.Table.rea(tsv)
 
     n1_ = an[!, 1]
 
@@ -143,19 +141,20 @@ Run data-rank (single-sample) GSEA.
 
     end
 
-    di = Nucleus.Dictionary.rea(set_features_json)
+    al = make_algorithm(algorithm)
+
+    di = Nucleus.Dictionary.rea(json)
 
     n2__ = collect(values(di))
 
-    al = make_algorithm(algorithm)
-
     GSEA.Plot.writ(
-        joinpath(output_directory, "data_rank"),
+        joinpath(directory, "data_rank"),
         al,
         n1_,
         N,
         collect(keys(di)),
         n2__,
+        names(an)[2:end],
         hcat(
             (
                 GSEA.Interface.make(
@@ -163,16 +162,13 @@ Run data-rank (single-sample) GSEA.
                     n1_,
                     nu_,
                     n2__;
-                    ex = exponent,
-                    mi = minimum_set_size,
-                    ma = maximum_set_size,
-                    fr = set_fraction,
+                    mi = minimum,
+                    ma = maximum,
+                    fr = fraction,
                 ) for nu_ in eachcol(N)
             )...,
         ),
-        names(an)[2:end],
-        exponent,
-        number_of_sets_to_plot,
+        number_of_plots,
     )
 
 end
@@ -327,9 +323,9 @@ Run user-rank (pre-rank) GSEA.
 
 # Arguments
 
-  - `output_directory`:
+  - `directory`:
   - `feature_x_metric_x_score_tsv`:
-  - `set_features_json`:
+  - `json`:
 
 # Options
 
@@ -348,9 +344,9 @@ Run user-rank (pre-rank) GSEA.
   - `--high-text`: = "High".
 """
 @cast function user_rank(
-    output_directory,
+    directory,
     feature_x_metric_x_score_tsv,
-    set_features_json;
+    json;
     algorithm = "ks",
     exponent::Float64 = 1.0,
     minimum_set_size::Int = 1,
@@ -372,7 +368,7 @@ Run user-rank (pre-rank) GSEA.
 
     fe_, sc_ = _select_sort(an[!, 1], an[!, 2])
 
-    se_me_ = Nucleus.Dictionary.rea(set_features_json)
+    se_me_ = Nucleus.Dictionary.rea(json)
 
     se_ = collect(keys(se_me_))
 
@@ -381,7 +377,7 @@ Run user-rank (pre-rank) GSEA.
     ke_ar = (ex = exponent, mi = minimum_set_size, ma = maximum_set_size, fr = set_fraction)
 
     writ(
-        output_directory,
+        directory,
         al,
         fe_,
         sc_,
@@ -405,10 +401,10 @@ Run metric-rank (standard) GSEA.
 
 # Arguments
 
-  - `output_directory`:
+  - `directory`:
   - `target_x_sample_x_number_tsv`:
-  - `feature_x_sample_x_score_tsv`:
-  - `set_features_json`:
+  - `tsv`:
+  - `json`:
 
 # Options
 
@@ -430,10 +426,10 @@ Run metric-rank (standard) GSEA.
   - `--high-text`: = "High".
 """
 @cast function metric_rank(
-    output_directory,
+    directory,
     target_x_sample_x_number_tsv,
-    feature_x_sample_x_score_tsv,
-    set_features_json;
+    tsv,
+    json;
     standard_deviation::Float64 = 0.0,
     algorithm = "ks",
     exponent::Float64 = 1.0,
@@ -454,7 +450,7 @@ Run metric-rank (standard) GSEA.
 
     tt = Nucleus.Table.rea(target_x_sample_x_number_tsv)
 
-    tf = Nucleus.Table.rea(feature_x_sample_x_score_tsv)
+    tf = Nucleus.Table.rea(tsv)
 
     vt_ = convert(BitVector, collect(tt[1, 2:end]))
 
@@ -488,13 +484,13 @@ Run metric-rank (standard) GSEA.
     s2_ = map(s1_ -> Nucleus.Target.go(fu, vt_, s1_), eachrow(s1))
 
     Nucleus.Table.writ(
-        joinpath(output_directory, "metric.tsv"),
+        joinpath(directory, "metric.tsv"),
         Nucleus.Table.make("Feature", fe_, [metric], reshape(s2_, :, 1)),
     )
 
     al = make_algorithm(algorithm)
 
-    se_me_ = Nucleus.Dictionary.rea(set_features_json)
+    se_me_ = Nucleus.Dictionary.rea(json)
 
     se_ = collect(keys(se_me_))
 
@@ -531,7 +527,7 @@ Run metric-rank (standard) GSEA.
     end
 
     writ(
-        output_directory,
+        directory,
         al,
         fe_,
         s2_,

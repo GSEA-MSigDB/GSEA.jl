@@ -10,15 +10,7 @@ include("_.jl")
 
 # ---- #
 
-for (t1_, yc_, t2_) in (
-        (
-            ['K', 'Q', 'J', 'X', '9', '8', '7', '6', '5', '4', '3', '2', 'A'],
-            [6, 5, 4, 3, 2, 1, 0, -1, -2, -3, -4, -5, -6.0],
-            ['K', 'A'],
-        ),
-        (GE_, EX_, D2["COLLER_MYC_TARGETS_UP"]),
-    ),
-    al in AL_
+for (t1_, yc_, t2_) in ((C1_, LI_, C2_), (GE_, EX_, D2["COLLER_MYC_TARGETS_UP"])), al in AL_
 
     GSEA.Plot.writ("", al, t1_, yc_, t2_, Dict("title" => Dict("text" => string(al))))
 
@@ -43,6 +35,7 @@ for al in AL_
         N2__,
         map(id -> "Sample $id", axes(N, 2)),
         hcat((GSEA.Interface.make(al, GE_, nu_, N2__) for nu_ in eachcol(N))...),
+        1,
     )
 
 end

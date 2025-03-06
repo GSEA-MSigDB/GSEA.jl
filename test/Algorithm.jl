@@ -85,14 +85,12 @@ end
 # 245.375 μs (0 allocations: 0 bytes)
 # 224.541 μs (0 allocations: 0 bytes)
 
+C1_, LI_ = GSEA.update(C1_, LI_)
+
 GE_, EX_ = GSEA.update(GE_, EX_)
 
 for (nu_, bo_, re_) in (
-        (
-            [6, 5, 4, 3, 2, 1, 0, -1, -2, -3, -4, -5, -6.0],
-            Nucleus.Collection.is_in(C1_, C2_),
-            (-0.5, 0.0, 0.0, 0.0, 0.0, 0.0),
-        ),
+        (LI_, Nucleus.Collection.is_in(C1_, C2_), (-0.5, 0.0, 0.0, 0.0, 0.0, 0.0)),
         (
             EX_,
             Nucleus.Collection.is_in(GE_, D2["COLLER_MYC_TARGETS_UP"]),

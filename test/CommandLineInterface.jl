@@ -14,13 +14,13 @@ const T1 = joinpath(TE, "_.tsv")
 
 # ---- #
 
-for (cl, re) in (
+for (ba, re) in (
     ("1.cls", (1, 7)),
     ("GSE76137.cls", (1, 7)),
     ("CCLE_mRNA_20Q2_no_haem_phen.cls", (1, 900)),
 )
 
-    GSEA.CommandLineInterface.cls(T1, joinpath(DI, cl))
+    GSEA.CommandLineInterface.cls(T1, joinpath(DI, ba))
 
     @test size(Nucleus.Table.rea(T1)) === re
 
@@ -28,9 +28,9 @@ end
 
 # ---- #
 
-for (gc, re) in (("1.gct", (13321, 190)),)
+for (ba, re) in (("1.gct", (13321, 190)),)
 
-    GSEA.CommandLineInterface.gct(T1, joinpath(DI, gc))
+    GSEA.CommandLineInterface.gct(T1, joinpath(DI, ba))
 
     @test size(Nucleus.Table.rea(T1)) === re
 
@@ -40,9 +40,9 @@ end
 
 const J1 = joinpath(TE, "_.json")
 
-for (gm, re) in (("1.gmt", 50), ("2.gmt", 5529))
+for (ba, re) in (("1.gmt", 50), ("2.gmt", 5529))
 
-    GSEA.CommandLineInterface.gmt(J1, joinpath(DI, gm))
+    GSEA.CommandLineInterface.gmt(J1, joinpath(DI, ba))
 
     @test length(Nucleus.Dictionary.rea(J1)) === re
 
@@ -64,17 +64,11 @@ const T2 = joinpath(DI, "data.tsv")
 
 # ---- #
 
-const D4 = mkpath(joinpath(TE, "data_rank"))
+const O1 = mkpath(joinpath(TE, "data_rank"))
 
-GSEA.CommandLineInterface.data_rank(
-    D4,
-    T2,
-    J2;
-    minimum_set_size = 15,
-    maximum_set_size = 500,
-)
+GSEA.CommandLineInterface.data_rank(O1, T2, J2; minimum = 15, maximum = 500)
 
-const A1 = Nucleus.Table.rea(joinpath(D4, "data_rank.tsv"))
+const A1 = Nucleus.Table.rea(joinpath(O1, "data_rank.tsv"))
 
 @test A1[!, 1] == [
     "HALLMARK_ESTROGEN_RESPONSE_LATE",
