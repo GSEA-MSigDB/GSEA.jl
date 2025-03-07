@@ -1,3 +1,3 @@
-using GSEA: comonicon_install
+using GSEA.CommandLineInterface: comonicon_install
 
 comonicon_install()

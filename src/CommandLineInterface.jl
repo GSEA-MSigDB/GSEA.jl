@@ -96,6 +96,12 @@ function make_algorithm(al)
 
 end
 
+function make!(N, st)
+
+    foreach(nu_ -> Nucleus.Normalization.update_0_clamp!(nu_, st), eachcol(N))
+
+end
+
 """
 Run data-rank (single-sample) GSEA.
 
@@ -136,10 +142,7 @@ Run data-rank (single-sample) GSEA.
 
     if !iszero(standard_deviation)
 
-        foreach(
-            nu_ -> Nucleus.Normalization.update_0_clamp!(nu_, standard_deviation),
-            eachcol(N),
-        )
+        make!(N, standard_deviation)
 
     end
 
@@ -426,79 +429,70 @@ Run metric-rank (standard) GSEA.
     high = "High",
 )
 
-    tt = Nucleus.Table.rea(tsv1)
+    y1 = Nucleus.Table.rea(tsv1)
 
-    tf = Nucleus.Table.rea(tsv2)
+    y2 = Nucleus.Table.rea(tsv2)
 
-    vt_ = convert(BitVector, collect(tt[1, 2:end]))
+    n1_ = convert(BitVector, collect(y1[1, 2:end]))
 
-    fe_ = tf[!, 1]
+    a1_ = y2[!, 1]
 
-    s1 = Matrix(tf[!, indexin(names(tt)[2:end], names(tf))])
+    N = Matrix(y2[!, indexin(names(y1)[2:end], names(y2))])
 
     if !iszero(standard_deviation)
 
-        foreach(
-            s1_ -> Nucleus.Normalization.standardize_clamp!(s1_, standard_deviation),
-            eachcol(s1),
-        )
+        make!(N, standard_deviation)
 
     end
 
     fu = if metric == "mean-difference"
 
-        Nucleus.Target.get_mean_difference
+        Nucleus.PairMetric.make_mean_difference
 
     elseif metric == "log-ratio"
 
-        Nucleus.Target.get_log_ratio
+        Nucleus.PairMetric.make_log_ratio
 
     elseif metric == "signal-to-noise-ratio"
 
-        Nucleus.Target.get_signal_to_noise_ratio
+        Nucleus.PairMetric.make_signal_to_noise_ratio
 
     end
 
-    s2_ = map(s1_ -> Nucleus.Target.go(fu, vt_, s1_), eachrow(s1))
+    n2_ = map(n2_ -> Nucleus.PairMap.make(fu, n1_, n2_), eachrow(N))
 
     Nucleus.Table.writ(
         joinpath(directory, "metric.tsv"),
-        Nucleus.Table.make("Feature", fe_, [metric], reshape(s2_, :, 1)),
+        Nucleus.Table.make("Feature", a1_, [metric], reshape(n2_, :, 1)),
     )
 
     al = make_algorithm(algorithm)
 
-    se_me_ = Nucleus.Dictionary.rea(json)
+    di = Nucleus.Dictionary.rea(json)
 
-    se_ = collect(keys(se_me_))
+    a2__ = collect(values(di))
 
-    n2__ = collect(values(se_me_))
-
-    ke_ar = (ex = exponent, mi = minimum_set_size, ma = maximum_set_size, fr = set_fraction)
+    ke_ = (mi = minimum, ma = maximum, fr = fraction)
 
     if permutation == "set"
 
-        R = make_random(number_of_permutations, random_seed, al, fe_, s2_, n2__; ke_ar...)
+        R = make_random(number_of_permutations, seed, al, a1_, n2_, a2__; ke_...)
 
     elseif permutation == "sample"
 
-        R = Matrix{Float64}(undef, lastindex(se_), number_of_permutations)
+        R = Matrix{Float64}(undef, lastindex(a2__), number_of_permutations)
 
-        if 0 < number_of_permutations
+        seed!(seed)
 
-            seed!(random_seed)
+        @showprogress for id in 1:number_of_permutations
 
-            @showprogress for id in 1:number_of_permutations
-
-                R[:, id] = enrich(
-                    al,
-                    fe_,
-                    map(s1_ -> Nucleus.Target.go(fu, shuffle!(vt_), s1_), eachrow(s1)),
-                    n2__;
-                    ke_ar...,
-                )
-
-            end
+            R[:, id] = GSEA.Interface.make(
+                al,
+                a1_,
+                map(n2_ -> Nucleus.PairMap.make(fu, shuffle!(n1_), n2_), eachrow(N)),
+                a2__;
+                ke_...,
+            )
 
         end
 
@@ -507,19 +501,16 @@ Run metric-rank (standard) GSEA.
     writ(
         directory,
         al,
-        fe_,
-        s2_,
-        exponent,
-        se_,
-        n2__,
-        enrich(al, fe_, s2_, n2__; ke_ar...),
+        a1_,
+        n2_,
+        collect(keys(di)),
+        a2__,
+        GSEA.Interface.make(al, a1_, n2_, a2__; ke_...),
         R,
-        number_of_sets_to_plot,
-        split(more_sets_to_plot, ';'),
-        feature_name,
-        score_name,
-        low_text,
-        high_text,
+        number_of_plots,
+        split(more_plots, ';'),
+        low,
+        high,
     )
 
 end

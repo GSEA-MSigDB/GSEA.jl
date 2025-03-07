@@ -68,6 +68,12 @@ const T2 = joinpath(DI, "data.tsv")
 
 const O1 = mkpath(joinpath(TE, "data_rank"))
 
+const O2 = mkpath(joinpath(TE, "user_rank"))
+
+const O3 = mkpath(joinpath(TE, "metric_rank"))
+
+# ---- #
+
 GSEA.CommandLineInterface.data_rank(O1, T2, J2; minimum = 15, maximum = 500)
 
 const A1 = Nucleus.Table.rea(joinpath(O1, "result.tsv"))
@@ -96,25 +102,23 @@ for al in (AL_[1], AL_[end])
 
     en_ = randn(100)
 
-    ra = randn(100, 1000)
+    R = randn(100, 1000)
 
-    GSEA.CommandLineInterface.make_normalized!(al, en_, ra)
+    GSEA.CommandLineInterface.make_normalized!(al, en_, R)
 
-    @btime GSEA.CommandLineInterface.make_normalized!($al, $en_, $ra)
-
-end
-
-# ---- #
-
-function test_result(an, US)
-
-    @test size(an, 1) === US
+    #@btime GSEA.CommandLineInterface.make_normalized!($al, $en_, $R)
 
 end
 
 # ---- #
 
-const O2 = mkpath(joinpath(TE, "user_rank"))
+function test_result(an, um)
+
+    @test size(an, 1) === um
+
+end
+
+# ---- #
 
 GSEA.CommandLineInterface.user_rank(
     O2,
@@ -148,9 +152,14 @@ end
 
 # ---- #
 
-const O3 = mkpath(joinpath(TE, "metric_rank"))
-
-GSEA.metric_rank(O3, joinpath(DI, "target.tsv"), T2, J2; minimum = 15, maximum = 500)
+GSEA.CommandLineInterface.metric_rank(
+    O3,
+    joinpath(DI, "target.tsv"),
+    T2,
+    J2;
+    minimum = 15,
+    maximum = 500,
+)
 
 const A3 = Nucleus.Table.rea(joinpath(O3, "metric.tsv"))
 
