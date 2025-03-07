@@ -66,36 +66,6 @@ Merge .gmts into .json.
 
 end
 
-function make_algorithm(al)
-
-    if al == "ks"
-
-        GSEA.Algorithm.KS()
-
-    elseif al == "ksa"
-
-        GSEA.Algorithm.KSa()
-
-    elseif al == "kliom"
-
-        GSEA.Algorithm.KLioM()
-
-    elseif al == "kliop"
-
-        GSEA.Algorithm.KLioP()
-
-    elseif al == "kli"
-
-        GSEA.Algorithm.KLi()
-
-    elseif al == "kli1"
-
-        GSEA.Algorithm.KLi1()
-
-    end
-
-end
-
 function make!(N, st)
 
     foreach(nu_ -> Nucleus.Normalization.update_0_clamp!(nu_, st), eachcol(N))
@@ -132,7 +102,7 @@ Run data-rank (single-sample) GSEA.
     number_of_plots::Int = 2,
 )
 
-    al = make_algorithm(algorithm)
+    al = GSEA.Algorithm.make(algorithm)
 
     an = Nucleus.Table.rea(tsv)
 
@@ -177,7 +147,7 @@ Run data-rank (single-sample) GSEA.
 end
 
 function make_normalized(
-    ::Union{GSEA.Algorithm.KS, GSEA.Algorithm.KSa},
+    ::Union{GSEA.Algorithm.KS, GSEA.Algorithm.KSA},
     en,
     m1,
     m2,
@@ -356,7 +326,7 @@ Run user-rank (pre-rank) GSEA.
     high = "High",
 )
 
-    al = make_algorithm(algorithm)
+    al = GSEA.Algorithm.make(algorithm)
 
     n1_, nu_ = eachcol(Nucleus.Table.rea(tsv; select = [1, 2]))
 
@@ -466,7 +436,7 @@ Run metric-rank (standard) GSEA.
         Nucleus.Table.make("Feature", a1_, [metric], reshape(n2_, :, 1)),
     )
 
-    al = make_algorithm(algorithm)
+    al = GSEA.Algorithm.make(algorithm)
 
     di = Nucleus.Dictionary.rea(json)
 

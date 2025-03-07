@@ -50,14 +50,6 @@ end
 
 # ---- #
 
-for (al, re) in zip(("ks", "ksa", "kliom", "kliop", "kli", "kli1"), AL_)
-
-    @test GSEA.CommandLineInterface.make_algorithm(al) === re
-
-end
-
-# ---- #
-
 const J2 = joinpath(DI, "set.json")
 
 const T2 = joinpath(DI, "data.tsv")

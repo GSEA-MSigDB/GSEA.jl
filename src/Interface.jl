@@ -6,7 +6,7 @@ using ..GSEA
 
 function make(al, n1_, nu_, n2__; mi = 1, ma = 1000, fr = 0)
 
-    n1_, nu_ = GSEA.update(n1_, nu_)
+    n1_, nu_ = GSEA.Sort.make(n1_, nu_)
 
     bo_ = falses(lastindex(n1_))
 
@@ -24,7 +24,7 @@ function make(al, n1_, nu_, n2__; mi = 1, ma = 1000, fr = 0)
 
         en_[id] =
             um < mi || ma < um || um / lastindex(n2_) < fr ? NaN :
-            GSEA.Algorithm.make!(al, nu_, bo_, nothing)
+            GSEA.Enrichment.make!(al, nu_, bo_, nothing)
 
         bo_[bo_] .= false
 

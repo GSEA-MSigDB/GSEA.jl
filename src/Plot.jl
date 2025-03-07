@@ -8,7 +8,7 @@ using ..GSEA
 
 function writ(ht, al, t1_, y1_, t2_, la = Dict{String, Any}(); a1 = "Low", a2 = "High")
 
-    t1_, y1_ = GSEA.update(t1_, y1_)
+    t1_, y1_ = GSEA.Sort.make(t1_, y1_)
 
     um = lastindex(t1_)
 
@@ -24,7 +24,7 @@ function writ(ht, al, t1_, y1_, t2_, la = Dict{String, Any}(); a1 = "Low", a2 = 
 
     y3_ = Vector{Float64}(undef, um)
 
-    en = GSEA.Algorithm.make!(al, y1_, bo_, y3_)
+    en = GSEA.Enrichment.make!(al, y1_, bo_, y3_)
 
     an = Dict(
         "y" => 0,

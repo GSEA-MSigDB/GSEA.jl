@@ -21,11 +21,11 @@ end
 # ---- #
 
 const AL_ = GSEA.Algorithm.KS(),
-GSEA.Algorithm.KSa(),
-GSEA.Algorithm.KLioM(),
-GSEA.Algorithm.KLioP(),
-GSEA.Algorithm.KLi(),
-GSEA.Algorithm.KLi1()
+GSEA.Algorithm.KSA(),
+GSEA.Algorithm.KLIOM(),
+GSEA.Algorithm.KLIOP(),
+GSEA.Algorithm.KLI(),
+GSEA.Algorithm.KLI1()
 
 # ---- #
 
