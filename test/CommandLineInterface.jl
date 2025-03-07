@@ -1,3 +1,5 @@
+using Random: seed!
+
 using Test: @test
 
 using GSEA
@@ -68,7 +70,7 @@ const O1 = mkpath(joinpath(TE, "data_rank"))
 
 GSEA.CommandLineInterface.data_rank(O1, T2, J2; minimum = 15, maximum = 500)
 
-const A1 = Nucleus.Table.rea(joinpath(O1, "data_rank.tsv"))
+const A1 = Nucleus.Table.rea(joinpath(O1, "result.tsv"))
 
 @test A1[!, 1] == [
     "HALLMARK_ESTROGEN_RESPONSE_LATE",
@@ -85,8 +87,8 @@ const A1 = Nucleus.Table.rea(joinpath(O1, "data_rank.tsv"))
 
 # ---- #
 
-# 435.333 μs (1802 allocations: 3.03 MiB)
-# 463.708 μs (1502 allocations: 3.69 MiB)
+# 388.958 μs (1500 allocations: 2.26 MiB)
+# 426.584 μs (1200 allocations: 2.91 MiB)
 
 for al in (AL_[1], AL_[end])
 
@@ -96,9 +98,9 @@ for al in (AL_[1], AL_[end])
 
     ra = randn(100, 1000)
 
-    GSEA._normalize_enrichment!(al, en_, ra)
+    GSEA.CommandLineInterface.make_normalized!(al, en_, ra)
 
-    #@btime GSEA._normalize_enrichment!($al, $en_, $ra)
+    @btime GSEA.CommandLineInterface.make_normalized!($al, $en_, $ra)
 
 end
 
@@ -112,18 +114,18 @@ end
 
 # ---- #
 
-const OU = mkpath(joinpath(TE, "user_rank"))
+const O2 = mkpath(joinpath(TE, "user_rank"))
 
-GSEA.user_rank(
-    OU,
+GSEA.CommandLineInterface.user_rank(
+    O2,
     joinpath(DI, "metric.tsv"),
     J2;
-    more_sets_to_plot = "HALLMARK_MYC_TARGETS_V1;HALLMARK_UV_RESPONSE_DN;HALLMARK_UV_RESPONSE_UP;ALIEN",
+    more_plots = "HALLMARK_MYC_TARGETS_V1;HALLMARK_UV_RESPONSE_DN;HALLMARK_UV_RESPONSE_UP;ALIEN",
 )
 
-const RU = Nucleus.Table.rea(joinpath(OU, "result.tsv"))
+const A2 = Nucleus.Table.rea(joinpath(O2, "result.tsv"))
 
-test_result(RU, 50)
+test_result(A2, 50)
 
 for (id, r1, r2, r3, r4) in (
     (45, "HALLMARK_PANCREAS_BETA_CELLS", -0.35266, -1.36616, 0.0200837),
@@ -132,39 +134,32 @@ for (id, r1, r2, r3, r4) in (
     (10, "HALLMARK_MYC_TARGETS_V2", 0.866579, 3.36557, 0.000262812),
 )
 
-    @test RU[id, 1] === r1
+    @test A2[id, 1] === r1
 
-    @test isapprox(RU[id, 2], r2; atol = 1e-6)
+    @test isapprox(A2[id, 2], r2; atol = 1e-6)
 
     # TODO: Investigate.
 
-    #@test isapprox(RU[id, 3], r3; atol = 1e-5)
+    #@test isapprox(A2[id, 3], r3; atol = 1e-5)
 
-    #@test isapprox(RU[id, 4], r4; atol = 1e-7)
+    #@test isapprox(A2[id, 4], r4; atol = 1e-7)
 
 end
 
 # ---- #
 
-const OM = mkpath(joinpath(TE, "metric_rank"))
+const O3 = mkpath(joinpath(TE, "metric_rank"))
 
-GSEA.metric_rank(
-    OM,
-    joinpath(DI, "target.tsv"),
-    T2,
-    J2;
-    minimum_set_size = 15,
-    maximum_set_size = 500,
-)
+GSEA.metric_rank(O3, joinpath(DI, "target.tsv"), T2, J2; minimum = 15, maximum = 500)
 
-const ME = Nucleus.Table.rea(joinpath(OM, "metric.tsv"))
+const A3 = Nucleus.Table.rea(joinpath(O3, "metric.tsv"))
 
-@test size(ME) === (1000, 2)
+@test size(A3) === (1000, 2)
 
-@test names(ME) == ["Feature", "signal-to-noise-ratio"]
+@test names(A3) == ["Feature", "signal-to-noise-ratio"]
 
-@test isapprox(sort(ME, 2)[[1, end], 2], [-1.8372355409610066, 1.7411005104346835])
+@test isapprox(sort(A3, 2)[[1, end], 2], [-1.8372355409610066, 1.7411005104346835])
 
-const RU = Nucleus.Table.rea(joinpath(OM, "result.tsv"))
+const A4 = Nucleus.Table.rea(joinpath(O3, "result.tsv"))
 
-test_result(RU, 8)
+test_result(A4, 8)

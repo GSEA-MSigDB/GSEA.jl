@@ -58,11 +58,11 @@ Merge .gmts into .json.
 # Arguments
 
   - `json`:
-  - `gmt_`:
+  - `gmts`:
 """
-@cast function gmt(json, gmt_...)
+@cast function gmt(json, gmts...)
 
-    Nucleus.Dictionary.writ(json, reduce(merge!, (GSEA.File.read_gmt(gm) for gm in gmt_)))
+    Nucleus.Dictionary.writ(json, reduce(merge!, (GSEA.File.read_gmt(gm) for gm in gmts)))
 
 end
 
@@ -126,6 +126,8 @@ Run data-rank (single-sample) GSEA.
     number_of_plots::Int = 2,
 )
 
+    al = make_algorithm(algorithm)
+
     an = Nucleus.Table.rea(tsv)
 
     n1_ = an[!, 1]
@@ -141,14 +143,12 @@ Run data-rank (single-sample) GSEA.
 
     end
 
-    al = make_algorithm(algorithm)
-
     di = Nucleus.Dictionary.rea(json)
 
     n2__ = collect(values(di))
 
     GSEA.Plot.writ(
-        joinpath(directory, "data_rank"),
+        joinpath(directory, "result"),
         al,
         n1_,
         N,
@@ -176,90 +176,80 @@ end
 function make_normalized(
     ::Union{GSEA.Algorithm.KS, GSEA.Algorithm.KSa},
     en,
-    mn,
-    mp,
-    ::Any,
-    ::Any,
+    m1,
+    m2,
+    ::Real,
+    ::Real,
 )
 
-    en / (en < 0.0 ? -mn : mp)
+    en / (en < 0 ? -m1 : m2)
 
 end
 
-function make_normalized(::Any, en, mn, mp, sn, sp)
+function make_normalized(::Any, en, m1, m2, s1, s2)
 
-    if en < 0.0
+    if en < 0
 
-        me = mn
+        m3 = m1
 
-        st = -sn
+        s3 = -s1
 
     else
 
-        me = mp
+        m3 = m2
 
-        st = sp
+        s3 = s2
 
     end
 
-    # TODO: Check `3 * st` or `(3 * st)`.
-    1.0 + (en - me) / 3.0 * st
+    # TODO: Check.
+    1 + (en - m3) / (s3 * 3)
 
 end
 
 function make_normalized!(al, en_, R)
 
-    us = lastindex(en_)
+    for i1 in axes(R, 1)
 
-    no_ = Vector{Float64}(undef, us)
+        r1_, r2_ = Nucleus.Numbe.ge(R[i1, :])
 
-    for id in 1:us
+        m1 = mean(r1_)
 
-        en = en_[id]
+        m2 = mean(r2_)
 
-        ra_ = R[id, :]
+        s1 = std(r1_)
 
-        rn_, rp_ = Nucleus.Significance._separate(ra_)
+        s2 = std(r2_)
 
-        mn = mean(rn_)
+        en_[i1] = make_normalized(al, en_[i1], m1, m2, s1, s2)
 
-        mp = mean(rp_)
+        for i2 in axes(R, 2)
 
-        sn = std(rn_)
+            R[i1, i2] = make_normalized(al, R[i1, i2], m1, m2, s1, s2)
 
-        sp = std(rp_)
-
-        no_[id] = make_normalized(al, en, mn, mp, sn, sp)
-
-        R[id, :] = map(R -> make_normalized(al, R, mn, mp, sn, sp), ra_)
+        end
 
     end
 
-    no_
-
 end
 
-function make_random(ur, sd, al, fe_, sc_, me__; ke_ar...)
+function make_random(u1, se, al, n1_, nu_, n2__; ke_...)
 
-    R = Matrix{Float64}(undef, lastindex(me__), ur)
+    R = Matrix{Float64}(undef, lastindex(n2__), u1)
 
-    if !iszero(ur)
+    u2_ = map(lastindex, n2__)
 
-        um_ = map(lastindex, me__)
+    seed!(se)
 
-        seed!(sd)
+    @showprogress for id in 1:u1
 
-        @showprogress for id in 1:ur
-
-            R[:, id] = enrich(
-                al,
-                fe_,
-                sc_,
-                map(um -> sample(fe_, um; replace = false), um_);
-                ke_ar...,
-            )
-
-        end
+        R[:, id] = GSEA.Interface.make(
+            al,
+            n1_,
+            nu_,
+            map(um -> sample(n1_, um; replace = false), u2_);
+            ke_...,
+        )
 
     end
 
@@ -267,51 +257,58 @@ function make_random(ur, sd, al, fe_, sc_, me__; ke_ar...)
 
 end
 
-function writ(di, al, fe_, sc_, ex, se_, me__, en_, R, up, pl_, nf, ns, nl, nh)
+function writ(di, al, n1_, nu_, n3_, n2__, en_, R, um, n4_, a1, a2)
 
-    ig_ = map(!isnan, en_)
+    id_ = findall(!isnan, en_)
 
-    se_ = se_[ig_]
+    n3_ = n3_[id_]
 
-    me__ = me__[ig_]
+    n2__ = n2__[id_]
 
-    en_ = en_[ig_]
+    en_ = en_[id_]
 
-    R = R[ig_, :]
+    R = R[id_, :]
 
-    no_ = make_normalized!(al, en_, R)
+    E = Matrix{Float64}(undef, lastindex(id_), 4)
 
-    pn_, qn_, pp_, qp_ = Nucleus.Significance.ge(R, no_)
+    E[:, 1] = en_
+
+    make_normalized!(al, en_, R)
+
+    E[:, 2] = en_
+    @info "" E
+
+    id_, pv_, qv_ = Nucleus.Significance.make(en_, R)
+
+    E[id_, 3] = pv_
+
+    E[id_, 4] = qv_
 
     Nucleus.Table.writ(
         joinpath(di, "result.tsv"),
         Nucleus.Table.make(
             "Set",
-            se_,
+            n3_,
             ["Enrichment", "Normalized Enrichment", "P-Value", "Q-Value"],
-            stack((en_, no_, vcat(pn_, pp_), vcat(qn_, qp_))),
+            E,
         ),
     )
 
-    fe_, sc_ = _select_sort(fe_, sc_)
+    for id in unique!(
+        vcat(Nucleus.Extreme.index(E[:, 1], um), filter!(!isnothing, indexin(n4_, n3_))),
+    )
 
-    for is in
-        unique!(vcat(Nucleus.Extreme.ge(en_, up), filter!(!isnothing, indexin(pl_, se_))))
+        se = n3_[id]
 
-        se = se_[is]
-
-        plot(
-            joinpath(di, "$(Nucleus.Numbe.shorten(en_[is])).$se.html"),
+        GSEA.Plot.writ(
+            joinpath(di, "$(Nucleus.Numbe.text(en_[id])).$se.html"),
             al,
-            fe_,
-            sc_,
-            me__[is];
-            ex,
-            nf,
-            ns,
-            nl,
-            nh,
-            la = Dict("title" => Dict("text" => se)),
+            n1_,
+            nu_,
+            n2__[id],
+            Dict("title" => Dict("text" => se));
+            a1,
+            a2,
         )
 
     end
@@ -324,74 +321,61 @@ Run user-rank (pre-rank) GSEA.
 # Arguments
 
   - `directory`:
-  - `feature_x_metric_x_score_tsv`:
+  - `tsv`:
   - `json`:
 
 # Options
 
   - `--algorithm`: = "ks". "ks" | "ksa" | "kliom" | "kliop" | "kli" | "kli1".
-  - `--exponent`: = 1.0.
-  - `--minimum-set-size`: = 1.
-  - `--maximum-set-size`: = 1000.
-  - `--set-fraction`: = 0.0.
+  - `--minimum`: = 1.
+  - `--maximum`: = 1000.
+  - `--fraction`: = 0.
   - `--number-of-permutations`: = 100.
-  - `--random-seed`: = 20150603.
-  - `--number-of-sets-to-plot`: = 2.
-  - `--more-sets-to-plot`: = "". ;-separated set names.
-  - `--feature-name`: = "Gene".
-  - `--score-name`: = "My Score".
-  - `--low-text`: = "Low".
-  - `--high-text`: = "High".
+  - `--seed`: = 20150603.
+  - `--number-of-plots`: = 2.
+  - `--more-plots`: = "". ;-separated set names.
+  - `--low`: = "Low".
+  - `--high`: = "High".
 """
 @cast function user_rank(
     directory,
-    feature_x_metric_x_score_tsv,
+    tsv,
     json;
     algorithm = "ks",
-    exponent::Float64 = 1.0,
-    minimum_set_size::Int = 1,
-    maximum_set_size::Int = 1000,
-    set_fraction::Float64 = 0.0,
+    minimum::Int = 1,
+    maximum::Int = 1000,
+    fraction::Real = 0,
     number_of_permutations::Int = 100,
-    random_seed::Int = 20150603,
-    number_of_sets_to_plot::Int = 2,
-    more_sets_to_plot = "",
-    feature_name = "Gene",
-    score_name = "My Score",
-    low_text = "Low",
-    high_text = "High",
+    seed::Int = 20150603,
+    number_of_plots::Int = 2,
+    more_plots = "",
+    low = "Low",
+    high = "High",
 )
 
     al = make_algorithm(algorithm)
 
-    an = Nucleus.Table.rea(feature_x_metric_x_score_tsv)
+    n1_, nu_ = eachcol(Nucleus.Table.rea(tsv; select = [1, 2]))
 
-    fe_, sc_ = _select_sort(an[!, 1], an[!, 2])
+    di = Nucleus.Dictionary.rea(json)
 
-    se_me_ = Nucleus.Dictionary.rea(json)
+    n2__ = collect(values(di))
 
-    se_ = collect(keys(se_me_))
-
-    me__ = collect(values(se_me_))
-
-    ke_ar = (ex = exponent, mi = minimum_set_size, ma = maximum_set_size, fr = set_fraction)
+    ke_ = (mi = minimum, ma = maximum, fr = fraction)
 
     writ(
         directory,
         al,
-        fe_,
-        sc_,
-        exponent,
-        se_,
-        me__,
-        enrich(al, fe_, sc_, me__; ke_ar...),
-        make_random(number_of_permutations, random_seed, al, fe_, sc_, me__; ke_ar...),
-        number_of_sets_to_plot,
-        split(more_sets_to_plot, ';'),
-        feature_name,
-        score_name,
-        low_text,
-        high_text,
+        n1_,
+        nu_,
+        collect(keys(di)),
+        n2__,
+        GSEA.Interface.make(al, n1_, nu_, n2__; ke_...),
+        make_random(number_of_permutations, seed, al, n1_, nu_, n2__; ke_...),
+        number_of_plots,
+        split(more_plots, ';'),
+        low,
+        high,
     )
 
 end
@@ -402,55 +386,49 @@ Run metric-rank (standard) GSEA.
 # Arguments
 
   - `directory`:
-  - `target_x_sample_x_number_tsv`:
-  - `tsv`:
+  - `tsv1`:
+  - `tsv2`:
   - `json`:
 
 # Options
 
-  - `--standard-deviation`: = 0.0. For normalization by column. 0.0 skips normalization.
-  - `--algorithm`: = "ks". "ks" | "ksa" | "kliom" | "kliop" | "kli" | "kli1".
-  - `--exponent`: = 1.0.
+  - `--standard-deviation`: = 0. For normalization by column. 0 skips normalization.
   - `--metric`: = "signal-to-noise-ratio". "mean-difference" | "log-ratio" | "signal-to-noise-ratio".
-  - `--minimum-set-size`: = 1.
-  - `--maximum-set-size`: = 1000.
-  - `--set-fraction`: = 0.0.
+  - `--algorithm`: = "ks". "ks" | "ksa" | "kliom" | "kliop" | "kli" | "kli1".
+  - `--minimum`: = 1.
+  - `--maximum`: = 1000.
+  - `--fraction`: = 0.
   - `--permutation`: = "sample". "sample" | "set".
   - `--number-of-permutations`: = 100.
-  - `--random-seed`: = 20150603.
-  - `--number-of-sets-to-plot`: = 2.
-  - `--more-sets-to-plot`: = "". ;-separated set names.
-  - `--feature-name`: = "Gene".
-  - `--score-name`: = "Signal-to-Noise Ratio".
-  - `--low-text`: = "Low".
-  - `--high-text`: = "High".
+  - `--seed`: = 20150603.
+  - `--number-of-plots`: = 2.
+  - `--more-plots`: = "". ;-separated set names.
+  - `--low`: = "Low".
+  - `--high`: = "High".
 """
 @cast function metric_rank(
     directory,
-    target_x_sample_x_number_tsv,
-    tsv,
+    tsv1,
+    tsv2,
     json;
     standard_deviation::Float64 = 0.0,
-    algorithm = "ks",
-    exponent::Float64 = 1.0,
     metric = "signal-to-noise-ratio",
-    minimum_set_size::Int = 1,
-    maximum_set_size::Int = 1000,
-    set_fraction::Float64 = 0.0,
+    algorithm = "ks",
+    minimum::Int = 1,
+    maximum::Int = 1000,
+    fraction::Real = 0,
     permutation = "sample",
     number_of_permutations::Int = 100,
-    random_seed::Int = 20150603,
-    number_of_sets_to_plot::Int = 2,
-    more_sets_to_plot = "",
-    feature_name = "Gene",
-    score_name = "Signal-to-Noise Ratio",
-    low_text = "Low",
-    high_text = "High",
+    seed::Int = 20150603,
+    number_of_plots::Int = 2,
+    more_plots = "",
+    low = "Low",
+    high = "High",
 )
 
-    tt = Nucleus.Table.rea(target_x_sample_x_number_tsv)
+    tt = Nucleus.Table.rea(tsv1)
 
-    tf = Nucleus.Table.rea(tsv)
+    tf = Nucleus.Table.rea(tsv2)
 
     vt_ = convert(BitVector, collect(tt[1, 2:end]))
 
@@ -494,13 +472,13 @@ Run metric-rank (standard) GSEA.
 
     se_ = collect(keys(se_me_))
 
-    me__ = collect(values(se_me_))
+    n2__ = collect(values(se_me_))
 
     ke_ar = (ex = exponent, mi = minimum_set_size, ma = maximum_set_size, fr = set_fraction)
 
     if permutation == "set"
 
-        R = make_random(number_of_permutations, random_seed, al, fe_, s2_, me__; ke_ar...)
+        R = make_random(number_of_permutations, random_seed, al, fe_, s2_, n2__; ke_ar...)
 
     elseif permutation == "sample"
 
@@ -516,7 +494,7 @@ Run metric-rank (standard) GSEA.
                     al,
                     fe_,
                     map(s1_ -> Nucleus.Target.go(fu, shuffle!(vt_), s1_), eachrow(s1)),
-                    me__;
+                    n2__;
                     ke_ar...,
                 )
 
@@ -533,8 +511,8 @@ Run metric-rank (standard) GSEA.
         s2_,
         exponent,
         se_,
-        me__,
-        enrich(al, fe_, s2_, me__; ke_ar...),
+        n2__,
+        enrich(al, fe_, s2_, n2__; ke_ar...),
         R,
         number_of_sets_to_plot,
         split(more_sets_to_plot, ';'),
