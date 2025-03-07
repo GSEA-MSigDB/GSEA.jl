@@ -1,5 +1,3 @@
-using Random: seed!
-
 using Test: @test
 
 using GSEA
@@ -87,8 +85,6 @@ const A1 = Nucleus.Table.rea(joinpath(O1, "result.tsv"))
 # 426.584 μs (1200 allocations: 2.91 MiB)
 
 for al in (AL_[1], AL_[end])
-
-    seed!(20231103)
 
     en_ = randn(100)
 
