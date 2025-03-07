@@ -2,8 +2,6 @@ using Test: @test
 
 using GSEA
 
-# ----------------------------------------------------------------------------------------------- #
-
 using StatsBase: Weights, sample
 
 using Nucleus
