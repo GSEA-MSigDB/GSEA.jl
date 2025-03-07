@@ -24,7 +24,7 @@ function make(al, n1_, nu_, n2__; mi = 1, ma = 1000, fr = 0)
 
         en_[id] =
             um < mi || ma < um || um / lastindex(n2_) < fr ? NaN :
-            GSEA.Enrichment.make!(al, nu_, bo_, nothing)
+            GSEA.Enrichment.make!(al, nu_, bo_)
 
         bo_[bo_] .= false
 
