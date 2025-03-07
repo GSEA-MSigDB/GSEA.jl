@@ -20,7 +20,7 @@ for (ba, re) in (
     ("CCLE_mRNA_20Q2_no_haem_phen.cls", (1, 900)),
 )
 
-    GSEA.CommandLineInterface.cls(T1, joinpath(DI, ba))
+    GSEA.CommandLineInterface.cls(T1, joinpath(DA, ba))
 
     @test size(Nucleus.Table.rea(T1)) === re
 
@@ -30,7 +30,7 @@ end
 
 for (ba, re) in (("1.gct", (13321, 190)),)
 
-    GSEA.CommandLineInterface.gct(T1, joinpath(DI, ba))
+    GSEA.CommandLineInterface.gct(T1, joinpath(DA, ba))
 
     @test size(Nucleus.Table.rea(T1)) === re
 
@@ -42,7 +42,7 @@ const J1 = joinpath(TE, "_.json")
 
 for (ba, re) in (("1.gmt", 50), ("2.gmt", 5529))
 
-    GSEA.CommandLineInterface.gmt(J1, joinpath(DI, ba))
+    GSEA.CommandLineInterface.gmt(J1, joinpath(DA, ba))
 
     @test length(Nucleus.Dictionary.rea(J1)) === re
 
@@ -50,9 +50,9 @@ end
 
 # ---- #
 
-const J2 = joinpath(DI, "set.json")
+const J2 = joinpath(DA, "set.json")
 
-const T2 = joinpath(DI, "data.tsv")
+const T2 = joinpath(DA, "data.tsv")
 
 # ---- #
 
@@ -112,7 +112,7 @@ end
 
 GSEA.CommandLineInterface.user_rank(
     O2,
-    joinpath(DI, "metric.tsv"),
+    joinpath(DA, "metric.tsv"),
     J2;
     more_plots = "HALLMARK_MYC_TARGETS_V1;HALLMARK_UV_RESPONSE_DN;HALLMARK_UV_RESPONSE_UP;ALIEN",
 )
@@ -144,7 +144,7 @@ end
 
 GSEA.CommandLineInterface.metric_rank(
     O3,
-    joinpath(DI, "target.tsv"),
+    joinpath(DA, "target.tsv"),
     T2,
     J2;
     minimum = 15,

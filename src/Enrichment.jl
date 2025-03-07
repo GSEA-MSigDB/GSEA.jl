@@ -4,7 +4,7 @@ using Nucleus
 
 using ..GSEA
 
-function make_normalizer(::Union{GSEA.Algorithm.KS0, GSEA.Algorithm.A0}, nu_, bo_)
+function make_delta(::Union{GSEA.Algorithm.KS0, GSEA.Algorithm.A0}, nu_, bo_)
 
     s0 = s1 = 0.0
 
@@ -26,7 +26,7 @@ function make_normalizer(::Union{GSEA.Algorithm.KS0, GSEA.Algorithm.A0}, nu_, bo
 
 end
 
-function make_normalizer(::Any, nu_, bo_)
+function make_delta(::Any, nu_, bo_)
 
     s1 = s2 = 0.0
 
@@ -46,29 +46,29 @@ function make_normalizer(::Any, nu_, bo_)
 
 end
 
-function make_normalizer(o1, o2)
+function make_delta(d1, d2)
 
-    inv(inv(o2) - inv(o1))
+    inv(inv(d2) - inv(d1))
 
 end
 
-function make_eps(nu)
+function make_eps(po)
 
     ep = eps()
 
-    nu < ep ? ep : nu
+    po < ep ? ep : po
 
 end
 
-function make!(al::GSEA.Algorithm.KS0, nu_, bo_, cu_)
+function make!(al::GSEA.Algorithm.KS0, nu_, bo_, cu_ = nothing)
 
-    o0, o1 = make_normalizer(al, nu_, bo_)
+    d0, d1 = make_delta(al, nu_, bo_)
 
     c2 = a2 = c1 = 0.0
 
     for id in eachindex(nu_)
 
-        c1 += bo_[id] ? abs(nu_[id]) * o1 : o0
+        c1 += bo_[id] ? d1 * abs(nu_[id]) : d0
 
         if !isnothing(cu_)
 
@@ -92,15 +92,15 @@ function make!(al::GSEA.Algorithm.KS0, nu_, bo_, cu_)
 
 end
 
-function make!(al::GSEA.Algorithm.A0, nu_, bo_, cu_)
+function make!(al::GSEA.Algorithm.A0, nu_, bo_, cu_ = nothing)
 
-    o0, o1 = make_normalizer(al, nu_, bo_)
+    d0, d1 = make_delta(al, nu_, bo_)
 
     cu = su = 0.0
 
     for id in eachindex(nu_)
 
-        su += cu += bo_[id] ? abs(nu_[id]) * o1 : o0
+        su += cu += bo_[id] ? d1 * abs(nu_[id]) : d0
 
         if !isnothing(cu_)
 
@@ -114,33 +114,27 @@ function make!(al::GSEA.Algorithm.A0, nu_, bo_, cu_)
 
 end
 
-function make!(al::GSEA.Algorithm.DA2, nu_, bo_, cu_)
+function make!(al::GSEA.Algorithm.DA2, nu_, bo_, cu_ = nothing)
 
-    o1, _ = make_normalizer(al, nu_, bo_)
+    d1, _ = make_delta(al, nu_, bo_)
 
     r1 = r2 = eps()
 
     l1 = l2 = 1.0
 
-    p1 = su = 0.0
+    e1 = su = 0.0
 
-    l2 += d2 = inv(lastindex(nu_))
+    l2 += e2 = inv(lastindex(nu_))
 
     for id in eachindex(nu_)
 
-        d1 = bo_[id] ? abs(nu_[id]) * o1 : 0.0
+        l1 = make_eps(l1 - e1)
 
-        l1 -= p1
+        l2 = make_eps(l2 - e2)
 
-        l2 -= d2
+        r1 += e1 = bo_[id] ? d1 * abs(nu_[id]) : 0.0
 
-        l1 = make_eps(l1)
-
-        l2 = make_eps(l2)
-
-        r1 += p1 = d1
-
-        r2 += d2
+        r2 += e2
 
         su +=
             cu = Nucleus.Information.make_antisymmetric_kullback_leibler_divergence(
@@ -162,35 +156,27 @@ function make!(al::GSEA.Algorithm.DA2, nu_, bo_, cu_)
 
 end
 
-function make!(al::GSEA.Algorithm.DA2W, nu_, bo_, cu_)
+function make!(al::GSEA.Algorithm.DA2W, nu_, bo_, cu_ = nothing)
 
-    o1, o2 = make_normalizer(al, nu_, bo_)
+    d1, d2 = make_delta(al, nu_, bo_)
 
     r1 = r2 = eps()
 
     l1 = l2 = 1.0
 
-    p1 = p2 = su = 0.0
+    e1 = e2 = su = 0.0
 
     for id in eachindex(nu_)
 
         ab = abs(nu_[id])
 
-        d1 = bo_[id] ? ab * o1 : 0.0
+        l1 = make_eps(l1 - e1)
 
-        d2 = ab * o2
+        l2 = make_eps(l2 - e2)
 
-        l1 -= p1
+        r1 += e1 = bo_[id] ? d1 * ab : 0.0
 
-        l2 -= p2
-
-        l1 = make_eps(l1)
-
-        l2 = make_eps(l2)
-
-        r1 += p1 = d1
-
-        r2 += p2 = d2
+        r2 += e2 = d2 * ab
 
         su +=
             cu = Nucleus.Information.make_antisymmetric_kullback_leibler_divergence(
@@ -212,55 +198,33 @@ function make!(al::GSEA.Algorithm.DA2W, nu_, bo_, cu_)
 
 end
 
-function make!(al::GSEA.Algorithm.DA2W0W, nu_, bo_, cu_)
+function make!(al::GSEA.Algorithm.DA2W0W, nu_, bo_, cu_ = nothing)
 
-    o1, o2 = make_normalizer(al, nu_, bo_)
+    d1, d2 = make_delta(al, nu_, bo_)
 
-    o0 = make_normalizer(o1, o2)
+    d0 = make_delta(d1, d2)
 
     r0 = r1 = r2 = eps()
 
     l0 = l1 = l2 = 1.0
 
-    p0 = p1 = p2 = su = 0.0
+    e0 = e1 = e2 = su = 0.0
 
     for id in eachindex(nu_)
 
         ab = abs(nu_[id])
 
-        if bo_[id]
+        l0 = make_eps(l0 - e0)
 
-            d0 = 0.0
+        l1 = make_eps(l1 - e1)
 
-            d1 = ab * o1
+        l2 = make_eps(l2 - e2)
 
-        else
+        r0 += e0 = bo_[id] ? 0.0 : d0 * ab
 
-            d0 = ab * o0
+        r1 += e1 = bo_[id] ? d1 * ab : 0.0
 
-            d1 = 0.0
-
-        end
-
-        d2 = ab * o2
-
-        l0 -= p0
-
-        l1 -= p1
-
-        l2 -= p2
-
-        l0 = make_eps(l0)
-
-        l1 = make_eps(l1)
-
-        l2 = make_eps(l2)
-
-        r0 += p0 = d0
-
-        r1 += p1 = d1
-
-        r2 += p2 = d2
+        r2 += e2 = d2 * ab
 
         su +=
             cu =

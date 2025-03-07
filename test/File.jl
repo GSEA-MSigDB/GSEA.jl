@@ -22,7 +22,7 @@ for (cl, r1, r2) in (
     ),
 )
 
-    cl = joinpath(DI, cl)
+    cl = joinpath(DA, cl)
 
     an = GSEA.File.read_cls(cl)
 
@@ -46,7 +46,7 @@ end
 
 for (gc, re) in (("1.gct", (13321, 190)),)
 
-    gc = joinpath(DI, gc)
+    gc = joinpath(DA, gc)
 
     @test size(GSEA.File.read_gct(gc)) === re
 
@@ -61,7 +61,7 @@ end
 
 for (gm, re) in (("1.gmt", 50), ("2.gmt", 5529))
 
-    gm = joinpath(DI, gm)
+    gm = joinpath(DA, gm)
 
     di = GSEA.File.read_gmt(gm)
 

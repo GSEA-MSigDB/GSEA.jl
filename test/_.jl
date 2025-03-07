@@ -38,12 +38,12 @@ const C3_ = ['6', '7', '8']
 
 # ---- #
 
-const DI = pkgdir(GSEA, "data")
+const DA = pkgdir(GSEA, "data")
 
-const GE_, EX_ = eachcol(Nucleus.Table.rea(joinpath(DI, "myc.tsv"); select = [1, 2]))
+const GE_, EX_ = eachcol(Nucleus.Table.rea(joinpath(DA, "myc.tsv"); select = [1, 2]))
 
 # ---- #
 
-const D1 = GSEA.File.read_gmt(joinpath(DI, "h.all.v7.1.symbols.gmt"))
+const D1 = GSEA.File.read_gmt(joinpath(DA, "h.all.v7.1.symbols.gmt"))
 
-const D2 = GSEA.File.read_gmt(joinpath(DI, "c2.all.v7.1.symbols.gmt"))
+const D2 = GSEA.File.read_gmt(joinpath(DA, "c2.all.v7.1.symbols.gmt"))
