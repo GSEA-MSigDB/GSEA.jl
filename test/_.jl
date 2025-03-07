@@ -20,12 +20,11 @@ end
 
 # ---- #
 
-const AL_ = GSEA.Algorithm.KS(),
-GSEA.Algorithm.KSA(),
-GSEA.Algorithm.KLIOM(),
-GSEA.Algorithm.KLIOP(),
-GSEA.Algorithm.KLI(),
-GSEA.Algorithm.KLI1()
+const AL_ = GSEA.Algorithm.KS0(),
+GSEA.Algorithm.A0(),
+GSEA.Algorithm.DA2(),
+GSEA.Algorithm.DA2W(),
+GSEA.Algorithm.DA2W0W()
 
 # ---- #
 
@@ -34,6 +33,8 @@ const C1_ = ['A', '2', '3', '4', '5', '6', '7', '8', '9', 'X', 'J', 'Q', 'K']
 const LI_ = [-6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6.0]
 
 const C2_ = ['A', 'K']
+
+const C3_ = ['6', '7', '8']
 
 # ---- #
 

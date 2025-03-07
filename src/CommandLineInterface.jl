@@ -84,7 +84,7 @@ Run data-rank (single-sample) GSEA.
 # Options
 
   - `--standard-deviation`: = 0. For normalization by column. 0 skips normalization.
-  - `--algorithm`: = "ks". "ks" | "ksa" | "kliom" | "kliop" | "kli" | "kli1".
+  - `--algorithm`: = *"ks0" | "a0" | "da2" | "da2w" | "da2w0w".
   - `--minimum`: = 1.
   - `--maximum`: = 1000.
   - `--fraction`: = 0.
@@ -95,7 +95,7 @@ Run data-rank (single-sample) GSEA.
     tsv,
     json;
     standard_deviation::Real = 0,
-    algorithm = "ks",
+    algorithm = "ks0",
     minimum::Int = 1,
     maximum::Int = 1000,
     fraction::Real = 0,
@@ -147,7 +147,7 @@ Run data-rank (single-sample) GSEA.
 end
 
 function make_normalized(
-    ::Union{GSEA.Algorithm.KS, GSEA.Algorithm.KSA},
+    ::Union{GSEA.Algorithm.KS0, GSEA.Algorithm.A0},
     en,
     m1,
     m2,
@@ -299,7 +299,7 @@ Run user-rank (pre-rank) GSEA.
 
 # Options
 
-  - `--algorithm`: = "ks". "ks" | "ksa" | "kliom" | "kliop" | "kli" | "kli1".
+  - `--algorithm`: = *"ks0" | "a0" | "da2" | "da2w" | "da2w0w".
   - `--minimum`: = 1.
   - `--maximum`: = 1000.
   - `--fraction`: = 0.
@@ -314,7 +314,7 @@ Run user-rank (pre-rank) GSEA.
     directory,
     tsv,
     json;
-    algorithm = "ks",
+    algorithm = "ks0",
     minimum::Int = 1,
     maximum::Int = 1000,
     fraction::Real = 0,
@@ -367,7 +367,7 @@ Run metric-rank (standard) GSEA.
 
   - `--standard-deviation`: = 0. For normalization by column. 0 skips normalization.
   - `--metric`: = "signal-to-noise-ratio". "mean-difference" | "log-ratio" | "signal-to-noise-ratio".
-  - `--algorithm`: = "ks". "ks" | "ksa" | "kliom" | "kliop" | "kli" | "kli1".
+  - `--algorithm`: = *"ks0" | "a0" | "da2" | "da2w" | "da2w0w".
   - `--minimum`: = 1.
   - `--maximum`: = 1000.
   - `--fraction`: = 0.
@@ -386,7 +386,7 @@ Run metric-rank (standard) GSEA.
     json;
     standard_deviation::Float64 = 0.0,
     metric = "signal-to-noise-ratio",
-    algorithm = "ks",
+    algorithm = "ks0",
     minimum::Int = 1,
     maximum::Int = 1000,
     fraction::Real = 0,

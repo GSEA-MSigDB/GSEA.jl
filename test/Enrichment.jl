@@ -88,17 +88,16 @@ C1_, LI_ = GSEA.Sort.make(C1_, LI_)
 GE_, EX_ = GSEA.Sort.make(GE_, EX_)
 
 for (nu_, bo_, re_) in (
-        (LI_, Nucleus.Collection.is_in(C1_, C2_), (-0.5, 0.0, 0.0, 0.0, 0.0, 0.0)),
+        (LI_, Nucleus.Collection.is_in(C1_, C2_), (-0.5, 0.0, 0.0, 0.0, 0.0)),
         (
             EX_,
             Nucleus.Collection.is_in(GE_, D2["COLLER_MYC_TARGETS_UP"]),
             (
                 0.7651927829281453,
                 0.41482514169516305,
-                1.1181841586127337,
-                1.1140922794954267,
-                1.1161382190540838,
                 1.2297916337424049,
+                1.1161382190540838,
+                1.1181841586127337,
             ),
         ),
     ),

@@ -8,7 +8,9 @@ include("_.jl")
 
 # ---- #
 
-for (t1_, yc_, t2_) in ((C1_, LI_, C2_), (GE_, EX_, D2["COLLER_MYC_TARGETS_UP"])), al in AL_
+for (t1_, yc_, t2_) in
+    ((C1_, LI_, C2_), (C1_, LI_, C3_), (GE_, EX_, D2["COLLER_MYC_TARGETS_UP"])),
+    al in AL_
 
     GSEA.Plot.writ("", al, t1_, yc_, t2_, Dict("title" => Dict("text" => string(al))))
 

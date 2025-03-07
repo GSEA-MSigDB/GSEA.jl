@@ -1,42 +1,36 @@
 module Algorithm
 
-struct KS end
+struct KS0 end
 
-struct KSA end
+struct A0 end
 
-struct KLIOM end
+struct DA2 end
 
-struct KLIOP end
+struct DA2W end
 
-struct KLI end
-
-struct KLI1 end
+struct DA2W0W end
 
 function make(al)
 
-    if al == "ks"
+    if al == "ks0"
 
-        KS()
+        KS0()
 
-    elseif al == "ksa"
+    elseif al == "a0"
 
-        KSA()
+        A0()
 
-    elseif al == "kliom"
+    elseif al == "da2"
 
-        KLIOM()
+        DA2()
 
-    elseif al == "kliop"
+    elseif al == "da2w"
 
-        KLIOP()
+        DA2W()
 
-    elseif al == "kli"
+    elseif al == "da2w0w"
 
-        KLI()
-
-    elseif al == "kli1"
-
-        KLI1()
+        DA2W0W()
 
     end
 
