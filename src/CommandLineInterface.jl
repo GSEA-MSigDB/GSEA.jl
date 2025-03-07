@@ -83,12 +83,15 @@ Run data-rank (single-sample) GSEA.
 
 # Options
 
-  - `--standard-deviation`: = 0. For normalization by column. 0 skips normalization.
-  - `--algorithm`: = *"ks0" | "a0" | "da2" | "da2w" | "da2w0w".
-  - `--minimum`: = 1.
-  - `--maximum`: = 1000.
-  - `--fraction`: = 0.
+  - `--standard-deviation`: = 0. For column-wise normalization. 0 skips normalization.
+  - `--algorithm`: = "ks0" | "a0" | "da2" | "da2w" | "da2w0w".
+  - `--minimum`: = 1. The minimum set size.
+  - `--maximum`: = 1000. The maximum set size.`
+  - `--fraction`: = 0. The minimum fraction of set genes present.
   - `--number-of-plots`: = 2.
+  - `--more-plots`: = "". ;-separated set names.
+  - `--low`: = "Low".
+  - `--high`: = "High".
 """
 @cast function data_rank(
     directory,
@@ -100,6 +103,9 @@ Run data-rank (single-sample) GSEA.
     maximum::Int = 1000,
     fraction::Real = 0,
     number_of_plots::Int = 2,
+    more_plots = "",
+    low = "Low",
+    high = "High",
 )
 
     al = GSEA.Algorithm.make(algorithm)
@@ -141,7 +147,9 @@ Run data-rank (single-sample) GSEA.
                 ) for nu_ in eachcol(N)
             )...,
         ),
-        number_of_plots,
+        number_of_plots;
+        a1 = low,
+        a2 = high,
     )
 
 end
@@ -299,10 +307,10 @@ Run user-rank (pre-rank) GSEA.
 
 # Options
 
-  - `--algorithm`: = *"ks0" | "a0" | "da2" | "da2w" | "da2w0w".
-  - `--minimum`: = 1.
-  - `--maximum`: = 1000.
-  - `--fraction`: = 0.
+  - `--algorithm`: = "ks0" | "a0" | "da2" | "da2w" | "da2w0w".
+  - `--minimum`: = 1. The minimum set size.
+  - `--maximum`: = 1000. The maximum set size.`
+  - `--fraction`: = 0. The minimum fraction of set genes present.
   - `--number-of-permutations`: = 100.
   - `--seed`: = 20150603.
   - `--number-of-plots`: = 2.
@@ -365,13 +373,13 @@ Run metric-rank (standard) GSEA.
 
 # Options
 
-  - `--standard-deviation`: = 0. For normalization by column. 0 skips normalization.
-  - `--metric`: = "signal-to-noise-ratio". "mean-difference" | "log-ratio" | "signal-to-noise-ratio".
-  - `--algorithm`: = *"ks0" | "a0" | "da2" | "da2w" | "da2w0w".
-  - `--minimum`: = 1.
-  - `--maximum`: = 1000.
-  - `--fraction`: = 0.
-  - `--permutation`: = "sample". "sample" | "set".
+  - `--standard-deviation`: = 0. For column-wise normalization. 0 skips normalization.
+  - `--metric`: = "signal-to-noise-ratio" | "mean-difference" | "log-ratio".
+  - `--algorithm`: = "ks0" | "a0" | "da2" | "da2w" | "da2w0w".
+  - `--minimum`: = 1. The minimum set size.
+  - `--maximum`: = 1000. The maximum set size.`
+  - `--fraction`: = 0. The minimum fraction of set genes present.
+  - `--permutation`: = "sample" | "set".
   - `--number-of-permutations`: = 100.
   - `--seed`: = 20150603.
   - `--number-of-plots`: = 2.
@@ -384,7 +392,7 @@ Run metric-rank (standard) GSEA.
     tsv1,
     tsv2,
     json;
-    standard_deviation::Float64 = 0.0,
+    standard_deviation::Real = 0,
     metric = "signal-to-noise-ratio",
     algorithm = "ks0",
     minimum::Int = 1,

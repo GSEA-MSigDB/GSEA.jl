@@ -139,7 +139,7 @@ function writ(ht, al, t1_, y1_, t2_, la = Dict{String, Any}(); a1 = "Low", a2 = 
 
 end
 
-function writ(pr, al, n1_, N, n3_, n2__, n4_, E, um = 2)
+function writ(pr, al, n1_, N, n3_, n2__, n4_, E, um = 2; ke_...)
 
     i1_ = findall(en_ -> all(!isnan, en_), eachrow(E))
 
@@ -163,7 +163,7 @@ function writ(pr, al, n1_, N, n3_, n2__, n4_, E, um = 2)
 
     i2_ = findall(!isnan, E)
 
-    for i3_ in CartesianIndices(E)[i2_][Nucleus.Extreme.index(E[i2_], um)]
+    for i3_ in CartesianIndices(E)[i2_][Nucleus.Extreme.index(E[i2_], um),]
 
         i1, n2 = Tuple(i3_)
 
@@ -175,7 +175,8 @@ function writ(pr, al, n1_, N, n3_, n2__, n4_, E, um = 2)
             n1_,
             N[:, n2],
             n2__[i1],
-            Dict("title" => Dict("text" => n3)),
+            Dict("title" => Dict("text" => n3));
+            ke_...,
         )
 
     end
