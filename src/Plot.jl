@@ -163,7 +163,7 @@ function writ(pr, al, n1_, N, n3_, n2__, n4_, E, um = 2; ke_...)
 
     i2_ = findall(!isnan, E)
 
-    for i3_ in CartesianIndices(E)[i2_][Nucleus.Extreme.index(E[i2_], um),]
+    for i3_ in CartesianIndices(E)[i2_][Nucleus.Extreme.index(E[i2_], um)]
 
         i1, n2 = Tuple(i3_)
 

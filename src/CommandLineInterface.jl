@@ -103,7 +103,6 @@ Run data-rank (single-sample) GSEA.
     maximum::Int = 1000,
     fraction::Real = 0,
     number_of_plots::Int = 2,
-    more_plots = "",
     low = "Low",
     high = "High",
 )
