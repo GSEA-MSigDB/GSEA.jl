@@ -6,25 +6,25 @@ using Nucleus
 
 using ..GSEA
 
-function writ(ht, al, t1_, y1_, t2_, la = Dict{String, Any}(); a1 = "Low", a2 = "High")
+function writ(ht, al, n1_, nu_, n2_, la = Dict{String, Any}(); a1 = "Low", a2 = "High")
 
-    t1_, y1_ = GSEA.Sort.make(t1_, y1_)
+    n1_, nu_ = GSEA.Sort.make(n1_, nu_)
 
-    um = lastindex(t1_)
+    um = lastindex(n1_)
 
     tr = Dict("mode" => "lines", "line" => Dict("width" => 0), "fill" => "tozeroy")
 
     xc_ = collect(1:um)
 
-    i1_ = findall(<(0.0), y1_)
+    i1_ = findall(<(0), nu_)
 
-    i2_ = findall(>=(0.0), y1_)
+    i2_ = findall(>=(0), nu_)
 
-    bo_ = Nucleus.Collection.is_in(t1_, t2_)
+    bo_ = Nucleus.Collection.is_in(n1_, n2_)
 
-    y3_ = Vector{Float64}(undef, um)
+    cu_ = Vector{Float64}(undef, um)
 
-    en = GSEA.Enrichment.make!(al, y1_, bo_, y3_)
+    en = GSEA.Enrichment.make!(al, nu_, bo_, cu_)
 
     an = Dict(
         "y" => 0,
@@ -43,18 +43,18 @@ function writ(ht, al, t1_, y1_, t2_, la = Dict{String, Any}(); a1 = "Low", a2 = 
             merge(
                 tr,
                 Dict(
-                    "y" => y1_[i1_],
+                    "y" => nu_[i1_],
                     "x" => xc_[i1_],
-                    "text" => t1_[i1_],
+                    "text" => n1_[i1_],
                     "fillcolor" => Nucleus.Color.BL,
                 ),
             ),
             merge(
                 tr,
                 Dict(
-                    "y" => y1_[i2_],
+                    "y" => nu_[i2_],
                     "x" => xc_[i2_],
-                    "text" => t1_[i2_],
+                    "text" => n1_[i2_],
                     "fillcolor" => Nucleus.Color.RE,
                 ),
             ),
@@ -62,14 +62,14 @@ function writ(ht, al, t1_, y1_, t2_, la = Dict{String, Any}(); a1 = "Low", a2 = 
                 "yaxis" => "y2",
                 "y" => zeros(sum(bo_)),
                 "x" => xc_[bo_],
-                "text" => t1_[bo_],
+                "text" => n1_[bo_],
                 "mode" => "markers",
                 "marker" => Dict(
                     "symbol" => "line-ns",
                     "size" => 24,
                     "line" => Dict(
                         "width" => 2,
-                        "color" => Nucleus.Color.make(Nucleus.Color.S2, 0.72),
+                        "color" => Nucleus.Color.make("#000000", 0.88),
                     ),
                 ),
                 "hoverinfo" => "x+text",
@@ -78,9 +78,9 @@ function writ(ht, al, t1_, y1_, t2_, la = Dict{String, Any}(); a1 = "Low", a2 = 
                 tr,
                 Dict(
                     "yaxis" => "y3",
-                    "y" => y3_,
+                    "y" => cu_,
                     "x" => xc_,
-                    "text" => t1_,
+                    "text" => n1_,
                     "fillcolor" => "#07fa07",
                 ),
             ),
@@ -88,20 +88,20 @@ function writ(ht, al, t1_, y1_, t2_, la = Dict{String, Any}(); a1 = "Low", a2 = 
         Nucleus.Dictionary.make(
             Dict(
                 "showlegend" => false,
-                "yaxis3" =>
-                    Dict("domain" => (0.328, 1), "title" => Dict("text" => "Δ Enrichment")),
+                "yaxis" => Dict("domain" => (0, 0.24), "title" => Dict("text" => "Score")),
                 "yaxis2" => Dict(
                     "domain" => (0.248, 0.32),
                     "title" => Dict("text" => "Set"),
                     "tickvals" => (),
                 ),
-                "yaxis" => Dict("domain" => (0, 0.24), "title" => Dict("text" => "Score")),
+                "yaxis3" =>
+                    Dict("domain" => (0.328, 1), "title" => Dict("text" => "Δ Enrichment")),
                 "xaxis" => Dict(
                     "title" => Dict("text" => "Feature ($um)"),
                     "showspikes" => true,
                     "spikemode" => "across",
                     "spikedash" => "solid",
-                    "spikethickness" => 0.8,
+                    "spikethickness" => -1,
                     "spikecolor" => "#000000",
                 ),
                 "annotations" => (
@@ -149,28 +149,26 @@ function writ(pr, al, n1_, N, n3_, n2__, n4_, E, um = 2; ke_...)
 
     E = E[i1_, :]
 
-    n4 = "Set"
+    n5 = "Set"
 
-    Nucleus.Table.writ("$pr.tsv", Nucleus.Table.make(n4, n3_, n4_, E))
+    Nucleus.Table.writ("$pr.tsv", Nucleus.Table.make(n5, n3_, n4_, E))
 
     Nucleus.HeatPlot.writ(
         "$pr.html",
         n3_,
         n4_,
         E,
-        Dict("yaxis" => Dict("title" => n4), "xaxis" => Dict("title" => "Sample")),
+        Dict("yaxis" => Dict("title" => n5), "xaxis" => Dict("title" => "Sample")),
     )
 
-    i2_ = findall(!isnan, E)
+    for i2_ in CartesianIndices(E)[Nucleus.Extreme.index(vec(E), um)]
 
-    for i3_ in CartesianIndices(E)[i2_][Nucleus.Extreme.index(E[i2_], um)]
-
-        i1, n2 = Tuple(i3_)
+        i1, n2 = Tuple(i2_)
 
         n3 = n3_[i1]
 
         writ(
-            "$pr.$(Nucleus.Numbe.text(E[i3_])).$(n4_[n2]).$n3.html",
+            "$pr.$(Nucleus.Numbe.text(E[i2_])).$(n4_[n2]).$n3.html",
             al,
             n1_,
             N[:, n2],
