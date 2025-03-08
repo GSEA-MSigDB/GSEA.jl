@@ -54,17 +54,17 @@ const T2 = joinpath(DA, "data.tsv")
 
 # ---- #
 
-const O1 = mkpath(joinpath(TE, "data_rank"))
+const I1 = mkpath(joinpath(TE, "data_rank"))
 
-const O2 = mkpath(joinpath(TE, "user_rank"))
+const I2 = mkpath(joinpath(TE, "user_rank"))
 
-const O3 = mkpath(joinpath(TE, "metric_rank"))
+const I3 = mkpath(joinpath(TE, "metric_rank"))
 
 # ---- #
 
-GSEA.CommandLineInterface.data_rank(O1, T2, J2; minimum = 15, maximum = 500)
+GSEA.CommandLineInterface.data_rank(I1, T2, J2; minimum = 15, maximum = 500)
 
-const A1 = Nucleus.Table.rea(joinpath(O1, "result.tsv"))
+const A1 = Nucleus.Table.rea(joinpath(I1, "result.tsv"))
 
 @test A1[!, 1] == [
     "HALLMARK_ESTROGEN_RESPONSE_LATE",
@@ -81,23 +81,6 @@ const A1 = Nucleus.Table.rea(joinpath(O1, "result.tsv"))
 
 # ---- #
 
-# 388.958 μs (1500 allocations: 2.26 MiB)
-# 426.584 μs (1200 allocations: 2.91 MiB)
-
-for al in (AL_[1], AL_[end])
-
-    en_ = randn(100)
-
-    R = randn(100, 1000)
-
-    GSEA.CommandLineInterface.make_normalized!(al, en_, R)
-
-    #@btime GSEA.CommandLineInterface.make_normalized!($al, $en_, $R)
-
-end
-
-# ---- #
-
 function test_result(an, um)
 
     @test size(an, 1) === um
@@ -107,13 +90,13 @@ end
 # ---- #
 
 GSEA.CommandLineInterface.user_rank(
-    O2,
+    I2,
     joinpath(DA, "metric.tsv"),
     J2;
     more_plots = "HALLMARK_MYC_TARGETS_V1;HALLMARK_UV_RESPONSE_DN;HALLMARK_UV_RESPONSE_UP;ALIEN",
 )
 
-const A2 = Nucleus.Table.rea(joinpath(O2, "result.tsv"))
+const A2 = Nucleus.Table.rea(joinpath(I2, "result.tsv"))
 
 test_result(A2, 50)
 
@@ -138,16 +121,13 @@ end
 
 # ---- #
 
-GSEA.CommandLineInterface.metric_rank(
-    O3,
-    joinpath(DA, "target.tsv"),
-    T2,
-    J2;
-    minimum = 15,
-    maximum = 500,
-)
+const KE_ = (minimum = 15, maximum = 500, more_plots = "HALLMARK_UV_RESPONSE_DN;")
 
-const A3 = Nucleus.Table.rea(joinpath(O3, "metric.tsv"))
+# ---- #
+
+GSEA.CommandLineInterface.metric_rank(I3, joinpath(DA, "target.tsv"), T2, J2; KE_...)
+
+const A3 = Nucleus.Table.rea(joinpath(I3, "metric.tsv"))
 
 @test size(A3) === (1000, 2)
 
@@ -155,6 +135,29 @@ const A3 = Nucleus.Table.rea(joinpath(O3, "metric.tsv"))
 
 @test isapprox(sort(A3, 2)[[1, end], 2], [-1.8372355409610066, 1.7411005104346835])
 
-const A4 = Nucleus.Table.rea(joinpath(O3, "result.tsv"))
+const A4 = Nucleus.Table.rea(joinpath(I3, "result.tsv"))
 
 test_result(A4, 8)
+
+# ---- #
+
+GSEA.CommandLineInterface.user_rank(I2, joinpath(I3, "metric.tsv"), J2; KE_...)
+
+const A5 = Nucleus.Table.rea(joinpath(I2, "result.tsv"))
+
+@test A5[!, 1:2] == A4[!, 1:2]
+
+# ---- #
+
+GSEA.CommandLineInterface.metric_rank(
+    I3,
+    joinpath(DA, "target.tsv"),
+    T2,
+    J2;
+    permutation = "set",
+    KE_...,
+)
+
+const A6 = Nucleus.Table.rea(joinpath(I3, "result.tsv"))
+
+@test A6 == A5

@@ -2,8 +2,18 @@ module GSEA
 
 # ----------------------------------------------------------------------------------------------- #
 
-for na in
-    ("Algorithm", "CommandLineInterface", "Enrichment", "File", "Interface", "Plot", "Sort")
+for na in (
+    "Algorithm",
+    "CommandLineInterface",
+    "Enrichment",
+    "File",
+    "Interface",
+    "Normalization",
+    "Plot",
+    "Rando",
+    "Result",
+    "Sort",
+)
 
     include("$na.jl")
 

@@ -4,8 +4,18 @@ using GSEA
 
 # ----------------------------------------------------------------------------------------------- #
 
-for na in
-    ("Algorithm", "CommandLineInterface", "Enrichment", "File", "Interface", "Plot", "Sort")
+for na in (
+    "Algorithm",
+    "CommandLineInterface",
+    "Enrichment",
+    "File",
+    "Interface",
+    "Normalization",
+    "Plot",
+    "Rando",
+    "Result",
+    "Sort",
+)
 
     @info "🎬 Testing $na"
 
