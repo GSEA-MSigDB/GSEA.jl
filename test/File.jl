@@ -6,11 +6,11 @@ include("_.jl")
 
 # ---- #
 
-# 10.542 μs (114 allocations: 6.84 KiB)
-# 10.875 μs (116 allocations: 7.17 KiB)
-# 412.208 μs (7160 allocations: 473.16 KiB)
+# 10.000 μs (114 allocations: 6.84 KiB)
+# 10.291 μs (116 allocations: 7.17 KiB)
+# 380.708 μs (7160 allocations: 473.16 KiB)
 
-for (cl, r1, r2) in (
+for (ba, r1, r2) in (
     ("1.cls", "CNTRL_LPS", [1, 1, 1, 2, 2, 2]),
     ("GSE76137.cls", "Proliferating_Arrested", [1, 2, 1, 2, 1, 2]),
     (
@@ -20,7 +20,7 @@ for (cl, r1, r2) in (
     ),
 )
 
-    cl = joinpath(DA, cl)
+    cl = joinpath(DA, ba)
 
     an = GSEA.File.read_cls(cl)
 
@@ -40,11 +40,11 @@ end
 
 # ---- #
 
-# 103.396 ms (71705 allocations: 23.67 MiB)
+# 101.095 ms (71705 allocations: 23.67 MiB)
 
-for (gc, re) in (("1.gct", (13321, 190)),)
+for (ba, re) in (("1.gct", (13321, 190)),)
 
-    gc = joinpath(DA, gc)
+    gc = joinpath(DA, ba)
 
     @test size(GSEA.File.read_gct(gc)) === re
 
@@ -54,12 +54,12 @@ end
 
 # ---- #
 
-# 285.959 μs (7984 allocations: 1.12 MiB)
-# 22.009 ms (537839 allocations: 62.61 MiB)
+# 287.583 μs (7984 allocations: 1.12 MiB)
+# 22.150 ms (537839 allocations: 62.61 MiB)
 
-for (gm, re) in (("1.gmt", 50), ("2.gmt", 5529))
+for (ba, re) in (("1.gmt", 50), ("2.gmt", 5529))
 
-    gm = joinpath(DA, gm)
+    gm = joinpath(DA, ba)
 
     di = GSEA.File.read_gmt(gm)
 
