@@ -61,10 +61,8 @@ for (ba, re) in (("1.gmt", 50), ("2.gmt", 5529))
 
     gm = joinpath(DA, ba)
 
-    di = GSEA.File.read_gmt(gm)
+    @test length(GSEA.File.read_gmt(gm)) === re
 
     #@btime GSEA.File.read_gmt($gm)
-
-    @test length(di) === re
 
 end

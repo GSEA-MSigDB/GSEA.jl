@@ -32,6 +32,11 @@ for al in AL_
         map(id -> "Sample $id", axes(N, 2)),
         hcat((GSEA.Interface.make(al, GE_, nu_, N2__) for nu_ in eachcol(N))...),
         1,
+        Dict{String, Any}(
+            "title" => Dict("text" => string(al)),
+            "yaxis" => Dict("title" => Dict("text" => 'H')),
+        );
+        a2 = "High Gene Expression",
     )
 
 end

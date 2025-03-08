@@ -69,7 +69,7 @@ function writ(ht, al, n1_, nu_, n2_, la = Dict{String, Any}(); a1 = "Low", a2 = 
                     "size" => 24,
                     "line" => Dict(
                         "width" => 2,
-                        "color" => Nucleus.Color.make("#000000", 0.88),
+                        "color" => Nucleus.Color.make("#000000", 0.8),
                     ),
                 ),
                 "hoverinfo" => "x+text",
@@ -108,7 +108,7 @@ function writ(ht, al, n1_, nu_, n2_, la = Dict{String, Any}(); a1 = "Low", a2 = 
                     Dict(
                         "yref" => "paper",
                         "xref" => "paper",
-                        "y" => 1.064,
+                        "y" => 1.056,
                         "text" => "Enrichment = <b>$(@sprintf "%.4g" en)</b>",
                         "font" => Dict("size" => 24, "color" => "#000000"),
                         "showarrow" => false,
@@ -139,7 +139,7 @@ function writ(ht, al, n1_, nu_, n2_, la = Dict{String, Any}(); a1 = "Low", a2 = 
 
 end
 
-function writ(pr, al, n1_, N, n3_, n2__, n4_, E, um = 2; ke_...)
+function writ(pr, al, n1_, N, n3_, n2__, n4_, E, um = 2, la = Dict{String, Any}(); ke_...)
 
     i1_ = findall(en_ -> all(!isnan, en_), eachrow(E))
 
@@ -149,17 +149,9 @@ function writ(pr, al, n1_, N, n3_, n2__, n4_, E, um = 2; ke_...)
 
     E = E[i1_, :]
 
-    n5 = "Set"
+    Nucleus.Table.writ("$pr.tsv", Nucleus.Table.make("Set", n3_, n4_, E))
 
-    Nucleus.Table.writ("$pr.tsv", Nucleus.Table.make(n5, n3_, n4_, E))
-
-    Nucleus.HeatPlot.writ(
-        "$pr.html",
-        n3_,
-        n4_,
-        E,
-        Dict("yaxis" => Dict("title" => n5), "xaxis" => Dict("title" => "Sample")),
-    )
+    Nucleus.HeatPlot.writ("$pr.html", n3_, n4_, E, la)
 
     for i2_ in CartesianIndices(E)[Nucleus.Extreme.index(vec(E), um)]
 
