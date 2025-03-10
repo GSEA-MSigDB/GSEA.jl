@@ -88,6 +88,7 @@ Run data-rank (single-sample) GSEA.
 # Options
 
   - `--standard-deviation`: 0. For column-wise normalization. 0 skips normalization.
+  - `--exponent`: 1.
   - `--algorithm`: "ks0" | "a0" | "da2" | "da2w" | "da2w0w".
   - `--minimum`: 1. The minimum set size.
   - `--maximum`: 1000. The maximum set size.
@@ -101,6 +102,7 @@ Run data-rank (single-sample) GSEA.
     tsv,
     json;
     standard_deviation::Real = 0,
+    exponent::Real = 1,
     algorithm = "ks0",
     minimum::Int = 1,
     maximum::Int = 1000,
@@ -170,6 +172,7 @@ Run user-rank (pre-rank) GSEA.
 
 # Options
 
+  - `--exponent`: 1.
   - `--algorithm`: "ks0" | "a0" | "da2" | "da2w" | "da2w0w".
   - `--minimum`: 1. The minimum set size.
   - `--maximum`: 1000. The maximum set size.
@@ -185,6 +188,7 @@ Run user-rank (pre-rank) GSEA.
     directory,
     tsv,
     json;
+    exponent::Real = 1,
     algorithm = "ks0",
     minimum::Int = 1,
     maximum::Int = 1000,
@@ -238,6 +242,7 @@ Run metric-rank (standard) GSEA.
 
   - `--standard-deviation`: 0. For column-wise normalization. 0 skips normalization.
   - `--metric`: "signal-to-noise-ratio" | "mean-difference" | "log-ratio".
+  - `--exponent`: 1.
   - `--algorithm`: "ks0" | "a0" | "da2" | "da2w" | "da2w0w".
   - `--minimum`: 1. The minimum set size.
   - `--maximum`: 1000. The maximum set size.
@@ -257,6 +262,7 @@ Run metric-rank (standard) GSEA.
     json;
     standard_deviation::Real = 0,
     metric = "signal-to-noise-ratio",
+    exponent::Real = 1,
     algorithm = "ks0",
     minimum::Int = 1,
     maximum::Int = 1000,

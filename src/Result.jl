@@ -47,7 +47,7 @@ function writ(di, al, n1_, nu_, n3_, n2__, en_, R, um, n4_, a1, a2)
         n3 = n3_[id]
 
         GSEA.Plot.writ(
-            joinpath(di, "$(Nucleus.Numbe.text(en_[id])).$n3.html"),
+            joinpath(di, "$(Nucleus.Numbe.text(E[id, 1])).$n3.html"),
             al,
             n1_,
             nu_,

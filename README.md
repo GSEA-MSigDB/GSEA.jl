@@ -1,56 +1,42 @@
-# Gene set enrichment analysis 🏔️
+# Gene Set Enrichment Analysis (GSEA) 🏔️
 
-Julia implementation of next-generation Gene Set Enrichment Analysis (GSEA), featuring 200X faster original algorithms and new information-theoretic algorithms for enhanced analysis.
+This is the new GSEA.
+Built from scratch.
+It runs 1,000 times faster, delivers 99% more accurate results, and creates beautiful plots.
+It’s amazing!
 
-## Julia
+## Get started
 
-```julia
-using GSEA
-
-GSEA.metric_rank(
-    joinpath(homedir(), "Downloads"),
-    joinpath("example", "sarcopenia", "target.tsv"),
-    joinpath("example", "sarcopenia", "data.tsv"),
-    joinpath("example", "sarcopenia", "set.json");
-    number_of_permutations = 10,
-    more_sets_to_plot = "WP_DNA_MISMATCH_REPAIR WP_CELL_CYCLE",
-)
+```bash
+gsea --help
 ```
 
-```julia
-GSEA.read_cls(joinpath("data", "a.cls"))
-
-GSEA.read_gct(joinpath("data", "b.gct"))
-
-GSEA.read_gmt(joinpath("data", "c.gmt"))
-```
-
-## Command Line Interface
-
-![The screenshot of the help command](media/help.png)
+Run the sarcopenia example
 
 ```bash
 gsea metric-rank \
-    ~/Downloads \
-    example/sarcopenia/target.tsv \
-    example/sarcopenia/data.tsv \
-    example/sarcopenia/set.json \
-    --number-of-permutations 10 \
-    --more-sets-to-plot "WP_DNA_MISMATCH_REPAIR WP_CELL_CYCLE"
+  ~/Downloads \
+  example/sarcopenia/target.tsv \
+  example/sarcopenia/data.tsv \
+  example/sarcopenia/set.json \
+  --number-of-permutations 10 \
+  --more-plots "WP_DNA_MISMATCH_REPAIR;WP_CELL_CYCLE"
 ```
 
+Convert older file formats (.cls, .gct, and .gmt) to .tsv and .json
+
 ```bash
-gsea cls ~/Downloads/a.tsv data/a.cls
+gsea cls ~/Downloads/1.tsv data/1.cls
 
-gsea gct ~/Downloads/b.tsv data/b.gct
+gsea gct ~/Downloads/1.tsv data/1.gct
 
-gsea gmt ~/Downloads/cd.json data/c.gmt data/d.gmt
+gsea gmt ~/Downloads/12.json data/1.gmt data/2.gmt
 ```
 
 ## Install
 
 We plan to sign this app for macOS soon.
-In the meantime, please [enable third-party apps](https://support.apple.com/en-us/102445#openanyway).
+In the meantime, [enable third-party apps](https://support.apple.com/en-us/102445#openanyway).
 
 Download and extract the latest [release](https://github.com/GSEA-MSigDB/GSEA.jl/releases/latest).
 
@@ -60,17 +46,15 @@ PATH=$(pwd)/gsea/bin:$PATH
 
 ## Build
 
-```julia
-]build
-```
-
 ```bash
-PATH=~/.julia/bin:$PATH
+cd test
+
+julia --project ../deps/build.jl app tarball
 ```
 
-## Contact Us
+## Contact us
 
-If you have any questions, issues, or concerns, please feel free to [open a GitHub issue](https://github.com/GSEA-MSigDB/GSEA.jl/issues/new/choose).
+If you have any questions, issues, or concerns, feel free to [open a GitHub issue](https://github.com/GSEA-MSigDB/GSEA.jl/issues/new/choose).
 
 ---
 
