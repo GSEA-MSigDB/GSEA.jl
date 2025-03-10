@@ -26,8 +26,4 @@ end
 # ---- #
 # TODO
 
-for () in ()
-
-    GSEA.Normalization.make!
-
-end
+GSEA.Normalization.make!

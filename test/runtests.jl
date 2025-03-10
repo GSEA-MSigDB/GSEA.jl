@@ -70,17 +70,15 @@ end
 
 # ---- #
 
-const J2 = joinpath(DA, "set.json")
-
-const T2 = joinpath(DA, "data.tsv")
-
-# ---- #
-
 const I1 = mkpath(joinpath(TE, "data_rank"))
 
 const I2 = mkpath(joinpath(TE, "user_rank"))
 
 const I3 = mkpath(joinpath(TE, "metric_rank"))
+
+const J2 = joinpath(DA, "set.json")
+
+const T2 = joinpath(DA, "data.tsv")
 
 # ---- #
 
@@ -143,7 +141,7 @@ end
 
 # ---- #
 
-const KE_ = (minimum = 15, maximum = 500, more_plots = "HALLMARK_UV_RESPONSE_DN;")
+const KE_ = minimum = 15, maximum = 500, more_plots = "HALLMARK_UV_RESPONSE_DN;"
 
 # ---- #
 
