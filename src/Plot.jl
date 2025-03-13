@@ -1,7 +1,5 @@
 module Plot
 
-using Printf: @sprintf
-
 using Nucleus
 
 using ..GSEA
@@ -109,7 +107,7 @@ function writ(ht, al, n1_, nu_, n2_, la = Dict{String, Any}(); a1 = "Low", a2 = 
                         "yref" => "paper",
                         "xref" => "paper",
                         "y" => 1.056,
-                        "text" => "Enrichment = <b>$(@sprintf "%.4g" en)</b>",
+                        "text" => "Enrichment = <b>$(Nucleus.Numbe.text_4(en))</b>",
                         "font" => Dict("size" => 24, "color" => "#000000"),
                         "showarrow" => false,
                     ),
@@ -160,7 +158,7 @@ function writ(pr, al, n1_, N, n3_, n2__, n4_, E, um = 2, la = Dict{String, Any}(
         n3 = n3_[i1]
 
         writ(
-            "$pr.$(Nucleus.Numbe.text(E[i2_])).$(n4_[n2]).$n3.html",
+            "$pr.$(Nucleus.Numbe.text_2(E[i2_])).$(n4_[n2]).$n3.html",
             al,
             n1_,
             N[:, n2],

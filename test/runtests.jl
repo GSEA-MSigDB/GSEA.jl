@@ -22,6 +22,8 @@ for na in (
 
 end
 
+@info "🎬 Testing GSEA"
+
 # ---- #
 
 using Nucleus
@@ -141,7 +143,7 @@ end
 
 # ---- #
 
-const KE_ = minimum = 15, maximum = 500, more_plots = "HALLMARK_UV_RESPONSE_DN;"
+const KE_ = (minimum = 15, maximum = 500, more_plots = "HALLMARK_UV_RESPONSE_DN;")
 
 # ---- #
 
