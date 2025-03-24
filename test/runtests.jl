@@ -103,7 +103,7 @@ const A1 = Nucleus.Table.rea(joinpath(I1, "result.tsv"))
 
 # ---- #
 
-function test_result(an, um)
+function test(an, um)
 
     @test size(an, 1) === um
 
@@ -120,7 +120,7 @@ GSEA.user_rank(
 
 const A2 = Nucleus.Table.rea(joinpath(I2, "result.tsv"))
 
-test_result(A2, 50)
+test(A2, 50)
 
 for (id, r1, r2, r3, r4) in (
     (45, "HALLMARK_PANCREAS_BETA_CELLS", -0.35266, -1.36616, 0.0200837),
@@ -159,7 +159,7 @@ const A3 = Nucleus.Table.rea(joinpath(I3, "metric.tsv"))
 
 const A4 = Nucleus.Table.rea(joinpath(I3, "result.tsv"))
 
-test_result(A4, 8)
+test(A4, 8)
 
 # ---- #
 

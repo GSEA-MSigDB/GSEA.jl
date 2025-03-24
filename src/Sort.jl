@@ -2,15 +2,15 @@ module Sort
 
 function make(an_, nu_)
 
-    id_ = findall(!isnan, nu_)
+    in_ = findall(!isnan, nu_)
 
-    an_ = an_[id_]
+    an_ = an_[in_]
 
-    nu_ = nu_[id_]
+    nu_ = nu_[in_]
 
-    sortperm!(id_, nu_; rev = true)
+    sortperm!(in_, nu_; rev = true)
 
-    an_[id_], nu_[id_]
+    an_[in_], nu_[in_]
 
 end
 

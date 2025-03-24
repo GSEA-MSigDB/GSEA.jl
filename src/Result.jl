@@ -6,17 +6,17 @@ using ..GSEA
 
 function writ(di, al, n1_, nu_, n3_, n2__, en_, R, um, n4_, a1, a2)
 
-    id_ = findall(!isnan, en_)
+    in_ = findall(!isnan, en_)
 
-    n3_ = n3_[id_]
+    n3_ = n3_[in_]
 
-    n2__ = n2__[id_]
+    n2__ = n2__[in_]
 
-    en_ = en_[id_]
+    en_ = en_[in_]
 
-    R = R[id_, :]
+    R = R[in_, :]
 
-    E = Matrix{Float64}(undef, lastindex(id_), 4)
+    E = Matrix{Float64}(undef, lastindex(in_), 4)
 
     E[:, 1] = en_
 
@@ -24,11 +24,11 @@ function writ(di, al, n1_, nu_, n3_, n2__, en_, R, um, n4_, a1, a2)
 
     E[:, 2] = en_
 
-    id_, pv_, qv_ = Nucleus.Significance.make(en_, R)
+    in_, pv_, qv_ = Nucleus.Significance.make(en_, R)
 
-    E[id_, 3] = pv_
+    E[in_, 3] = pv_
 
-    E[id_, 4] = qv_
+    E[in_, 4] = qv_
 
     Nucleus.Table.writ(
         joinpath(di, "result.tsv"),

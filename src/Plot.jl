@@ -12,7 +12,7 @@ function writ(ht, al, n1_, nu_, n2_, la = Dict{String, Any}(); a1 = "Low", a2 = 
 
     tr = Dict("mode" => "lines", "line" => Dict("width" => 0), "fill" => "tozeroy")
 
-    xc_ = collect(1:um)
+    xc_ = 1:um
 
     i1_ = findall(<(0), nu_)
 
