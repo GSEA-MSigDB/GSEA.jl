@@ -65,10 +65,7 @@ function writ(ht, al, n1_, nu_, n2_, la = Dict{String, Any}(); a1 = "Low", a2 = 
                 "marker" => Dict(
                     "symbol" => "line-ns",
                     "size" => 24,
-                    "line" => Dict(
-                        "width" => 2,
-                        "color" => Nucleus.Color.make("#000000", 0.8),
-                    ),
+                    "line" => Dict("width" => 2, "color" => "#000000cc"),
                 ),
                 "hoverinfo" => "x+text",
             ),
