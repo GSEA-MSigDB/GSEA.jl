@@ -6,17 +6,17 @@ function read_cls(cl)
 
     l1, l2, l3 = readlines(cl)
 
-    na = "Phenotype"
+    st = "Phenotype"
 
     l2 = l2[2:end]
 
     s3_ = split(l3)
 
-    na_ = map(id -> "Sample $id", eachindex(s3_))
+    st_ = map(id -> "Sample $id", eachindex(s3_))
 
     if l1 == "#numeric"
 
-        Nucleus.Table.make(na, l2, na_, [parse(Float64, st) for _ in 1:1, st in s3_])
+        Nucleus.Table.make(st, l2, st_, [parse(Float64, st) for _ in 1:1, st in s3_])
 
     else
 
@@ -30,7 +30,7 @@ function read_cls(cl)
 
         di = Dict(st => id for (id, st) in enumerate(s2_))
 
-        Nucleus.Table.make(na, join(s2_, '_'), na_, [di[st] for _ in 1:1, st in s3_])
+        Nucleus.Table.make(st, join(s2_, '_'), st_, [di[st] for _ in 1:1, st in s3_])
 
     end
 
@@ -50,11 +50,11 @@ function read_gmt(gm)
 
         sp_ = split(li, '\t')
 
-        na = sp_[1]
+        st = sp_[1]
 
-        @assert !haskey(di, na)
+        @assert !haskey(di, st)
 
-        di[na] = filter!(!isempty, sp_[3:end])
+        di[st] = filter!(!isempty, sp_[3:end])
 
     end
 

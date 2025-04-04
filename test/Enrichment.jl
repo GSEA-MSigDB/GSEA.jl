@@ -23,13 +23,17 @@ const B2_ = sample([false, true], Weights([0.9, 0.1]), lastindex(N2_))
 # 7.958 ns (0 allocations: 0 bytes)
 # 86.625 μs (0 allocations: 0 bytes)
 
-for (nu_, bo_, re) in ((N1_, B1_, (-0.25, 0.15625)), (N2_, B2_, nothing))
+for (nu_, bo_, r1, r2) in ((N1_, B1_, -0.25, 0.15625), (N2_, B2_, nothing, nothing))
 
     al = AL_[1]
 
-    @test isnothing(re) || GSEA.Enrichment.make_delta(al, nu_, bo_) === re
+    d0, d1 = GSEA.Enrichment.make_delta(al, nu_, bo_)
 
     #@btime GSEA.Enrichment.make_delta($al, $nu_, $bo_)
+
+    @test isnothing(r1) || d0 === r1
+
+    @test isnothing(r2) || d1 === r2
 
 end
 
@@ -38,13 +42,18 @@ end
 # 6.417 ns (0 allocations: 0 bytes)
 # 92.833 μs (0 allocations: 0 bytes)
 
-for (nu_, bo_, re) in ((N1_, B1_, (0.15625, 0.09615384615384615)), (N2_, B2_, nothing))
+for (nu_, bo_, r1, r2) in
+    ((N1_, B1_, 0.15625, 0.09615384615384615), (N2_, B2_, nothing, nothing))
 
     al = AL_[3]
 
-    @test isnothing(re) || GSEA.Enrichment.make_delta(al, nu_, bo_) === re
+    d1, d2 = GSEA.Enrichment.make_delta(al, nu_, bo_)
 
     #@btime GSEA.Enrichment.make_delta($al, $nu_, $bo_)
+
+    @test isnothing(r1) || d1 === r1
+
+    @test isnothing(r2) || d2 === r2
 
 end
 

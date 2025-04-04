@@ -10,25 +10,25 @@ struct DA2W end
 
 struct DA2W0W end
 
-function make(al)
+function make(st)
 
-    if al == "ks0"
+    if st == "ks0"
 
         KS0()
 
-    elseif al == "a0"
+    elseif st == "a0"
 
         A0()
 
-    elseif al == "da2"
+    elseif st == "da2"
 
         DA2()
 
-    elseif al == "da2w"
+    elseif st == "da2w"
 
         DA2W()
 
-    elseif al == "da2w0w"
+    elseif st == "da2w0w"
 
         DA2W0W()
 

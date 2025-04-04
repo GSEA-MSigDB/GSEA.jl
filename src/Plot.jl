@@ -4,11 +4,11 @@ using Nucleus
 
 using ..GSEA
 
-function writ(ht, al, n1_, nu_, n2_, la = Dict{String, Any}(); a1 = "Low", a2 = "High")
+function writ(ht, al, s1_, nu_, s2_, la = Dict{String, Any}(); t1 = "Low", t2 = "High")
 
-    n1_, nu_ = GSEA.Sort.make(n1_, nu_)
+    s1_, nu_ = GSEA.Sort.make(s1_, nu_)
 
-    um = lastindex(n1_)
+    um = lastindex(s1_)
 
     tr = Dict("mode" => "lines", "line" => Dict("width" => 0), "fill" => "tozeroy")
 
@@ -18,7 +18,7 @@ function writ(ht, al, n1_, nu_, n2_, la = Dict{String, Any}(); a1 = "Low", a2 = 
 
     i2_ = findall(>=(0), nu_)
 
-    bo_ = Nucleus.Collection.is_in(n1_, n2_)
+    bo_ = Nucleus.Collection.is_in(s1_, s2_)
 
     cu_ = Vector{Float64}(undef, um)
 
@@ -33,7 +33,7 @@ function writ(ht, al, n1_, nu_, n2_, la = Dict{String, Any}(); a1 = "Low", a2 = 
         "showarrow" => false,
     )
 
-    ax = um * 0.008
+    po = um * 0.008
 
     Nucleus.Plotly.writ(
         ht,
@@ -43,7 +43,7 @@ function writ(ht, al, n1_, nu_, n2_, la = Dict{String, Any}(); a1 = "Low", a2 = 
                 Dict(
                     "y" => nu_[i1_],
                     "x" => xc_[i1_],
-                    "text" => n1_[i1_],
+                    "text" => s1_[i1_],
                     "fillcolor" => Nucleus.Color.BL,
                 ),
             ),
@@ -52,7 +52,7 @@ function writ(ht, al, n1_, nu_, n2_, la = Dict{String, Any}(); a1 = "Low", a2 = 
                 Dict(
                     "y" => nu_[i2_],
                     "x" => xc_[i2_],
-                    "text" => n1_[i2_],
+                    "text" => s1_[i2_],
                     "fillcolor" => Nucleus.Color.RE,
                 ),
             ),
@@ -60,7 +60,7 @@ function writ(ht, al, n1_, nu_, n2_, la = Dict{String, Any}(); a1 = "Low", a2 = 
                 "yaxis" => "y2",
                 "y" => zeros(sum(bo_)),
                 "x" => xc_[bo_],
-                "text" => n1_[bo_],
+                "text" => s1_[bo_],
                 "mode" => "markers",
                 "marker" => Dict(
                     "symbol" => "line-ns",
@@ -75,7 +75,7 @@ function writ(ht, al, n1_, nu_, n2_, la = Dict{String, Any}(); a1 = "Low", a2 = 
                     "yaxis" => "y3",
                     "y" => cu_,
                     "x" => xc_,
-                    "text" => n1_,
+                    "text" => s1_,
                     "fillcolor" => "#07fa07",
                 ),
             ),
@@ -111,18 +111,18 @@ function writ(ht, al, n1_, nu_, n2_, la = Dict{String, Any}(); a1 = "Low", a2 = 
                     merge(
                         an,
                         Dict(
-                            "x" => 1 - ax,
+                            "x" => 1 - po,
                             "xanchor" => "right",
-                            "text" => a2,
+                            "text" => t2,
                             "font" => Dict("color" => Nucleus.Color.RE),
                         ),
                     ),
                     merge(
                         an,
                         Dict(
-                            "x" => um + ax,
+                            "x" => um + po,
                             "xanchor" => "left",
-                            "text" => a1,
+                            "text" => t1,
                             "font" => Dict("color" => Nucleus.Color.BL),
                         ),
                     ),
@@ -134,33 +134,33 @@ function writ(ht, al, n1_, nu_, n2_, la = Dict{String, Any}(); a1 = "Low", a2 = 
 
 end
 
-function writ(pr, al, n1_, N, n3_, n2__, n4_, E, um = 2, la = Dict{String, Any}(); ke_...)
+function writ(fi, al, s1_, s2_, N, s3_, st__, E, um = 2, la = Dict{String, Any}(); ke_...)
 
     i1_ = findall(en_ -> all(!isnan, en_), eachrow(E))
 
-    n3_ = n3_[i1_]
+    s3_ = s3_[i1_]
 
-    n2__ = n2__[i1_]
+    st__ = st__[i1_]
 
     E = E[i1_, :]
 
-    Nucleus.Table.writ("$pr.tsv", Nucleus.Table.make("Set", n3_, n4_, E))
+    Nucleus.Table.writ("$fi.tsv", Nucleus.Table.make("Set", s3_, s1_, E))
 
-    Nucleus.HeatPlot.writ("$pr.html", n3_, n4_, E, la)
+    Nucleus.HeatPlot.writ("$fi.html", s3_, s1_, E, la)
 
     for i2_ in CartesianIndices(E)[Nucleus.Extreme.index(vec(E), um)]
 
-        i1, n2 = Tuple(i2_)
+        i1, i2 = Tuple(i2_)
 
-        n3 = n3_[i1]
+        st = s3_[i1]
 
         writ(
-            "$pr.$(Nucleus.Numbe.text_2(E[i2_])).$(n4_[n2]).$n3.html",
+            "$fi.$(Nucleus.Numbe.text_2(E[i2_])).$(s1_[i2]).$st.html",
             al,
-            n1_,
-            N[:, n2],
-            n2__[i1],
-            Dict("title" => Dict("text" => n3));
+            s2_,
+            N[:, i2],
+            st__[i1],
+            Dict("title" => Dict("text" => st));
             ke_...,
         )
 

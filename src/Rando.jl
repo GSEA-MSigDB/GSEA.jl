@@ -10,21 +10,21 @@ using Nucleus
 
 using ..GSEA
 
-function make(u1, se, al, n1_, nu_, n2__; ke_...)
+function make(um, se, al, s1_, nu_, st__; ke_...)
 
-    R = Matrix{Float64}(undef, lastindex(n2__), u1)
+    R = Matrix{Float64}(undef, lastindex(st__), um)
 
-    u2_ = map(n2_ -> lastindex(intersect(n1_, n2_)), n2__)
+    um_ = map(s2_ -> lastindex(intersect(s1_, s2_)), st__)
 
     seed!(se)
 
-    @showprogress for id in 1:u1
+    @showprogress for id in 1:um
 
         R[:, id] = GSEA.Interface.make(
             al,
-            n1_,
+            s1_,
             nu_,
-            map(um -> sample(n1_, um; replace = false), u2_);
+            map(um -> sample(s1_, um; replace = false), um_);
             ke_...,
         )
 
@@ -34,19 +34,19 @@ function make(u1, se, al, n1_, nu_, n2__; ke_...)
 
 end
 
-function make(u1, se, al, n1_, fu, u1_, N, n2__; ke_...)
+function make(um, se, al, s1_, fu, bo_, N, st__; ke_...)
 
-    R = Matrix{Float64}(undef, lastindex(n2__), u1)
+    R = Matrix{Float64}(undef, lastindex(st__), um)
 
     seed!(se)
 
-    @showprogress for id in 1:u1
+    @showprogress for id in 1:um
 
         R[:, id] = GSEA.Interface.make(
             al,
-            n1_,
-            map(nu_ -> Nucleus.PairMap.make(fu, shuffle!(u1_), nu_), eachrow(N)),
-            n2__;
+            s1_,
+            map(nu_ -> Nucleus.PairMap.make(fu, shuffle!(bo_), nu_), eachrow(N)),
+            st__;
             ke_...,
         )
 

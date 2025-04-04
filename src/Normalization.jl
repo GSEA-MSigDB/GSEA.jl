@@ -37,15 +37,15 @@ function make!(al, en_, R)
 
     for i1 in axes(R, 1)
 
-        r1_, r2_ = Nucleus.Numbe.ge(R[i1, :])
+        ne_, po_ = Nucleus.Numbe.ge(R[i1, :])
 
-        m1 = mean(r1_)
+        m1 = mean(ne_)
 
-        m2 = mean(r2_)
+        m2 = mean(po_)
 
-        s1 = std(r1_)
+        s1 = std(ne_)
 
-        s2 = std(r2_)
+        s2 = std(po_)
 
         en_[i1] = make(al, en_[i1], m1, m2, s1, s2)
 

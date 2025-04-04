@@ -2,7 +2,7 @@ module GSEA
 
 # ----------------------------------------------------------------------------------------------- #
 
-for na in (
+for st in (
     "Algorithm",
     "Enrichment",
     "File",
@@ -14,7 +14,7 @@ for na in (
     "Sort",
 )
 
-    include("$na.jl")
+    include("$st.jl")
 
 end
 
@@ -32,13 +32,13 @@ Convert .cls to .tsv.
 """
 @cast function cls(tsv, cls)
 
-    an = File.read_cls(cls)
+    A = File.read_cls(cls)
 
-    na_ = names(an)
+    st_ = names(A)
 
     Nucleus.Table.writ(
         tsv,
-        Nucleus.Table.make(na_[1], an[1, 1], na_[2:end], Matrix(an[!, 2:end])),
+        Nucleus.Table.make(st_[1], A[1, 1], st_[2:end], Matrix(A[!, 2:end])),
     )
 
 end
@@ -53,11 +53,11 @@ Convert .gct to .tsv.
 """
 @cast function gct(tsv, gct)
 
-    an = File.read_gct(gct)
+    A = File.read_gct(gct)
 
     Nucleus.Table.writ(
         tsv,
-        Nucleus.Table.make("Feature", an[!, 1], names(an)[2:end], Matrix(an[!, 2:end])),
+        Nucleus.Table.make("Feature", A[!, 1], names(A)[2:end], Matrix(A[!, 2:end])),
     )
 
 end
@@ -114,11 +114,11 @@ Run data-rank (single-sample) GSEA.
 
     al = Algorithm.make(algorithm)
 
-    an = Nucleus.Table.rea(tsv)
+    A = Nucleus.Table.rea(tsv)
 
-    n1_ = an[!, 1]
+    st_ = A[!, 1]
 
-    N = Matrix(an[!, 2:end])
+    N = Matrix(A[!, 2:end])
 
     if !iszero(standard_deviation)
 
@@ -131,32 +131,32 @@ Run data-rank (single-sample) GSEA.
 
     di = Nucleus.Dictionary.rea(json)
 
-    n2__ = collect(values(di))
+    st__ = collect(values(di))
 
     Plot.writ(
         joinpath(directory, "result"),
         al,
-        n1_,
+        names(A)[2:end],
+        st_,
         N,
         collect(keys(di)),
-        n2__,
-        names(an)[2:end],
+        st__,
         hcat(
             (
                 Interface.make(
                     al,
-                    n1_,
+                    st_,
                     nu_,
-                    n2__;
-                    mi = minimum,
-                    ma = maximum,
-                    fr = fraction,
+                    st__;
+                    u1 = minimum,
+                    u2 = maximum,
+                    pr = fraction,
                 ) for nu_ in eachcol(N)
             )...,
         ),
         number_of_plots;
-        a1 = low,
-        a2 = high,
+        t1 = low,
+        t2 = high,
     )
 
 end
@@ -201,25 +201,25 @@ Run user-rank (pre-rank) GSEA.
     high = "High",
 )
 
-    n1_, nu_ = eachcol(Nucleus.Table.rea(tsv; select = [1, 2]))
+    st_, nu_ = eachcol(Nucleus.Table.rea(tsv; select = [1, 2]))
 
     al = Algorithm.make(algorithm)
 
     di = Nucleus.Dictionary.rea(json)
 
-    n2__ = collect(values(di))
+    st__ = collect(values(di))
 
-    ke_ = (mi = minimum, ma = maximum, fr = fraction)
+    ke_ = (u1 = minimum, u2 = maximum, pr = fraction)
 
     Result.writ(
         directory,
         al,
-        n1_,
+        st_,
         nu_,
         collect(keys(di)),
-        n2__,
-        Interface.make(al, n1_, nu_, n2__; ke_...),
-        Rando.make(number_of_permutations, seed, al, n1_, nu_, n2__; ke_...),
+        st__,
+        Interface.make(al, st_, nu_, st__; ke_...),
+        Rando.make(number_of_permutations, seed, al, st_, nu_, st__; ke_...),
         number_of_plots,
         split(more_plots, ';'),
         low,
@@ -276,15 +276,15 @@ Run metric-rank (standard) GSEA.
     high = "High",
 )
 
-    a1 = Nucleus.Table.rea(tsv1)
+    A1 = Nucleus.Table.rea(tsv1)
 
-    a2 = Nucleus.Table.rea(tsv2)
+    A2 = Nucleus.Table.rea(tsv2)
 
-    n1_ = convert(BitVector, collect(a1[1, 2:end]))
+    bo_ = convert(BitVector, collect(A1[1, 2:end]))
 
-    m1_ = a2[!, 1]
+    st_ = A2[!, 1]
 
-    N = Matrix(a2[!, indexin(names(a1)[2:end], names(a2))])
+    N = Matrix(A2[!, indexin(names(A1)[2:end], names(A2))])
 
     if !iszero(standard_deviation)
 
@@ -309,36 +309,36 @@ Run metric-rank (standard) GSEA.
 
     end
 
-    n2_ = map(n2_ -> Nucleus.PairMap.make(fu, n1_, n2_), eachrow(N))
+    nu_ = map(nu_ -> Nucleus.PairMap.make(fu, bo_, nu_), eachrow(N))
 
     Nucleus.Table.writ(
         joinpath(directory, "metric.tsv"),
-        Nucleus.Table.make("Feature", m1_, [metric], reshape(n2_, :, 1)),
+        Nucleus.Table.make("Feature", st_, [metric], reshape(nu_, :, 1)),
     )
 
     al = Algorithm.make(algorithm)
 
     di = Nucleus.Dictionary.rea(json)
 
-    m2__ = collect(values(di))
+    st__ = collect(values(di))
 
-    ke_ = (mi = minimum, ma = maximum, fr = fraction)
+    ke_ = (u1 = minimum, u2 = maximum, pr = fraction)
 
     Result.writ(
         directory,
         al,
-        m1_,
-        n2_,
+        st_,
+        nu_,
         collect(keys(di)),
-        m2__,
-        Interface.make(al, m1_, n2_, m2__; ke_...),
+        st__,
+        Interface.make(al, st_, nu_, st__; ke_...),
         if permutation == "set"
 
-            Rando.make(number_of_permutations, seed, al, m1_, n2_, m2__; ke_...)
+            Rando.make(number_of_permutations, seed, al, st_, nu_, st__; ke_...)
 
         elseif permutation == "sample"
 
-            Rando.make(number_of_permutations, seed, al, m1_, fu, n1_, N, m2__; ke_...)
+            Rando.make(number_of_permutations, seed, al, st_, fu, bo_, N, st__; ke_...)
 
         end,
         number_of_plots,
