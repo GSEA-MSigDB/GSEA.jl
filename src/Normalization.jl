@@ -12,7 +12,14 @@ function make(::Union{GSEA.Algorithm.KS0, GSEA.Algorithm.A0}, en, m1, m2, ::Real
 
 end
 
-function make(::Any, en, m1, m2, s1, s2)
+function make(
+    ::Union{GSEA.Algorithm.DA2, GSEA.Algorithm.DA2W, GSEA.Algorithm.DA2W0W},
+    en,
+    m1,
+    m2,
+    s1,
+    s2,
+)
 
     if en < 0
 

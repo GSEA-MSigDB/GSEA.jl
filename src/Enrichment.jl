@@ -26,7 +26,11 @@ function make_delta(::Union{GSEA.Algorithm.KS0, GSEA.Algorithm.A0}, nu_, bo_)
 
 end
 
-function make_delta(::Any, nu_, bo_)
+function make_delta(
+    ::Union{GSEA.Algorithm.DA2, GSEA.Algorithm.DA2W, GSEA.Algorithm.DA2W0W},
+    nu_,
+    bo_,
+)
 
     s1 = s2 = 0.0
 
