@@ -28,7 +28,7 @@ function read_cls(cl)
 
         @assert parse(Int, s1_[2]) == lastindex(s2_) == lastindex(unique(s3_))
 
-        di = Dict(st => id for (id, st) in enumerate(s2_))
+        di = Dict(s2_[id] => id for id in eachindex(s2_))
 
         Nucleus.Table.make(st, join(s2_, '_'), st_, [di[st] for _ in 1:1, st in s3_])
 
