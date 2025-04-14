@@ -34,7 +34,7 @@ function make(um, se, al, s1_, nu_, st__; ke_...)
 
 end
 
-function make(um, se, al, s1_, fu, bo_, N, st__; ke_...)
+function make(um, se, al, st_, fu, bo_, N, st__; ke_...)
 
     R = Matrix{Float64}(undef, lastindex(st__), um)
 
@@ -44,7 +44,7 @@ function make(um, se, al, s1_, fu, bo_, N, st__; ke_...)
 
         R[:, id] = GSEA.Interface.make(
             al,
-            s1_,
+            st_,
             map(nu_ -> Nucleus.PairMap.make(fu, shuffle!(bo_), nu_), eachrow(N)),
             st__;
             ke_...,

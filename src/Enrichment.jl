@@ -68,7 +68,7 @@ function make!(al::GSEA.Algorithm.KS0, nu_, bo_, cu_ = nothing)
 
     d0, d1 = make_delta(al, nu_, bo_)
 
-    c2 = a2 = c1 = 0.0
+    c1 = a2 = c2 = 0.0
 
     for id in eachindex(nu_)
 
@@ -120,7 +120,7 @@ end
 
 function make!(al::GSEA.Algorithm.DA2, nu_, bo_, cu_ = nothing)
 
-    d1, _ = make_delta(al, nu_, bo_)
+    de, _ = make_delta(al, nu_, bo_)
 
     r1 = r2 = eps()
 
@@ -136,7 +136,7 @@ function make!(al::GSEA.Algorithm.DA2, nu_, bo_, cu_ = nothing)
 
         l2 = make_eps(l2 - e2)
 
-        r1 += e1 = bo_[id] ? d1 * abs(nu_[id]) : 0.0
+        r1 += e1 = bo_[id] ? de * abs(nu_[id]) : 0.0
 
         r2 += e2
 

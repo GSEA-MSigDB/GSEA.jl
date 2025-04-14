@@ -48,13 +48,13 @@ function read_gmt(gm)
 
     for li in eachline(gm)
 
-        sp_ = split(li, '\t')
+        st_ = split(li, '\t')
 
-        st = sp_[1]
+        st = st_[1]
 
         @assert !haskey(di, st)
 
-        di[st] = filter!(!isempty, sp_[3:end])
+        di[st] = filter!(!isempty, st_[3:end])
 
     end
 

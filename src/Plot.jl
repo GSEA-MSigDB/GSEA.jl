@@ -136,26 +136,26 @@ end
 
 function writ(fi, al, s1_, s2_, N, s3_, st__, E, um = 2, la = Dict{String, Any}(); ke_...)
 
-    i1_ = findall(en_ -> all(!isnan, en_), eachrow(E))
+    in_ = findall(en_ -> all(!isnan, en_), eachrow(E))
 
-    s3_ = s3_[i1_]
+    s3_ = s3_[in_]
 
-    st__ = st__[i1_]
+    st__ = st__[in_]
 
-    E = E[i1_, :]
+    E = E[in_, :]
 
     Nucleus.Table.writ("$fi.tsv", Nucleus.Table.make("Set", s3_, s1_, E))
 
     Nucleus.HeatPlot.writ("$fi.html", s3_, s1_, E, la)
 
-    for i2_ in CartesianIndices(E)[Nucleus.Extreme.index(vec(E), um)]
+    for in_ in CartesianIndices(E)[Nucleus.Extreme.index(vec(E), um)]
 
-        i1, i2 = Tuple(i2_)
+        i1, i2 = Tuple(in_)
 
         st = s3_[i1]
 
         writ(
-            "$fi.$(Nucleus.Numbe.text_2(E[i2_])).$(s1_[i2]).$st.html",
+            "$fi.$(Nucleus.Numbe.text_2(E[in_])).$(s1_[i2]).$st.html",
             al,
             s2_,
             N[:, i2],
