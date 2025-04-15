@@ -4,7 +4,7 @@ using GSEA
 
 # ----------------------------------------------------------------------------------------------- #
 
-for na in (
+for st in (
     "Algorithm",
     "Enrichment",
     "File",
@@ -16,9 +16,9 @@ for na in (
     "Sort",
 )
 
-    @info "🎬 Testing $na"
+    @info "🎬 Testing $st"
 
-    run(`julia --project $na.jl`)
+    run(`julia --project $st.jl`)
 
 end
 
