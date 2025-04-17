@@ -35,7 +35,6 @@ function make(
 
     end
 
-    # TODO: Check.
     1 + (en - m3) / (s3 * 3)
 
 end

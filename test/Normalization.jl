@@ -1,27 +1,32 @@
+using Test: @test
+
 using GSEA
 
 include("_.jl")
 
 # ---- #
 
-# 383.667 μs (1500 allocations: 2.26 MiB)
-# 420.459 μs (1200 allocations: 2.91 MiB)
+for (en, m1, m2, s1, s2, re) in ((-1, -2, 2, 3, 3, -0.5), (1, 2, 2, 3, 3, 0.5))
 
-for al in (AL_[1], AL_[end])
-
-    en_ = randn(100)
-
-    R = randn(100, 1000)
-
-    GSEA.Normalization.make!(al, en_, R)
-
-    # TODO: Test.
-
-    #@btime GSEA.Normalization.make!($al, $en_, $R)
+    @test GSEA.Normalization.make(AL_[1], en, m1, m2, s1, s2) === re
 
 end
 
 # ---- #
-# TODO
 
-GSEA.Normalization.make!
+for (en, m1, m2, s1, s2, re) in ((-1, -2, 2, 3, 3, nothing), (1, 2, 2, 3, 3, nothing))
+
+    @warn "TODO" GSEA.Normalization.make(AL_[3], en, m1, m2, s1, s2)
+
+end
+
+# ---- #
+
+# 290.208 μs (1500 allocations: 2.34 MiB)
+# 247.042 μs (1200 allocations: 2.99 MiB)
+
+for al in (AL_[1], AL_[3])
+
+    #@btime GSEA.Normalization.make!($al, $(randn(100)), $(randn(100, 1000)))
+
+end
