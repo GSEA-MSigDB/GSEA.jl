@@ -75,16 +75,16 @@ end
 
 # ---- #
 
+# 10.553 ns (0 allocations: 0 bytes)
 # 10.343 ns (0 allocations: 0 bytes)
-# 10.343 ns (0 allocations: 0 bytes)
-# 84.414 ns (0 allocations: 0 bytes)
+# 84.371 ns (0 allocations: 0 bytes)
 # 85.883 ns (0 allocations: 0 bytes)
-# 154.327 ns (0 allocations: 0 bytes)
+# 154.379 ns (0 allocations: 0 bytes)
 # 22.166 μs (0 allocations: 0 bytes)
-# 21.583 μs (0 allocations: 0 bytes)
+# 21.541 μs (0 allocations: 0 bytes)
 # 127.125 μs (0 allocations: 0 bytes)
-# 135.042 μs (0 allocations: 0 bytes)
-# 224.500 μs (0 allocations: 0 bytes)
+# 135.000 μs (0 allocations: 0 bytes)
+# 224.208 μs (0 allocations: 0 bytes)
 
 C1_, IN_ = GSEA.Sort.make(C1_, IN_)
 

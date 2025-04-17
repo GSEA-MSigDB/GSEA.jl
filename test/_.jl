@@ -20,15 +20,13 @@ GSEA.Algorithm.DA2(),
 GSEA.Algorithm.DA2W(),
 GSEA.Algorithm.DA2W0W()
 
-const C1_ = ['A', '2', '3', '4', '5', '6', '7', '8', '9', 'X', 'J', 'Q', 'K']
-#const C1_ = ["Aa", "22", "33", "44", "55", "66", "77", "88", "99", "Xx", "Jj", "Qq", "Kk"]
+const C1_ = ["Aa", "22", "33", "44", "55", "66", "77", "88", "99", "Xx", "Jj", "Qq", "Kk"]
 
 const IN_ = [-6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6.0]
 
-const C2_ = ['A', 'K']
-#const C2_ = ["Aa", "Kk"]
+const C2_ = ["Aa", "Kk", "Jo"]
 
-const C3_ = ['6', '7', '8']
+const C3_ = ["66", "77", "88", "Jo"]
 
 const DA = pkgdir(GSEA, "data")
 

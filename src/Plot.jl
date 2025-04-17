@@ -134,7 +134,7 @@ function writ(ht, al, s1_, nu_, s2_, la = Dict{String, Any}(); t1 = "Low", t2 = 
 
 end
 
-function writ(fi, al, s1_, s2_, N, s3_, st__, E, um = 2, la = Dict{String, Any}(); ke_...)
+function writ(fi, al, s2_, s1_, N, s3_, st__, E, um = 2, la = Dict{String, Any}(); ke_...)
 
     in_ = findall(en_ -> all(!isnan, en_), eachrow(E))
 
@@ -144,22 +144,35 @@ function writ(fi, al, s1_, s2_, N, s3_, st__, E, um = 2, la = Dict{String, Any}(
 
     E = E[in_, :]
 
-    Nucleus.Table.writ("$fi.tsv", Nucleus.Table.make("Set", s3_, s1_, E))
+    Nucleus.Table.writ("$fi.tsv", Nucleus.Table.make("Set", s3_, s2_, E))
 
-    Nucleus.HeatPlot.writ("$fi.html", s3_, s1_, E, la)
+    Nucleus.HeatPlot.writ(
+        "$fi.html",
+        s3_,
+        s2_,
+        E,
+        Nucleus.Dictionary.make(
+            Dict(
+                "title" => Dict("text" => "Enrichment"),
+                "yaxis" => Dict("title" => Dict("text" => "Set")),
+                "xaxis" => Dict("title" => Dict("text" => "Sample")),
+            ),
+            la,
+        ),
+    )
 
     for in_ in CartesianIndices(E)[Nucleus.Extreme.index(vec(E), um)]
 
-        i1, i2 = Tuple(in_)
+        i3, i2 = Tuple(in_)
 
-        st = s3_[i1]
+        st = s3_[i3]
 
         writ(
-            "$fi.$(Nucleus.Numbe.text_2(E[in_])).$(s1_[i2]).$st.html",
+            "$fi.$(Nucleus.Numbe.text_2(E[in_])).$(s2_[i2]).$st.html",
             al,
-            s2_,
+            s1_,
             N[:, i2],
-            st__[i1],
+            st__[i3],
             Dict("title" => Dict("text" => st));
             ke_...,
         )
