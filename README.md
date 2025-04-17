@@ -2,7 +2,6 @@
 
 This is the new GSEA.
 Built from scratch.
-It runs 1,000 times faster, delivers 99% more accurate results, and creates beautiful plots.
 It’s amazing!
 
 ## Get started
