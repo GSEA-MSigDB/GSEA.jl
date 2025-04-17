@@ -1,7 +1,5 @@
 using GSEA
 
-# TODO
-
 # ---- #
 
 GSEA.Rando.make
