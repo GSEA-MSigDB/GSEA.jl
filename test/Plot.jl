@@ -12,8 +12,11 @@ end
 
 # ---- #
 
-for (s1_, nu_, s2_) in
-    ((C1_, IN_, C2_), (C1_, IN_, C3_), (GE_, EX_, D2["COLLER_MYC_TARGETS_UP"])),
+for (s1_, nu_, s2_) in (
+        (C1_, IN_, C2_),
+        (C1_, IN_, ["66", "77", "88", "Jo"]),
+        (GE_, EX_, D2["COLLER_MYC_TARGETS_UP"]),
+    ),
     al in AL_
 
     GSEA.Plot.writ("", al, s1_, nu_, s2_, make(al))
