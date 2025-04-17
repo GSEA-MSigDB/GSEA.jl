@@ -6,7 +6,8 @@ include("_.jl")
 
 # ---- #
 
-for (an_, nu_, r1, r2) in (('a':'f', [1, NaN, 3, NaN, 5], ['e', 'c', 'a'], [5, 3, 1.0]),)
+for (an_, nu_, r1, r2) in
+    ((["Aa", "Bb", "Cc", "Dd", "Ee"], [1, NaN, 3, NaN, 5], ["Ee", "Cc", "Aa"], [5, 3, 1.0]),)
 
     an_, nu_ = GSEA.Sort.make(an_, nu_)
 
