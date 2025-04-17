@@ -6,9 +6,9 @@ include("_.jl")
 
 # ---- #
 
-# 10.000 μs (114 allocations: 6.84 KiB)
-# 10.291 μs (116 allocations: 7.17 KiB)
-# 380.708 μs (7160 allocations: 473.16 KiB)
+# 10.500 μs (114 allocations: 6.84 KiB)
+# 10.708 μs (116 allocations: 7.17 KiB)
+# 271.958 μs (7160 allocations: 497.98 KiB)
 
 for (ba, r1, r2) in (
     ("1.cls", "CNTRL_LPS", [1, 1, 1, 2, 2, 2]),
@@ -22,40 +22,30 @@ for (ba, r1, r2) in (
 
     cl = joinpath(DA, ba)
 
-    an = GSEA.File.read_cls(cl)
+    A = GSEA.File.read_cls(cl)
 
     #@btime GSEA.File.read_cls($cl)
 
-    @test names(an) == vcat("Phenotype", map(id -> "Sample $id", 1:(size(an, 2) - 1)))
+    @test names(A) == vcat("Phenotype", map(id -> "Sample $id", 1:(size(A, 2) - 1)))
 
-    @test an[!, 1][] === r1
+    @test A[!, 1][] === r1
 
-    N = Matrix(an[!, 2:end])
-
-    @test eltype(N) === eltype(r2)
-
-    @test N[1, eachindex(r2)] == r2
+    @test is_egal(Vector(A[1, 2:(1 + lastindex(r2))]), r2)
 
 end
 
 # ---- #
-
-# 101.095 ms (71705 allocations: 23.67 MiB)
 
 for (ba, re) in (("1.gct", (13321, 190)),)
 
-    gc = joinpath(DA, ba)
-
-    @test size(GSEA.File.read_gct(gc)) === re
-
-    #@btime GSEA.File.read_gct($gc)
+    @test size(GSEA.File.read_gct(joinpath(DA, ba))) === re
 
 end
 
 # ---- #
 
-# 287.583 μs (7984 allocations: 1.12 MiB)
-# 22.150 ms (537839 allocations: 62.61 MiB)
+# 183.208 μs (7984 allocations: 1.16 MiB)
+# 15.071 ms (537839 allocations: 66.19 MiB)
 
 for (ba, re) in (("1.gmt", 50), ("2.gmt", 5529))
 

@@ -6,23 +6,23 @@ include("_.jl")
 
 # ---- #
 
-# 3.420 ms (35 allocations: 1.94 MiB)
-# 2.980 ms (35 allocations: 1.94 MiB)
-# 12.289 ms (35 allocations: 1.94 MiB)
-# 13.302 ms (35 allocations: 1.94 MiB)
-# 21.676 ms (35 allocations: 1.94 MiB)
+# 1.781 ms (35 allocations: 1.97 MiB)
+# 1.777 ms (35 allocations: 1.97 MiB)
+# 7.483 ms (35 allocations: 1.97 MiB)
+# 7.907 ms (35 allocations: 1.97 MiB)
+# 12.868 ms (35 allocations: 1.97 MiB)
 
-const N3_ = collect(keys(D1))
+const ST_ = collect(keys(D1))
 
-const N2__ = collect(values(D1))
+const ST__ = collect(values(D1))
 
 for al in AL_
 
-    en_ = GSEA.Interface.make(al, GE_, EX_, N2__)
+    en_ = GSEA.Interface.make(al, GE_, EX_, ST__)
 
-    #@btime GSEA.Interface.make($al, GE_, EX_, N2__)
+    @btime GSEA.Interface.make($al, GE_, EX_, ST__)
 
-    @test N3_[sortperm(en_)][(end - 1):end] ==
+    @test ST_[sortperm(en_)][(end - 1):end] ==
           ["HALLMARK_MYC_TARGETS_V1", "HALLMARK_MYC_TARGETS_V2"]
 
 end
