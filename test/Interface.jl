@@ -20,7 +20,7 @@ for al in AL_
 
     en_ = GSEA.Interface.make(al, GE_, EX_, ST__)
 
-    @btime GSEA.Interface.make($al, GE_, EX_, ST__)
+    #@btime GSEA.Interface.make($al, GE_, EX_, ST__)
 
     @test ST_[sortperm(en_)][(end - 1):end] ==
           ["HALLMARK_MYC_TARGETS_V1", "HALLMARK_MYC_TARGETS_V2"]
