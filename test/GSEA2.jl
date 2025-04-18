@@ -56,21 +56,43 @@ const A2 = Nucleus.Table.rea(joinpath(O2, "result.tsv"))
 @test size(A2, 1) === 50
 
 for (id, r1, r2, r3, r4) in (
-    (45, "HALLMARK_PANCREAS_BETA_CELLS", -0.35266, -1.36616, 0.0200837),
-    (33, "HALLMARK_PROTEIN_SECRETION", -0.272096, -1.25207, 0.0686192),
-    (36, "HALLMARK_MYC_TARGETS_V1", 0.603356, 2.73998, 0.000262812),
-    (10, "HALLMARK_MYC_TARGETS_V2", 0.866579, 3.36557, 0.000262812),
+    (
+        45,
+        "HALLMARK_PANCREAS_BETA_CELLS",
+        -0.3526604388911228,
+        -1.424806498309897,
+        0.01718494271685761,
+    ),
+    (
+        33,
+        "HALLMARK_PROTEIN_SECRETION",
+        -0.27209592258934645,
+        -1.324926701473525,
+        0.03764320785597381,
+    ),
+    (
+        36,
+        "HALLMARK_MYC_TARGETS_V1",
+        0.6033555857451218,
+        2.719800888801976,
+        0.00026469031233456857,
+    ),
+    (
+        10,
+        "HALLMARK_MYC_TARGETS_V2",
+        0.8665786760826208,
+        3.27574664008412,
+        0.00026469031233456857,
+    ),
 )
 
     @test A2[id, 1] === r1
 
-    @test isapprox(A2[id, 2], r2; atol = 1e-6)
+    @test A2[id, 2] === r2
 
-    # TODO
+    @test A2[id, 3] === r3
 
-    #@test isapprox(A2[id, 3], r3; atol = 1e-5)
-
-    #@test isapprox(A2[id, 4], r4; atol = 1e-7)
+    @test A2[id, 4] === r4
 
 end
 

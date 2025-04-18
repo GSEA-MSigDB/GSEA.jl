@@ -20,7 +20,7 @@ function writ(di, al, s1_, nu_, s2_, st__, en_, R, um, s3_, t1, t2)
 
     E[:, 1] = en_
 
-    GSEA.Normalization.make!(al, en_, R)
+    GSEA.Normalization.make!(en_, R)
 
     E[:, 2] = en_
 
