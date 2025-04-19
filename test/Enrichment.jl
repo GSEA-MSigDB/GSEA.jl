@@ -10,6 +10,15 @@ include("_.jl")
 
 # ---- #
 
+# 4.166 ns (0 allocations: 0 bytes)
+# 49.291 μs (0 allocations: 0 bytes)
+# 3.916 ns (0 allocations: 0 bytes)
+# 55.958 μs (0 allocations: 0 bytes)
+
+const A1 = AL_[1]
+
+const A3 = AL_[3]
+
 const NU_ = [-2, -1, -0.5, 0, 0, 0.5, 1, 2, 3.4]
 
 const BO_ = [true, false, true, false, true, true, false, false, true]
@@ -18,40 +27,20 @@ const R1_ = randn(100000)
 
 const R2_ = sample([false, true], Weights([0.9, 0.1]), lastindex(R1_))
 
-# ---- #
+for (al, nu_, bo_, r1, r2) in (
+    (A1, NU_, BO_, -0.25, 0.15625),
+    (A1, R1_, R2_, nothing, nothing),
+    (A3, NU_, BO_, 0.15625, 0.09615384615384615),
+    (A3, R1_, R2_, nothing, nothing),
+)
 
-function test(al, nu_, bo_, r1, r2)
+    d1, d2 = GSEA.Enrichment.make_delta($al, nu_, bo_)
 
-    d1, d2 = GSEA.Enrichment.make_delta(al, nu_, bo_)
-
-    #@btime GSEA.Enrichment.make_delta($al, $nu_, $bo_)
+    @btime GSEA.Enrichment.make_delta($al, $nu_, $bo_)
 
     @test isnothing(r1) || d1 === r1
 
     @test isnothing(r2) || d2 === r2
-
-end
-
-# ---- #
-
-# 4.166 ns (0 allocations: 0 bytes)
-# 49.291 μs (0 allocations: 0 bytes)
-
-for (nu_, bo_, r1, r2) in ((NU_, BO_, -0.25, 0.15625), (R1_, R2_, nothing, nothing))
-
-    test(AL_[1], nu_, bo_, r1, r2)
-
-end
-
-# ---- #
-
-# 3.916 ns (0 allocations: 0 bytes)
-# 55.958 μs (0 allocations: 0 bytes)
-
-for (nu_, bo_, r1, r2) in
-    ((NU_, BO_, 0.15625, 0.09615384615384615), (R1_, R2_, nothing, nothing))
-
-    test(AL_[3], nu_, bo_, r1, r2)
 
 end
 
