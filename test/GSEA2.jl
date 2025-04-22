@@ -13,6 +13,7 @@ const JS = joinpath(DA, "set.json")
 const T1 = joinpath(DA, "data.tsv")
 
 # ---- #
+# TODO
 
 const O1 = mkpath(joinpath(TE, "data_rank"))
 
@@ -41,6 +42,7 @@ const A1 = Nucleus.Table.rea(joinpath(O1, "result.tsv"))
 const KE_ = (minimum = 15, maximum = 500, more_plots = "HALLMARK_UV_RESPONSE_DN")
 
 # ---- #
+# TODO
 
 const O2 = mkpath(joinpath(TE, "user_rank"))
 
@@ -105,6 +107,7 @@ const T2 = joinpath(DA, "target.tsv")
 const T3 = joinpath(O3, "metric.tsv")
 
 # ---- #
+# TODO
 
 GSEA.metric_rank(O3, T2, T1, JS; KE_...)
 
