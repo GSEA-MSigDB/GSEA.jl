@@ -2,8 +2,6 @@ using Test: @test
 
 using GSEA
 
-include("_.jl")
-
 # ---- #
 
 for (en, m1, m2, re) in ((-1, -2, 2, -0.5), (1, 2, 2, 0.5))

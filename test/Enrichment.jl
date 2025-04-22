@@ -1,10 +1,10 @@
-using Test: @test
-
-using GSEA
-
 using StatsBase: Weights, sample
 
+using Test: @test
+
 using Nucleus
+
+using GSEA
 
 include("_.jl")
 
@@ -26,6 +26,8 @@ const BO_ = [true, false, true, false, true, true, false, false, true]
 const R1_ = randn(100000)
 
 const R2_ = sample([false, true], Weights([0.9, 0.1]), lastindex(R1_))
+
+# TODO: Split
 
 for (al, nu_, bo_, r1, r2) in (
     (A1, NU_, BO_, -0.25, 0.15625),
@@ -63,6 +65,7 @@ for (po, re) in ((-EP, EP), (0, EP))
 end
 
 # ---- #
+# TODO: Split
 
 # 10.553 ns (0 allocations: 0 bytes)
 # 10.343 ns (0 allocations: 0 bytes)

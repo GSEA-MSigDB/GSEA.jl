@@ -1,8 +1,8 @@
 using Test: @test
 
-using GSEA
-
 using Nucleus
+
+using GSEA
 
 include("_.jl")
 
