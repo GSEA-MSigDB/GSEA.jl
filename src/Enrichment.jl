@@ -56,11 +56,11 @@ function make_delta(d1, d2)
 
 end
 
-function make_eps(po)
+function make_eps(nu)
 
     ep = eps()
 
-    po < ep ? ep : po
+    nu < ep ? ep : nu
 
 end
 
