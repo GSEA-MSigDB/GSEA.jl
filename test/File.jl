@@ -26,7 +26,7 @@ for (ba, r1, r2) in (
 
     @btime GSEA.File.read_cls($cl)
 
-    @test names(A) == vcat("Phenotype", map(id -> "Sample $id", 1:(size(A, 2) - 1)))
+    @test is_egal(names(A), vcat("Phenotype", map(id -> "Sample $id", 1:(size(A, 2) - 1))))
 
     @test A[!, 1][] === r1
 
@@ -44,8 +44,8 @@ end
 
 # ---- #
 
-# 183.208 μs (7984 allocations: 1.16 MiB)
-# 15.071 ms (537839 allocations: 66.19 MiB)
+# 181.959 μs (7984 allocations: 1.16 MiB)
+# 15.765 ms (537839 allocations: 66.19 MiB)
 
 for (ba, re) in (("1.gmt", 50), ("2.gmt", 5529))
 
@@ -53,6 +53,6 @@ for (ba, re) in (("1.gmt", 50), ("2.gmt", 5529))
 
     @test length(GSEA.File.read_gmt(gm)) === re
 
-    #@btime GSEA.File.read_gmt($gm)
+    @btime GSEA.File.read_gmt($gm)
 
 end
