@@ -24,7 +24,7 @@ for (ba, r1, r2) in (
 
     A = GSEA.File.read_cls(cl)
 
-    #@btime GSEA.File.read_cls($cl)
+    @btime GSEA.File.read_cls($cl)
 
     @test names(A) == vcat("Phenotype", map(id -> "Sample $id", 1:(size(A, 2) - 1)))
 
