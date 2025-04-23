@@ -13,6 +13,7 @@ Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
 [compat]
 Comonicon = "1.0.8"
+Nucleus = "0.1.0"
 ProgressMeter = "1.10.2"
 Random = "1.11.0"
 StatsBase = "0.34.4"
