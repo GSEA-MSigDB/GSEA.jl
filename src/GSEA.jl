@@ -87,26 +87,26 @@ Run data-rank (single-sample) GSEA.
 
 # Options
 
-  - `--standard-deviation`: 0. For column-wise normalization. 0 skips normalization.
-  - `--exponent`: 1.
+  - `--standard-deviation`: For column-wise normalization. 0 skips normalization.
+  - `--exponent`:
   - `--algorithm`: "ks0" | "a0" | "da2" | "da2w" | "da2w0w".
-  - `--minimum`: 1. The minimum set size.
-  - `--maximum`: 1000. The maximum set size.
-  - `--fraction`: 0. The minimum fraction of set members present.
-  - `--number-of-plots`: 2.
-  - `--low`: "Low".
-  - `--high`: "High".
+  - `--minimum`: The minimum set size.
+  - `--maximum`: The maximum set size.
+  - `--fraction`: The minimum fraction of set members present.
+  - `--number-of-plots`:
+  - `--low`:
+  - `--high`:
 """
 @cast function data_rank(
     directory,
     tsv,
     json;
-    standard_deviation::Real = 0,
-    exponent::Real = 1,
+    standard_deviation::Float64 = 0.0,
+    exponent::Float64 = 1.0,
     algorithm = "ks0",
     minimum::Int = 1,
     maximum::Int = 1000,
-    fraction::Real = 0,
+    fraction::Float64 = 0.0,
     number_of_plots::Int = 2,
     low = "Low",
     high = "High",
@@ -172,27 +172,27 @@ Run user-rank (pre-rank) GSEA.
 
 # Options
 
-  - `--exponent`: 1.
+  - `--exponent`:
   - `--algorithm`: "ks0" | "a0" | "da2" | "da2w" | "da2w0w".
-  - `--minimum`: 1. The minimum set size.
-  - `--maximum`: 1000. The maximum set size.
-  - `--fraction`: 0. The minimum fraction of set members present.
-  - `--number-of-permutations`: 100.
-  - `--seed`: 20150603.
-  - `--number-of-plots`: 2.
-  - `--more-plots`: "". ;-separated set names.
-  - `--low`: "Low".
-  - `--high`: "High".
+  - `--minimum`: The minimum set size.
+  - `--maximum`: The maximum set size.
+  - `--fraction`: The minimum fraction of set members present.
+  - `--number-of-permutations`:
+  - `--seed`:
+  - `--number-of-plots`:
+  - `--more-plots`: ;-separated set names.
+  - `--low`:
+  - `--high`:
 """
 @cast function user_rank(
     directory,
     tsv,
     json;
-    exponent::Real = 1,
+    exponent::Float64 = 1.0,
     algorithm = "ks0",
     minimum::Int = 1,
     maximum::Int = 1000,
-    fraction::Real = 0,
+    fraction::Float64 = 0.0,
     number_of_permutations::Int = 100,
     seed::Int = 20150603,
     number_of_plots::Int = 2,
@@ -240,33 +240,33 @@ Run metric-rank (standard) GSEA.
 
 # Options
 
-  - `--standard-deviation`: 0. For column-wise normalization. 0 skips normalization.
+  - `--standard-deviation`: For column-wise normalization. 0 skips normalization.
   - `--metric`: "signal-to-noise-ratio" | "mean-difference" | "log-ratio".
-  - `--exponent`: 1.
+  - `--exponent`:
   - `--algorithm`: "ks0" | "a0" | "da2" | "da2w" | "da2w0w".
-  - `--minimum`: 1. The minimum set size.
-  - `--maximum`: 1000. The maximum set size.
-  - `--fraction`: 0. The minimum fraction of set members present.
+  - `--minimum`: The minimum set size.
+  - `--maximum`: The maximum set size.
+  - `--fraction`: The minimum fraction of set members present.
   - `--permutation`: "sample" | "set".
-  - `--number-of-permutations`: 100.
-  - `--seed`: 20150603.
-  - `--number-of-plots`: 2.
-  - `--more-plots`: "". ;-separated set names.
-  - `--low`: "Low".
-  - `--high`: "High".
+  - `--number-of-permutations`:
+  - `--seed`:
+  - `--number-of-plots`:
+  - `--more-plots`: ;-separated set names.
+  - `--low`:
+  - `--high`:
 """
 @cast function metric_rank(
     directory,
     tsv1,
     tsv2,
     json;
-    standard_deviation::Real = 0,
+    standard_deviation::Float64 = 0.0,
     metric = "signal-to-noise-ratio",
-    exponent::Real = 1,
+    exponent::Float64 = 1.0,
     algorithm = "ks0",
     minimum::Int = 1,
     maximum::Int = 1000,
-    fraction::Real = 0,
+    fraction::Float64 = 0.0,
     permutation = "sample",
     number_of_permutations::Int = 100,
     seed::Int = 20150603,
