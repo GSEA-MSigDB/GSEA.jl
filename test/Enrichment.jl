@@ -34,7 +34,7 @@ for (nu_, bo_, r0, r1) in ((IN_, B1_, -1 / 11, E1), (R1_, R2_, nothing, nothing)
 
     d0, d1 = GSEA.Enrichment.make_delta(A1, nu_, bo_)
 
-    @btime GSEA.Enrichment.make_delta(A1, $nu_, $bo_)
+    #@btime GSEA.Enrichment.make_delta(A1, $nu_, $bo_)
 
     @test isnothing(r0) || d0 === r0
 
@@ -51,7 +51,7 @@ for (nu_, bo_, r1, r2) in ((IN_, B1_, E1, E2), (R1_, R2_, nothing, nothing))
 
     d1, d2 = GSEA.Enrichment.make_delta(A3, nu_, bo_)
 
-    @btime GSEA.Enrichment.make_delta(A3, $nu_, $bo_)
+    #@btime GSEA.Enrichment.make_delta(A3, $nu_, $bo_)
 
     @test isnothing(r1) || d1 === r1
 
@@ -83,9 +83,9 @@ end
 
 C1_, IN_ = GSEA.Sort.make(C1_, IN_)
 
-GE_, EX_ = GSEA.Sort.make(GE_, EX_)
+G1_, EX_ = GSEA.Sort.make(G1_, EX_)
 
-const B2_ = Nucleus.Collection.is_in(GE_, D2["COLLER_MYC_TARGETS_UP"])
+const B2_ = Nucleus.Collection.is_in(G1_, G2_)
 
 # ---- #
 
@@ -93,7 +93,7 @@ function test(al, nu_, bo_, re)
 
     @test isapprox(GSEA.Enrichment.make!(al, nu_, bo_), re; atol = 1e-15)
 
-    @btime GSEA.Enrichment.make!($al, $nu_, $bo_)
+    #@btime GSEA.Enrichment.make!($al, $nu_, $bo_)
 
 end
 

@@ -8,7 +8,15 @@ include("_.jl")
 
 # ---- #
 
-const TS = joinpath(TE, "_.tsv")
+function test(wr, ba, re)
+
+    ts = joinpath(TE, "_.tsv")
+
+    wr(ts, joinpath(DA, ba))
+
+    @test size(Nucleus.Table.rea(ts)) === re
+
+end
 
 # ---- #
 
@@ -18,9 +26,7 @@ for (ba, re) in (
     ("CCLE_mRNA_20Q2_no_haem_phen.cls", (1, 900)),
 )
 
-    GSEA.cls(TS, joinpath(DA, ba))
-
-    @test size(Nucleus.Table.rea(TS)) === re
+    test(GSEA.cls, ba, re)
 
 end
 
@@ -28,9 +34,7 @@ end
 
 for (ba, re) in (("1.gct", (13321, 190)),)
 
-    GSEA.gct(TS, joinpath(DA, ba))
-
-    @test size(Nucleus.Table.rea(TS)) === re
+    test(GSEA.gct, ba, re)
 
 end
 
@@ -38,7 +42,7 @@ end
 
 const JS = joinpath(TE, "_.json")
 
-for (ba, re) in (("1.gmt", 50), ("2.gmt", 5529))
+for (ba, re) in (("h.all.v7.1.symbols.gmt", 50), ("c2.all.v7.1.symbols.gmt", 5529))
 
     GSEA.gmt(JS, joinpath(DA, ba))
 

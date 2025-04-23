@@ -24,7 +24,7 @@ for (ba, r1, r2) in (
 
     A = GSEA.File.read_cls(cl)
 
-    @btime GSEA.File.read_cls($cl)
+    #@btime GSEA.File.read_cls($cl)
 
     @test is_egal(names(A), vcat("Phenotype", map(id -> "Sample $id", 1:(size(A, 2) - 1))))
 
@@ -47,12 +47,12 @@ end
 # 181.959 μs (7984 allocations: 1.16 MiB)
 # 15.765 ms (537839 allocations: 66.19 MiB)
 
-for (ba, re) in (("1.gmt", 50), ("2.gmt", 5529))
+for (ba, re) in (("h.all.v7.1.symbols.gmt", 50), ("c2.all.v7.1.symbols.gmt", 5529))
 
     gm = joinpath(DA, ba)
 
     @test length(GSEA.File.read_gmt(gm)) === re
 
-    @btime GSEA.File.read_gmt($gm)
+    #@btime GSEA.File.read_gmt($gm)
 
 end

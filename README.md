@@ -1,7 +1,7 @@
 # Gene Set Enrichment Analysis (GSEA) 🏔️
 
 This is the new GSEA.
-Built from scratch.
+Rebuilt from scratch.
 It runs 1,000 times faster, delivers 99% more accurate results, and creates beautiful plots.
 It’s amazing!
 
@@ -30,7 +30,7 @@ gsea cls ~/Downloads/1.tsv data/1.cls
 
 gsea gct ~/Downloads/1.tsv data/1.gct
 
-gsea gmt ~/Downloads/12.json data/1.gmt data/2.gmt
+gsea gmt ~/Downloads/12.json data/h.all.v7.1.symbols.gmt data/c2.all.v7.1.symbols.gmt
 ```
 
 ## Install

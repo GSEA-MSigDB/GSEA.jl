@@ -8,14 +8,14 @@ for st in (
     "Algorithm",
     "Enrichment",
     "File",
+    "GSEA1",
+    "GSEA2",
     "Interface",
     "Normalization",
     "Plot",
     "Rando",
     "Result",
     "Sort",
-    "GSEA1",
-    "GSEA2",
 )
 
     @info "🎬 Testing $st"
