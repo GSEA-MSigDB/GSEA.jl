@@ -1,5 +1,3 @@
-using GSEA
-
 include("_.jl")
 
 # ---- #

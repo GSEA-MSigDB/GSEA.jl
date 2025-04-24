@@ -1,6 +1,6 @@
-using GSEA
-
 using Nucleus
+
+using GSEA
 
 const TE = joinpath(tempdir(), "GSEA")
 

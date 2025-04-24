@@ -1,7 +1,5 @@
 using Test: @test
 
-using GSEA
-
 include("_.jl")
 
 # ---- #
