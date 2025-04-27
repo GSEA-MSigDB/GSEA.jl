@@ -12,11 +12,11 @@ include("_.jl")
 
 for al in AL_
 
-    en_ = GSEA.Interface.make(al, G1_, EX_, HA__)
+    en_ = GSEA.Interface.make(al, S3_, N2_, ST__)
 
-    #@btime GSEA.Interface.make($al, G1_, EX_, HA__)
+    #@btime GSEA.Interface.make($al, S3_, N2_, ST__)
 
-    @test HA_[sortperm(en_)][49:50] ==
+    @test S5_[sortperm(en_)][49:50] ==
           ["HALLMARK_MYC_TARGETS_V1", "HALLMARK_MYC_TARGETS_V2"]
 
 end

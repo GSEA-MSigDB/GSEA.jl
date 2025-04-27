@@ -20,21 +20,21 @@ GSEA.Algorithm.DA2(),
 GSEA.Algorithm.DA2W(),
 GSEA.Algorithm.DA2W0W()
 
-const C1_ = ["Aa", "22", "33", "44", "55", "66", "77", "88", "99", "Xx", "Jj", "Qq", "Kk"]
+const S1_ = ["Aa", "22", "33", "44", "55", "66", "77", "88", "99", "Xx", "Jj", "Qq", "Kk"]
 
-const IN_ = [-6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6.0]
+const N1_ = [-6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6.0]
 
-const C2_ = ["Aa", "Kk", "Jo"]
+const S2_ = ["Aa", "Kk", "Jo"]
 
 const DA = pkgdir(GSEA, "data")
 
-const G1_, EX_ = eachcol(Nucleus.Table.rea(joinpath(DA, "myc.tsv"); select = [1, 2]))
+const S3_, N2_ = eachcol(Nucleus.Table.rea(joinpath(DA, "myc.tsv"); select = [1, 2]))
 
-const G2_ =
+const S4_ =
     GSEA.File.read_gmt(joinpath(DA, "c2.all.v7.1.symbols.gmt"))["COLLER_MYC_TARGETS_UP"]
 
-const HA = GSEA.File.read_gmt(joinpath(DA, "h.all.v7.1.symbols.gmt"))
+const DI = GSEA.File.read_gmt(joinpath(DA, "h.all.v7.1.symbols.gmt"))
 
-const HA_ = collect(keys(HA))
+const S5_ = collect(keys(DI))
 
-const HA__ = collect(values(HA))
+const ST__ = collect(values(DI))

@@ -12,10 +12,10 @@ const T3 = joinpath(DA, "metric.tsv")
 
 const JS = joinpath(DA, "set.json")
 
-const O1, O2, O3, O4, O5 =
+const D1, D2, D3, D4, D5 =
     (mkpath(joinpath(TE, ba)) for ba in ("da", "us", "me", "us2", "me2"))
 
-const T4 = joinpath(O3, "metric.tsv")
+const T4 = joinpath(D3, "metric.tsv")
 
 function rea(di)
 
@@ -26,9 +26,9 @@ end
 # ---- #
 # TODO
 
-GSEA.data_rank(O1, T2, JS; minimum = 15, maximum = 500)
+GSEA.data_rank(D1, T2, JS; minimum = 15, maximum = 500)
 
-const A1 = rea(O1)
+const A1 = rea(D1)
 
 @test size(A1) === (8, 10)
 
@@ -51,9 +51,9 @@ const A1 = rea(O1)
 # ---- #
 # TODO
 
-GSEA.user_rank(O2, T3, JS)
+GSEA.user_rank(D2, T3, JS)
 
-const A2 = rea(O2)
+const A2 = rea(D2)
 
 @test size(A2) === (50, 5)
 
@@ -99,7 +99,7 @@ end
 # ---- #
 # TODO
 
-GSEA.metric_rank(O3, T1, T2, JS)
+GSEA.metric_rank(D3, T1, T2, JS)
 
 const A4 = Nucleus.Table.rea(T4)
 
@@ -109,20 +109,20 @@ const A4 = Nucleus.Table.rea(T4)
 
 @test is_egal(sort(A4, 2)[[1, end], 2], [-1.8372355409610066, 1.7411005104346835])
 
-const A3 = rea(O3)
+const A3 = rea(D3)
 
 @test size(A3) === (50, 5)
 
 # ---- #
 
-GSEA.user_rank(O4, T4, JS)
+GSEA.user_rank(D4, T4, JS)
 
-const A5 = rea(O4)
+const A5 = rea(D4)
 
 @test is_egal(A5[!, 1:2], A3[!, 1:2])
 
 # ---- #
 
-GSEA.metric_rank(O5, T1, T2, JS; permutation = "set")
+GSEA.metric_rank(D5, T1, T2, JS; permutation = "set")
 
-@test is_egal(rea(O5), A5)
+@test is_egal(rea(D5), A5)
