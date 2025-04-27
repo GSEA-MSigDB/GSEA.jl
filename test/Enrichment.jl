@@ -23,35 +23,37 @@ const R2_ = sample([false, true], Weights([0.9, 0.1]), lastindex(R1_))
 
 # ---- #
 
-# 5.708 ns (0 allocations: 0 bytes)
-# 49.250 μs (0 allocations: 0 bytes)
+function test(al, nu_, bo_, r1, r2)
 
-for (nu_, bo_, r0, r1) in ((N1_, B1_, -1 / 11, D1), (R1_, R2_, nothing, nothing))
+    d1, d2 = GSEA.Enrichment.make_delta(al, nu_, bo_)
 
-    d0, d1 = GSEA.Enrichment.make_delta(A1, nu_, bo_)
-
-    #@btime GSEA.Enrichment.make_delta(A1, $nu_, $bo_)
-
-    @test isnothing(r0) || d0 === r0
+    #@btime GSEA.Enrichment.make_delta($al, $nu_, $bo_)
 
     @test isnothing(r1) || d1 === r1
+
+    @test isnothing(r2) || d2 === r2
 
 end
 
 # ---- #
 
-# 5.250 ns (0 allocations: 0 bytes)
+# 5.708 ns (0 allocations: 0 bytes)
+# 49.208 μs (0 allocations: 0 bytes)
+
+for (nu_, bo_, r0, r1) in ((N1_, B1_, -1 / 11, D1), (R1_, R2_, nothing, nothing))
+
+    test(A1, nu_, bo_, r0, r1)
+
+end
+
+# ---- #
+
+# 5.500 ns (0 allocations: 0 bytes)
 # 55.958 μs (0 allocations: 0 bytes)
 
 for (nu_, bo_, r1, r2) in ((N1_, B1_, D1, D2), (R1_, R2_, nothing, nothing))
 
-    d1, d2 = GSEA.Enrichment.make_delta(A3, nu_, bo_)
-
-    #@btime GSEA.Enrichment.make_delta(A3, $nu_, $bo_)
-
-    @test isnothing(r1) || d1 === r1
-
-    @test isnothing(r2) || d2 === r2
+    test(A3, nu_, bo_, r1, r2)
 
 end
 
@@ -65,11 +67,11 @@ end
 
 # ---- #
 
-const P1 = eps()
+const EP = eps()
 
-const P2 = P1 * 2
+const PO = EP * 2
 
-for (nu, re) in ((-1, P1), (0, P1), (P2, P2))
+for (nu, re) in ((-1, EP), (0, EP), (PO, PO))
 
     @test GSEA.Enrichment.make_eps(nu) === re
 
@@ -95,8 +97,8 @@ end
 
 # ---- #
 
-# 10.594 ns (0 allocations: 0 bytes)
-# 22.125 μs (0 allocations: 0 bytes)
+# 10.375 ns (0 allocations: 0 bytes)
+# 22.166 μs (0 allocations: 0 bytes)
 
 for (nu_, bo_, re) in ((N1_, B1_, -0.5), (N2_, B2_, 0.7651927829281453))
 
@@ -106,8 +108,8 @@ end
 
 # ---- #
 
-# 10.375 ns (0 allocations: 0 bytes)
-# 21.541 μs (0 allocations: 0 bytes)
+# 10.343 ns (0 allocations: 0 bytes)
+# 21.458 μs (0 allocations: 0 bytes)
 
 for (nu_, bo_, re) in ((N1_, B1_, 0), (N2_, B2_, 0.41482514169516305))
 
@@ -117,8 +119,8 @@ end
 
 # ---- #
 
-# 84.501 ns (0 allocations: 0 bytes)
-# 127.166 μs (0 allocations: 0 bytes)
+# 84.457 ns (0 allocations: 0 bytes)
+# 127.167 μs (0 allocations: 0 bytes)
 
 for (nu_, bo_, re) in ((N1_, B1_, 0), (N2_, B2_, 1.2297916337424049))
 
@@ -128,8 +130,8 @@ end
 
 # ---- #
 
-# 85.927 ns (0 allocations: 0 bytes)
-# 135.250 μs (0 allocations: 0 bytes)
+# 85.932 ns (0 allocations: 0 bytes)
+# 135.292 μs (0 allocations: 0 bytes)
 
 for (nu_, bo_, re) in ((N1_, B1_, 0), (N2_, B2_, 1.1161382190540838))
 
@@ -139,8 +141,8 @@ end
 
 # ---- #
 
-# 154.637 ns (0 allocations: 0 bytes)
-# 224.834 μs (0 allocations: 0 bytes)
+# 154.939 ns (0 allocations: 0 bytes)
+# 224.916 μs (0 allocations: 0 bytes)
 
 for (nu_, bo_, re) in ((N1_, B1_, 0), (N2_, B2_, 1.1181841586127337))
 

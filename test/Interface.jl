@@ -4,11 +4,11 @@ include("_.jl")
 
 # ---- #
 
-# 1.765 ms (35 allocations: 1.97 MiB)
-# 1.767 ms (35 allocations: 1.97 MiB)
-# 7.232 ms (35 allocations: 1.97 MiB)
-# 7.690 ms (35 allocations: 1.97 MiB)
-# 12.543 ms (35 allocations: 1.97 MiB)
+# 1.777 ms (35 allocations: 1.97 MiB)
+# 1.795 ms (35 allocations: 1.97 MiB)
+# 7.602 ms (35 allocations: 1.97 MiB)
+# 7.994 ms (35 allocations: 1.97 MiB)
+# 12.888 ms (35 allocations: 1.97 MiB)
 
 for al in AL_
 

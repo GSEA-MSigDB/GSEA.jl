@@ -4,9 +4,9 @@ include("_.jl")
 
 # ---- #
 
-# 10.500 μs (114 allocations: 6.84 KiB)
+# 10.458 μs (114 allocations: 6.84 KiB)
 # 10.708 μs (116 allocations: 7.17 KiB)
-# 271.958 μs (7160 allocations: 497.98 KiB)
+# 266.792 μs (7160 allocations: 497.98 KiB)
 
 for (ba, r1, r2) in (
     ("1.cls", "CNTRL_LPS", [1, 1, 1, 2, 2, 2]),
@@ -42,8 +42,8 @@ end
 
 # ---- #
 
-# 181.959 μs (7984 allocations: 1.16 MiB)
-# 15.765 ms (537839 allocations: 66.19 MiB)
+# 181.500 μs (7986 allocations: 1.16 MiB)
+# 15.302 ms (537841 allocations: 66.19 MiB)
 
 for (ba, re) in (("h.all.v7.1.symbols.gmt", 50), ("c2.all.v7.1.symbols.gmt", 5529))
 

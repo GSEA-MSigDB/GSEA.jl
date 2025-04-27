@@ -101,17 +101,17 @@ end
 
 GSEA.metric_rank(D3, T1, T2, JS)
 
-const A4 = Nucleus.Table.rea(T4)
+const A3 = Nucleus.Table.rea(T4)
 
-@test size(A4) === (1000, 2)
+@test size(A3) === (1000, 2)
 
-@test is_egal(names(A4), ["Feature", "signal-to-noise-ratio"])
+@test is_egal(names(A3), ["Feature", "signal-to-noise-ratio"])
 
-@test is_egal(sort(A4, 2)[[1, end], 2], [-1.8372355409610066, 1.7411005104346835])
+@test is_egal(sort(A3, 2)[[1, end], 2], [-1.8372355409610066, 1.7411005104346835])
 
-const A3 = rea(D3)
+const A4 = rea(D3)
 
-@test size(A3) === (50, 5)
+@test size(A4) === (50, 5)
 
 # ---- #
 
@@ -119,7 +119,7 @@ GSEA.user_rank(D4, T4, JS)
 
 const A5 = rea(D4)
 
-@test is_egal(A5[!, 1:2], A3[!, 1:2])
+@test is_egal(A5[!, 1:2], A4[!, 1:2])
 
 # ---- #
 

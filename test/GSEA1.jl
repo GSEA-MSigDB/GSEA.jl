@@ -4,11 +4,11 @@ include("_.jl")
 
 # ---- #
 
-function test(wr, ba, re)
+function test(fu, ba, re)
 
     ts = joinpath(TE, "_.tsv")
 
-    wr(ts, joinpath(DA, ba))
+    fu(ts, joinpath(DA, ba))
 
     @test size(Nucleus.Table.rea(ts)) === re
 
