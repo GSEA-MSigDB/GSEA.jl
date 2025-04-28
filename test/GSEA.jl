@@ -4,13 +4,57 @@ include("_.jl")
 
 # ---- #
 
+function test(fu, ba, re)
+
+    ts = joinpath(TE, "_.tsv")
+
+    fu(ts, joinpath(DA, ba))
+
+    @test size(Nucleus.Table.rea(ts)) === re
+
+end
+
+# ---- #
+
+for (ba, re) in (
+    ("1.cls", (1, 7)),
+    ("GSE76137.cls", (1, 7)),
+    ("CCLE_mRNA_20Q2_no_haem_phen.cls", (1, 900)),
+)
+
+    test(GSEA.cls, ba, re)
+
+end
+
+# ---- #
+
+for (ba, re) in (("1.gct", (13321, 190)),)
+
+    test(GSEA.gct, ba, re)
+
+end
+
+# ---- #
+
+const J1 = joinpath(TE, "_.json")
+
+for (ba, re) in (("h.all.v7.1.symbols.gmt", 50), ("c2.all.v7.1.symbols.gmt", 5529))
+
+    GSEA.gmt(J1, joinpath(DA, ba))
+
+    @test length(Nucleus.Dictionary.rea(J1)) === re
+
+end
+
+# ---- #
+
 const T1 = joinpath(DA, "target.tsv")
 
 const T2 = joinpath(DA, "data.tsv")
 
 const T3 = joinpath(DA, "metric.tsv")
 
-const JS = joinpath(DA, "set.json")
+const J2 = joinpath(DA, "set.json")
 
 const D1, D2, D3, D4, D5 =
     (mkpath(joinpath(TE, ba)) for ba in ("da", "us", "me", "us2", "me2"))
@@ -26,7 +70,7 @@ end
 # ---- #
 # TODO
 
-GSEA.data_rank(D1, T2, JS; minimum = 15, maximum = 500)
+GSEA.data_rank(D1, T2, J2; minimum = 15, maximum = 500)
 
 const A1 = rea(D1)
 
@@ -51,7 +95,7 @@ const A1 = rea(D1)
 # ---- #
 # TODO
 
-GSEA.user_rank(D2, T3, JS)
+GSEA.user_rank(D2, T3, J2)
 
 const A2 = rea(D2)
 
@@ -92,14 +136,14 @@ for (id, r1, r2) in (
 
     @test A2[id, 1] === r1
 
-    @test is_egal(Vector(A2[id, 2:end]), r2)
+    @test is_egal(collect(A2[id, 2:end]), r2)
 
 end
 
 # ---- #
 # TODO
 
-GSEA.metric_rank(D3, T1, T2, JS)
+GSEA.metric_rank(D3, T1, T2, J2)
 
 const A3 = Nucleus.Table.rea(T4)
 
@@ -115,7 +159,7 @@ const A4 = rea(D3)
 
 # ---- #
 
-GSEA.user_rank(D4, T4, JS)
+GSEA.user_rank(D4, T4, J2)
 
 const A5 = rea(D4)
 
@@ -123,6 +167,6 @@ const A5 = rea(D4)
 
 # ---- #
 
-GSEA.metric_rank(D5, T1, T2, JS; permutation = "set")
+GSEA.metric_rank(D5, T1, T2, J2; permutation = "set")
 
 @test is_egal(rea(D5), A5)

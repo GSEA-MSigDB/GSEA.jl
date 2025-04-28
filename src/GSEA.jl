@@ -122,10 +122,11 @@ Run data-rank (single-sample) GSEA.
 
     if !iszero(standard_deviation)
 
-        foreach(
-            nu_ -> Nucleus.Normalization.update_0_clamp!(nu_, standard_deviation),
-            eachcol(N),
-        )
+        for nu_ in eachcol(N)
+
+            Nucleus.Normalization.update_0_clamp!(nu_, standard_deviation)
+
+        end
 
     end
 
@@ -288,10 +289,11 @@ Run metric-rank (standard) GSEA.
 
     if !iszero(standard_deviation)
 
-        foreach(
-            nu_ -> Nucleus.Normalization.update_0_clamp!(nu_, standard_deviation),
-            eachcol(N),
-        )
+        for nu_ in eachcol(N)
+
+            Nucleus.Normalization.update_0_clamp!(nu_, standard_deviation)
+
+        end
 
     end
 
