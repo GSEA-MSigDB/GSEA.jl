@@ -60,13 +60,13 @@ function writ(ht, al, s1_, nu_, s2_, la = Dict{String, Any}(); t1 = "Low", t2 = 
                 "yaxis" => "y2",
                 "y" => zeros(sum(bo_)),
                 "x" => xc_[bo_],
-                "text" => s1_[bo_],
                 "mode" => "markers",
                 "marker" => Dict(
                     "symbol" => "line-ns",
                     "size" => 24,
                     "line" => Dict("width" => 2, "color" => "#000000cc"),
                 ),
+                "text" => s1_[bo_],
                 "hoverinfo" => "x+text",
             ),
             merge(
