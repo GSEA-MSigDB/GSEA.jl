@@ -142,18 +142,10 @@ Run data-rank (single-sample) GSEA.
         N,
         collect(keys(di)),
         st__,
-        hcat(
-            (
-                Interface.make(
-                    al,
-                    st_,
-                    nu_,
-                    st__;
-                    u1 = minimum,
-                    u2 = maximum,
-                    pr = fraction,
-                ) for nu_ in eachcol(N)
-            )...,
+        reduce(
+            hcat,
+            Interface.make(al, st_, nu_, st__; u1 = minimum, u2 = maximum, pr = fraction)
+            for nu_ in eachcol(N)
         ),
         number_of_plots;
         t1 = low,

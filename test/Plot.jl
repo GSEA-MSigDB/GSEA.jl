@@ -32,7 +32,7 @@ for al in AL_
         N,
         S5_,
         ST__,
-        hcat((GSEA.Interface.make(al, S3_, nu_, ST__) for nu_ in eachcol(N))...),
+        reduce(hcat, GSEA.Interface.make(al, S3_, nu_, ST__) for nu_ in eachcol(N)),
         1,
         make(al);
         t2 = "High Expression",
