@@ -27,8 +27,8 @@ for al in AL_
     GSEA.Plot.writ(
         joinpath(TE, "$al"),
         al,
-        map(id -> "Sa $id", axes(N, 2)),
         S3_,
+        map(id -> "Sa $id", axes(N, 2)),
         N,
         S5_,
         ST__,

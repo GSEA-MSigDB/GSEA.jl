@@ -134,7 +134,7 @@ function writ(ht, al, s1_, nu_, s2_, la = Dict{String, Any}(); t1 = "Low", t2 = 
 
 end
 
-function writ(fi, al, s2_, s1_, N, s3_, st__, E, um = 2, la = Dict{String, Any}(); ke_...)
+function writ(fi, al, s1_, s2_, N, s3_, st__, E, um = 2, la = Dict{String, Any}(); ke_...)
 
     in_ = findall(en_ -> all(!isnan, en_), eachrow(E))
 

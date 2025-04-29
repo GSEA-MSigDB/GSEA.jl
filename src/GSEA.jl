@@ -76,6 +76,22 @@ Merge .gmts into .json.
 
 end
 
+function update!(N, st)
+
+    if iszero(st)
+
+        return
+
+    end
+
+    for nu_ in eachcol(N)
+
+        Nucleus.Normalization.update_0_clamp!(nu_, st)
+
+    end
+
+end
+
 """
 Run data-rank (single-sample) GSEA.
 
@@ -120,15 +136,7 @@ Run data-rank (single-sample) GSEA.
 
     N = Matrix(A[!, 2:end])
 
-    if !iszero(standard_deviation)
-
-        for nu_ in eachcol(N)
-
-            Nucleus.Normalization.update_0_clamp!(nu_, standard_deviation)
-
-        end
-
-    end
+    update!(N, standard_deviation)
 
     di = Nucleus.Dictionary.rea(json)
 
@@ -137,8 +145,8 @@ Run data-rank (single-sample) GSEA.
     Plot.writ(
         joinpath(directory, "result"),
         al,
-        names(A)[2:end],
         st_,
+        names(A)[2:end],
         N,
         collect(keys(di)),
         st__,
@@ -279,15 +287,7 @@ Run metric-rank (standard) GSEA.
 
     N = Matrix(A2[!, indexin(names(A1)[2:end], names(A2))])
 
-    if !iszero(standard_deviation)
-
-        for nu_ in eachcol(N)
-
-            Nucleus.Normalization.update_0_clamp!(nu_, standard_deviation)
-
-        end
-
-    end
+    update!(N, standard_deviation)
 
     fu = if metric == "mean-difference"
 
