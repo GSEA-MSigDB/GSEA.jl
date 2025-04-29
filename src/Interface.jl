@@ -4,7 +4,7 @@ using Nucleus
 
 using ..GSEA
 
-function make(al, s1_, nu_, st__; u1 = 1, u2 = 1000, pr = 0)
+function make(al, s1_, nu_, st__; mi = 1, ma = 1000, pr = 0)
 
     s1_, nu_ = GSEA.Sort.make(s1_, nu_)
 
@@ -23,7 +23,7 @@ function make(al, s1_, nu_, st__; u1 = 1, u2 = 1000, pr = 0)
         um = sum(bo_)
 
         en_[id] =
-            um < u1 || u2 < um || um / lastindex(s2_) < pr ? NaN :
+            um < mi || ma < um || um / lastindex(s2_) < pr ? NaN :
             GSEA.Enrichment.make!(al, nu_, bo_)
 
         fill!(bo_, false)

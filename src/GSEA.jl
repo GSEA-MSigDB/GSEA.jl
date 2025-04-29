@@ -152,7 +152,7 @@ Run data-rank (single-sample) GSEA.
         st__,
         reduce(
             hcat,
-            Interface.make(al, st_, nu_, st__; u1 = minimum, u2 = maximum, pr = fraction)
+            Interface.make(al, st_, nu_, st__; mi = minimum, ma = maximum, pr = fraction)
             for nu_ in eachcol(N)
         ),
         number_of_plots;
@@ -210,7 +210,7 @@ Run user-rank (pre-rank) GSEA.
 
     st__ = collect(values(di))
 
-    ke_ = (u1 = minimum, u2 = maximum, pr = fraction)
+    ke_ = (mi = minimum, ma = maximum, pr = fraction)
 
     Result.writ(
         directory,
@@ -316,7 +316,7 @@ Run metric-rank (standard) GSEA.
 
     st__ = collect(values(di))
 
-    ke_ = (u1 = minimum, u2 = maximum, pr = fraction)
+    ke_ = (mi = minimum, ma = maximum, pr = fraction)
 
     Result.writ(
         directory,
