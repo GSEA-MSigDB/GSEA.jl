@@ -136,14 +136,6 @@ end
 
 function writ(fi, al, s1_, s2_, N, s3_, st__, E, um = 2, la = Dict{String, Any}(); ke_...)
 
-    in_ = findall(en_ -> all(!isnan, en_), eachrow(E))
-
-    s3_ = s3_[in_]
-
-    st__ = st__[in_]
-
-    E = E[in_, :]
-
     Nucleus.Table.writ("$fi.tsv", Nucleus.Table.make("Set", s3_, s2_, E))
 
     Nucleus.HeatPlot.writ(
@@ -160,6 +152,14 @@ function writ(fi, al, s1_, s2_, N, s3_, st__, E, um = 2, la = Dict{String, Any}(
             la,
         ),
     )
+
+    in_ = findall(en_ -> all(!isnan, en_), eachrow(E))
+
+    s3_ = s3_[in_]
+
+    st__ = st__[in_]
+
+    E = E[in_, :]
 
     for in_ in CartesianIndices(E)[Nucleus.Extreme.index(vec(E), um)]
 

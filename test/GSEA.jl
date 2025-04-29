@@ -36,9 +36,13 @@ end
 
 # ---- #
 
+const UM = 50
+
+# ---- #
+
 const J1 = joinpath(TE, "_.json")
 
-for (ba, re) in (("h.all.v7.1.symbols.gmt", 50), ("c2.all.v7.1.symbols.gmt", 5529))
+for (ba, re) in (("h.all.v7.1.symbols.gmt", UM), ("c2.all.v7.1.symbols.gmt", 5529))
 
     GSEA.gmt(J1, joinpath(DA, ba))
 
@@ -74,7 +78,9 @@ GSEA.data_rank(D1, T2, J2; minimum = 15, maximum = 500)
 
 const A1 = rea(D1)
 
-@test size(A1) === (8, 10)
+@test size(A1) === (UM, 10)
+
+A1 = A1[findall(nu_ -> !any(isnan, nu_), eachrow(Matrix(A1[!, 2:end]))), :]
 
 @test is_egal(
     A1[!, 1],
@@ -99,7 +105,7 @@ GSEA.user_rank(D2, T3, J2)
 
 const A2 = rea(D2)
 
-@test size(A2) === (50, 5)
+@test size(A2) === (UM, 5)
 
 for (id, r1, r2) in (
     (
@@ -155,7 +161,7 @@ const A3 = Nucleus.Table.rea(T4)
 
 const A4 = rea(D3)
 
-@test size(A4) === (50, 5)
+@test size(A4) === (UM, 5)
 
 # ---- #
 
