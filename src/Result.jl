@@ -4,27 +4,17 @@ using Nucleus
 
 using ..GSEA
 
-function writ(di, al, s1_, nu_, s2_, st__, en_, R, um, s3_, t1, t2)
+function writ(di, al, s1_, nu_, s2_, st__, en_, N, um, s3_, t1, t2)
 
-    in_ = findall(!isnan, en_)
-
-    s2_ = s2_[in_]
-
-    st__ = st__[in_]
-
-    en_ = en_[in_]
-
-    R = R[in_, :]
-
-    E = Matrix{Float64}(undef, lastindex(in_), 4)
+    E = Matrix{Float64}(undef, lastindex(s2_), 4)
 
     E[:, 1] = en_
 
-    GSEA.Normalization.make!(en_, R)
+    GSEA.Normalization.make!(en_, N)
 
     E[:, 2] = en_
 
-    in_, pv_, qv_ = Nucleus.Significance.make(en_, R)
+    in_, pv_, qv_ = Nucleus.Significance.make(en_, N)
 
     E[in_, 3] = pv_
 
@@ -39,6 +29,16 @@ function writ(di, al, s1_, nu_, s2_, st__, en_, R, um, s3_, t1, t2)
             E,
         ),
     )
+
+    in_ = findall(!isnan, en_)
+
+    s2_ = s2_[in_]
+
+    st__ = st__[in_]
+
+    en_ = en_[in_]
+
+    N = N[in_, :]
 
     for id in unique!(
         vcat(Nucleus.Extreme.index(E[:, 1], um), filter!(!isnothing, indexin(s3_, s2_))),
