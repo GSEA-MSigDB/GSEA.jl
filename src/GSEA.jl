@@ -281,7 +281,7 @@ Run metric-rank (standard) GSEA.
 
     A2 = Nucleus.Table.rea(tsv2)
 
-    bo_ = convert(BitVector, collect(A1[1, 2:end]))
+    bo_::Vector{Bool} = collect(A1[1, 2:end])
 
     st_ = A2[!, 1]
 

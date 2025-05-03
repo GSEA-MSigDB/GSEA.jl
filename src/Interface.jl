@@ -10,7 +10,7 @@ function make(al, s1_, nu_, st__; mi = 1, ma = 1000, pr = 0)
 
     di = Dict(s1_[id] => id for id in eachindex(s1_))
 
-    bo_ = falses(length(s1_))
+    bo_ = fill(false, length(s1_))
 
     en_ = Vector{Float64}(undef, lastindex(st__))
 
