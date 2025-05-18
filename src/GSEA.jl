@@ -76,6 +76,7 @@ Merge .gmts into .json.
 
 end
 
+# TODO: Generalize
 function update!(N, st)
 
     if iszero(st)
