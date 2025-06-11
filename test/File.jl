@@ -20,15 +20,17 @@ for (ba, r1, r2) in (
 
     cl = joinpath(DA, ba)
 
-    A = GSEA.File.read_cls(cl)
+    st, s1_, s2_, N = Nucleus.Table.ge(GSEA.File.read_cls(cl))
 
     #@btime GSEA.File.read_cls($cl)
 
-    @test is_egal(names(A), vcat("Phenotype", map(id -> "Sample $id", 1:(size(A, 2) - 1))))
+    @test st === "Phenotype"
 
-    @test A[!, 1][] === r1
+    @test s1_[] === r1
 
-    @test is_egal(collect(A[1, 2:(1 + lastindex(r2))]), r2)
+    @test is_egal(s2_, map(id -> "Sample $id", eachindex(s2_)))
+
+    @test is_egal(N[1, eachindex(r2)], r2)
 
 end
 
