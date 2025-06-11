@@ -10,16 +10,16 @@ function test(fu, ba, re)
 
     fu(ts, joinpath(DA, ba))
 
-    @test size(Nucleus.Table.rea(ts)) === re
+    @test size(Nucleus.Table.ge(Nucleus.Table.rea(ts))[4]) === re
 
 end
 
 # ---- #
 
 for (ba, re) in (
-    ("1.cls", (1, 7)),
-    ("GSE76137.cls", (1, 7)),
-    ("CCLE_mRNA_20Q2_no_haem_phen.cls", (1, 900)),
+    ("1.cls", (1, 6)),
+    ("GSE76137.cls", (1, 6)),
+    ("CCLE_mRNA_20Q2_no_haem_phen.cls", (1, 899)),
 )
 
     test(GSEA.cls, ba, re)
@@ -28,7 +28,7 @@ end
 
 # ---- #
 
-for (ba, re) in (("1.gct", (13321, 190)),)
+for (ba, re) in (("1.gct", (13321, 189)),)
 
     test(GSEA.gct, ba, re)
 
@@ -67,7 +67,7 @@ const T4 = joinpath(D3, "metric.tsv")
 
 function rea(di)
 
-    Nucleus.Table.rea(joinpath(di, "result.tsv"))
+    Nucleus.Table.ge(Nucleus.Table.rea(joinpath(di, "result.tsv")))
 
 end
 
@@ -76,14 +76,14 @@ end
 
 GSEA.data_rank(D1, T2, J2; minimum = 15, maximum = 500)
 
-const A1 = rea(D1)
+const _, S6_, _, N1 = rea(D1)
 
-@test size(A1) === (UM, 10)
+@test size(N1) === (UM, 9)
 
-A1 = A1[findall(nu_ -> !any(isnan, nu_), eachrow(Matrix(A1[!, 2:end]))), :]
+const IN_ = findall(nu_ -> !any(isnan, nu_), eachrow(N1))
 
 @test is_egal(
-    A1[!, 1],
+    S6_[IN_],
     [
         "HALLMARK_ESTROGEN_RESPONSE_LATE",
         "HALLMARK_EPITHELIAL_MESENCHYMAL_TRANSITION",
@@ -96,16 +96,16 @@ A1 = A1[findall(nu_ -> !any(isnan, nu_), eachrow(Matrix(A1[!, 2:end]))), :]
     ],
 )
 
-@test findmax(Matrix(A1[!, 2:end])) === (0.756249206577638, CartesianIndex(2, 2))
+@test findmax(N1[IN_, :]) === (0.756249206577638, CartesianIndex(2, 2))
 
 # ---- #
 # TODO
 
 GSEA.user_rank(D2, T3, J2)
 
-const A2 = rea(D2)
+const _, S7_, _, N2 = rea(D2)
 
-@test size(A2) === (UM, 5)
+@test size(N2) === (UM, 4)
 
 for (id, r1, r2) in (
     (
@@ -140,9 +140,9 @@ for (id, r1, r2) in (
     ),
 )
 
-    @test A2[id, 1] === r1
+    @test S7_[id] === r1
 
-    @test is_egal(collect(A2[id, 2:end]), r2)
+    @test is_egal(N2[id, :], r2)
 
 end
 
@@ -151,28 +151,40 @@ end
 
 GSEA.metric_rank(D3, T1, T2, J2)
 
-const A3 = Nucleus.Table.rea(T4)
+const ST, _, S8_, N3 = Nucleus.Table.ge(Nucleus.Table.rea(T4))
 
-@test size(A3) === (1000, 2)
+@test ST === "Gene"
 
-@test is_egal(names(A3), ["Feature", "signal-to-noise-ratio"])
+@test S8_[] === "signal-to-noise-ratio"
 
-@test is_egal(sort(A3, 2)[[1, end], 2], [-1.8372355409610066, 1.7411005104346835])
+const N3_ = sort!(vec(N3))
 
-const A4 = rea(D3)
+@test lastindex(N3_) === 1000
 
-@test size(A4) === (UM, 5)
+@test N3_[1] === -1.8372355409610066
+
+@test N3_[end] === 1.7411005104346835
+
+const _, S9_, _, N4 = rea(D3)
+
+@test size(N4) === (UM, 4)
 
 # ---- #
 
 GSEA.user_rank(D4, T4, J2)
 
-const A5 = rea(D4)
+const _, S0_, _, N5 = rea(D4)
 
-@test is_egal(A5[!, 1:2], A4[!, 1:2])
+@test is_egal(S9_, S0_)
+
+@test is_egal(N4[:, 1], N5[:, 1])
 
 # ---- #
 
 GSEA.metric_rank(D5, T1, T2, J2; permutation = "set")
 
-@test is_egal(rea(D5), A5)
+_, S9_, _, N4 = rea(D4)
+
+@test is_egal(S9_, S0_)
+
+@test is_egal(N4, N5)

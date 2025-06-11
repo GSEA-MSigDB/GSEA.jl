@@ -32,14 +32,9 @@ Convert .cls to .tsv.
 """
 @cast function cls(tsv, cls)
 
-    A = File.read_cls(cls)
+    st, s1_, s2_, N = Nucleus.Table.ge(File.read_cls(cls))
 
-    st_ = names(A)
-
-    Nucleus.Table.writ(
-        tsv,
-        Nucleus.Table.make(st_[1], A[1, 1], st_[2:end], Matrix(A[!, 2:end])),
-    )
+    Nucleus.Table.writ(tsv, Nucleus.Table.make(st, s1_[], s2_, N))
 
 end
 
@@ -53,12 +48,9 @@ Convert .gct to .tsv.
 """
 @cast function gct(tsv, gct)
 
-    A = File.read_gct(gct)
+    st, s1_, s2_, N = Nucleus.Table.ge(File.read_gct(gct))
 
-    Nucleus.Table.writ(
-        tsv,
-        Nucleus.Table.make("Feature", A[!, 1], names(A)[2:end], Matrix(A[!, 2:end])),
-    )
+    Nucleus.Table.writ(tsv, Nucleus.Table.make(st, s1_, s2_, N))
 
 end
 
@@ -130,11 +122,7 @@ Run data-rank (single-sample) GSEA.
 
     al = Algorithm.make(algorithm)
 
-    A = Nucleus.Table.rea(tsv)
-
-    st_ = A[!, 1]
-
-    N = Matrix(A[!, 2:end])
+    st, s1_, s2_, N = Nucleus.Table.ge(Nucleus.Table.rea(tsv))
 
     update!(N, standard_deviation)
 
@@ -145,14 +133,14 @@ Run data-rank (single-sample) GSEA.
     Plot.writ(
         joinpath(directory, "result"),
         al,
-        st_,
-        names(A)[2:end],
+        s1_,
+        s2_,
         N,
         collect(keys(di)),
         st__,
         reduce(
             hcat,
-            Interface.make(al, st_, nu_, st__; mi = minimum, ma = maximum, pr = fraction)
+            Interface.make(al, s1_, nu_, st__; mi = minimum, ma = maximum, pr = fraction)
             for nu_ in eachcol(N)
         ),
         number_of_plots;
@@ -202,7 +190,7 @@ Run user-rank (pre-rank) GSEA.
     high = "High",
 )
 
-    st_, nu_ = eachcol(Nucleus.Table.rea(tsv; select = [1, 2]))
+    st_, nu_ = eachcol(Nucleus.Table.rea(tsv)[!, 1:2])
 
     al = Algorithm.make(algorithm)
 
@@ -277,17 +265,15 @@ Run metric-rank (standard) GSEA.
     high = "High",
 )
 
-    A1 = Nucleus.Table.rea(tsv1)
+    _, _, s1_, N1 = Nucleus.Table.ge(Nucleus.Table.rea(tsv1))
 
-    A2 = Nucleus.Table.rea(tsv2)
+    st, s2_, s3_, N2 = Nucleus.Table.ge(Nucleus.Table.rea(tsv2))
 
-    bo_::Vector{Bool} = collect(A1[1, 2:end])
+    bo_::Vector{Bool} = N1[1, :]
 
-    st_ = A2[!, 1]
+    N2 = N2[:, indexin(s1_, s3_)]
 
-    N = Matrix(A2[!, indexin(names(A1)[2:end], names(A2))])
-
-    update!(N, standard_deviation)
+    update!(N2, standard_deviation)
 
     fu = if metric == "mean-difference"
 
@@ -303,11 +289,11 @@ Run metric-rank (standard) GSEA.
 
     end
 
-    nu_ = map(nu_ -> Nucleus.PairMap.make(fu, bo_, nu_), eachrow(N))
+    nu_ = map(nu_ -> Nucleus.PairMap.make(fu, bo_, nu_), eachrow(N2))
 
     Nucleus.Table.writ(
         joinpath(directory, "metric.tsv"),
-        Nucleus.Table.make("Feature", st_, [metric], reshape(nu_, :, 1)),
+        Nucleus.Table.make(st, s2_, [metric], reshape(nu_, :, 1)),
     )
 
     al = Algorithm.make(algorithm)
@@ -321,18 +307,18 @@ Run metric-rank (standard) GSEA.
     Result.writ(
         directory,
         al,
-        st_,
+        s2_,
         nu_,
         collect(keys(di)),
         st__,
-        Interface.make(al, st_, nu_, st__; ke_...),
+        Interface.make(al, s2_, nu_, st__; ke_...),
         if permutation == "set"
 
-            Rando.make(number_of_permutations, seed, al, st_, nu_, st__; ke_...)
+            Rando.make(number_of_permutations, seed, al, s2_, nu_, st__; ke_...)
 
         elseif permutation == "sample"
 
-            Rando.make(number_of_permutations, seed, al, st_, fu, bo_, N, st__; ke_...)
+            Rando.make(number_of_permutations, seed, al, s2_, fu, bo_, N2, st__; ke_...)
 
         end,
         number_of_plots,

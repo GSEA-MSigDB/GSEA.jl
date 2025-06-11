@@ -28,7 +28,7 @@ const S2_ = ["Aa", "Kk", "Jo"]
 
 const DA = pkgdir(GSEA, "data")
 
-const S3_, N2_ = eachcol(Nucleus.Table.rea(joinpath(DA, "myc.tsv"); select = [1, 2]))
+const S3_, N2_ = eachcol(Nucleus.Table.rea(joinpath(DA, "myc.tsv"))[!, 1:2])
 
 const S4_ =
     GSEA.File.read_gmt(joinpath(DA, "c2.all.v7.1.symbols.gmt"))["COLLER_MYC_TARGETS_UP"]
