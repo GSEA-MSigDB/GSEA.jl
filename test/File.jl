@@ -4,9 +4,9 @@ include("_.jl")
 
 # ---- #
 
-# 10.959 μs (114 allocations: 6.84 KiB)
-# 10.875 μs (116 allocations: 7.17 KiB)
-# 279.417 μs (7160 allocations: 497.98 KiB)
+# 9.333 μs (80 allocations: 4.97 KiB)
+# 9.459 μs (82 allocations: 5.30 KiB)
+# 97.042 μs (4927 allocations: 290.59 KiB)
 
 for (ba, r1, r2) in (
     ("1.cls", "CNTRL_LPS", [1, 1, 1, 2, 2, 2]),
@@ -20,15 +20,11 @@ for (ba, r1, r2) in (
 
     cl = joinpath(DA, ba)
 
-    st, s1_, s2_, N = Nucleus.Table.ge(GSEA.File.read_cls(cl))
+    _, st, _, N = GSEA.File.read_cls(cl)
 
     #@btime GSEA.File.read_cls($cl)
 
-    @test st === "Phenotype"
-
-    @test s1_[] === r1
-
-    @test is_egal(s2_, map(id -> "Sample $id", eachindex(s2_)))
+    @test st === r1
 
     @test is_egal(N[eachindex(r2)], r2)
 
@@ -36,16 +32,20 @@ end
 
 # ---- #
 
-for (ba, re) in (("1.gct", (13321, 190)),)
+for (ba, re) in (("1.gct", (13321, 189)),)
 
-    @test size(GSEA.File.read_gct(joinpath(DA, ba))) === re
+    _, _, _, N = GSEA.File.read_gct(joinpath(DA, ba))
+
+    @test typeof(N) === Matrix{Float64}
+
+    @test size(N) === re
 
 end
 
 # ---- #
 
-# 182.166 μs (7986 allocations: 1.16 MiB)
-# 14.968 ms (537841 allocations: 66.19 MiB)
+# 181.375 μs (7986 allocations: 1.16 MiB)
+# 15.097 ms (537841 allocations: 66.19 MiB)
 
 for (ba, re) in (("h.all.v7.1.symbols.gmt", 50), ("c2.all.v7.1.symbols.gmt", 5529))
 

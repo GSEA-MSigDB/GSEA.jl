@@ -32,9 +32,9 @@ Convert .cls to .tsv.
 """
 @cast function cls(tsv, cls)
 
-    st, s1_, s2_, N = Nucleus.Table.ge(File.read_cls(cls))
+    s1, s2, st_, N = File.read_cls(cls)
 
-    Nucleus.Table.writ(tsv, Nucleus.Table.make(st, s1_[], s2_, N))
+    Nucleus.Table.writ(tsv, Nucleus.Table.make(s1, s2, st_, N))
 
 end
 
@@ -48,7 +48,7 @@ Convert .gct to .tsv.
 """
 @cast function gct(tsv, gct)
 
-    st, s1_, s2_, N = Nucleus.Table.ge(File.read_gct(gct))
+    st, s1_, s2_, N = File.read_gct(gct)
 
     Nucleus.Table.writ(tsv, Nucleus.Table.make(st, s1_, s2_, N))
 

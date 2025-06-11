@@ -16,7 +16,7 @@ function read_cls(cl)
 
     if l1 == "#numeric"
 
-        Nucleus.Table.make(st, l2, st_, [parse(Float64, st) for _ in 1:1, st in s3_])
+        st, l2, st_, [parse(Float64, st) for _ in 1:1, st in s3_]
 
     else
 
@@ -30,7 +30,7 @@ function read_cls(cl)
 
         di = Dict(s2_[id] => id for id in eachindex(s2_))
 
-        Nucleus.Table.make(st, join(s2_, '_'), st_, [di[st] for _ in 1:1, st in s3_])
+        st, join(s2_, '_'), st_, [di[st] for _ in 1:1, st in s3_]
 
     end
 
@@ -38,7 +38,7 @@ end
 
 function read_gct(gc)
 
-    Nucleus.Table.rea(gc; header = 3, drop = ["Description"])
+    Nucleus.Table.ge(Nucleus.Table.rea(gc; header = 3, drop = ["Description"]))
 
 end
 
