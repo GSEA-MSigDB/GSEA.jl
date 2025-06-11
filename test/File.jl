@@ -30,7 +30,7 @@ for (ba, r1, r2) in (
 
     @test is_egal(s2_, map(id -> "Sample $id", eachindex(s2_)))
 
-    @test is_egal(N[1, eachindex(r2)], r2)
+    @test is_egal(N[eachindex(r2)], r2)
 
 end
 
