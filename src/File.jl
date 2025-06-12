@@ -6,17 +6,13 @@ function read_cls(cl)
 
     l1, l2, l3 = readlines(cl)
 
-    st = "Phenotype"
-
     l2 = l2[2:end]
 
     s3_ = split(l3)
 
-    st_ = map(id -> "Sample $id", eachindex(s3_))
+    st_, N = if l1 == "#numeric"
 
-    if l1 == "#numeric"
-
-        st, l2, st_, [parse(Float64, st) for _ in 1:1, st in s3_]
+        l2, [parse(Float64, st) for _ in 1:1, st in s3_]
 
     else
 
@@ -30,9 +26,11 @@ function read_cls(cl)
 
         di = Dict(s2_[id] => id for id in eachindex(s2_))
 
-        st, join(s2_, '_'), st_, [di[st] for _ in 1:1, st in s3_]
+        join(s2_, '_'), [di[st] for _ in 1:1, st in s3_]
 
     end
+
+    "Phenotype", st_, map!(id -> "Sample $id", s3_, eachindex(s3_)), N
 
 end
 

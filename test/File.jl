@@ -4,9 +4,9 @@ include("_.jl")
 
 # ---- #
 
-# 9.333 μs (80 allocations: 4.97 KiB)
-# 9.459 μs (82 allocations: 5.30 KiB)
-# 97.042 μs (4927 allocations: 290.59 KiB)
+# 9.416 μs (78 allocations: 4.86 KiB)
+# 9.666 μs (80 allocations: 5.19 KiB)
+# 114.375 μs (4924 allocations: 283.03 KiB)
 
 for (ba, r1, r2) in (
     ("1.cls", "CNTRL_LPS", [1, 1, 1, 2, 2, 2]),
