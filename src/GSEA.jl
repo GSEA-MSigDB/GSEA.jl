@@ -102,6 +102,7 @@ Run data-rank (single-sample) GSEA.
   - `--maximum`: The maximum set size.
   - `--fraction`: The minimum fraction of set members present.
   - `--number-of-plots`:
+  - `--score`:
   - `--low`:
   - `--high`:
 """
@@ -116,6 +117,7 @@ Run data-rank (single-sample) GSEA.
     maximum::Int = 1000,
     fraction::Float64 = 0.0,
     number_of_plots::Int = 2,
+    score = "Data",
     low = "Low",
     high = "High",
 )
@@ -144,6 +146,7 @@ Run data-rank (single-sample) GSEA.
             for nu_ in eachcol(N)
         );
         um = number_of_plots,
+        t1 = score,
         t2 = low,
         t3 = high,
     )
@@ -170,6 +173,7 @@ Run user-rank (pre-rank) GSEA.
   - `--seed`:
   - `--number-of-plots`:
   - `--more-plots`: ;-separated set names.
+  - `--score`:
   - `--low`:
   - `--high`:
 """
@@ -186,6 +190,7 @@ Run user-rank (pre-rank) GSEA.
     seed::Int = 20150603,
     number_of_plots::Int = 2,
     more_plots = "",
+    score = "",
     low = "Low",
     high = "High",
 )
@@ -211,6 +216,7 @@ Run user-rank (pre-rank) GSEA.
         Rando.make(number_of_permutations, seed, al, st_, nu_, st__; ke_...),
         number_of_plots,
         split(more_plots, ';'),
+        score,
         low,
         high,
     )
@@ -241,6 +247,7 @@ Run metric-rank (standard) GSEA.
   - `--seed`:
   - `--number-of-plots`:
   - `--more-plots`: ;-separated set names.
+  - `--score`:
   - `--low`:
   - `--high`:
 """
@@ -261,6 +268,7 @@ Run metric-rank (standard) GSEA.
     seed::Int = 20150603,
     number_of_plots::Int = 2,
     more_plots = "",
+    score = metric,
     low = "Low",
     high = "High",
 )
@@ -323,6 +331,7 @@ Run metric-rank (standard) GSEA.
         end,
         number_of_plots,
         split(more_plots, ';'),
+        score,
         low,
         high,
     )
