@@ -142,10 +142,10 @@ Run data-rank (single-sample) GSEA.
             hcat,
             Interface.make(al, s1_, nu_, st__; mi = minimum, ma = maximum, pr = fraction)
             for nu_ in eachcol(N)
-        ),
-        number_of_plots;
-        t1 = low,
-        t2 = high,
+        );
+        um = number_of_plots,
+        t2 = low,
+        t3 = high,
     )
 
 end

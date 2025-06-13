@@ -4,7 +4,7 @@ using Nucleus
 
 using ..GSEA
 
-function writ(di, al, s1_, nu_, s2_, st__, en_, R, um, s3_, t1, t2)
+function writ(di, al, s1_, nu_, s2_, st__, en_, R, um, s3_, t2, t3)
 
     E = Matrix{Float64}(undef, lastindex(s2_), 4)
 
@@ -51,8 +51,8 @@ function writ(di, al, s1_, nu_, s2_, st__, en_, R, um, s3_, t1, t2)
             nu_,
             st__[id],
             Dict("title" => Dict("text" => st));
-            t1,
             t2,
+            t3,
         )
 
     end

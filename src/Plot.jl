@@ -4,7 +4,17 @@ using Nucleus
 
 using ..GSEA
 
-function writ(ht, al, s1_, nu_, s2_, la = Dict{String, Any}(); t1 = "Low", t2 = "High")
+function writ(
+    ht,
+    al,
+    s1_,
+    nu_,
+    s2_,
+    la = Dict{String, Any}();
+    t1 = "Score",
+    t2 = "Low",
+    t3 = "High",
+)
 
     s1_, nu_ = GSEA.Sort.make(s1_, nu_)
 
@@ -83,7 +93,7 @@ function writ(ht, al, s1_, nu_, s2_, la = Dict{String, Any}(); t1 = "Low", t2 = 
         Nucleus.Dictionary.make(
             Dict(
                 "showlegend" => false,
-                "yaxis" => Dict("domain" => (0, 0.24), "title" => Dict("text" => "Score")),
+                "yaxis" => Dict("domain" => (0, 0.24), "title" => Dict("text" => t1)),
                 "yaxis2" => Dict(
                     "domain" => (0.248, 0.32),
                     "title" => Dict("text" => "Set"),
@@ -113,7 +123,7 @@ function writ(ht, al, s1_, nu_, s2_, la = Dict{String, Any}(); t1 = "Low", t2 = 
                         Dict(
                             "x" => 1 - po,
                             "xanchor" => "right",
-                            "text" => t2,
+                            "text" => t3,
                             "font" => Dict("color" => Nucleus.Color.RE),
                         ),
                     ),
@@ -122,7 +132,7 @@ function writ(ht, al, s1_, nu_, s2_, la = Dict{String, Any}(); t1 = "Low", t2 = 
                         Dict(
                             "x" => um + po,
                             "xanchor" => "left",
-                            "text" => t1,
+                            "text" => t2,
                             "font" => Dict("color" => Nucleus.Color.BL),
                         ),
                     ),
@@ -134,7 +144,7 @@ function writ(ht, al, s1_, nu_, s2_, la = Dict{String, Any}(); t1 = "Low", t2 = 
 
 end
 
-function writ(fi, al, s1_, s2_, N, s3_, st__, E, um = 2, la = Dict{String, Any}(); ke_...)
+function writ(fi, al, s1_, s2_, N, s3_, st__, E, la = Dict{String, Any}(); um = 2, ke_...)
 
     Nucleus.Table.writ("$fi.tsv", Nucleus.Table.make("Set", s3_, s2_, E))
 
