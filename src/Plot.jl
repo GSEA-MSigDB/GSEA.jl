@@ -144,12 +144,16 @@ function writ(
 
 end
 
-function writ(fi, al, s1_, s2_, N, s3_, st__, E, la = Dict{String, Any}(); um = 2, ke_...)
+function writ(ts, s1_, s2_, N)
 
-    Nucleus.Table.writ("$fi.tsv", Nucleus.Table.make("Set", s3_, s2_, E))
+    Nucleus.Table.writ(ts, Nucleus.Table.make("Set", s1_, s2_, N))
+
+end
+
+function writ(ht, al, s1_, s2_, N, s3_, st__, E, la = Dict{String, Any}(); um = 2, ke_...)
 
     Nucleus.HeatPlot.writ(
-        "$fi.html",
+        ht,
         s3_,
         s2_,
         E,
@@ -178,7 +182,7 @@ function writ(fi, al, s1_, s2_, N, s3_, st__, E, la = Dict{String, Any}(); um = 
         st = s3_[i3]
 
         writ(
-            "$fi.$(Nucleus.Numbe.text_2(E[in_])).$(s2_[i2]).$st.html",
+            "$(Nucleus.Strin.get_not_end(ht, '.')).$(Nucleus.Numbe.text_2(E[in_])).$(s2_[i2]).$st.html",
             al,
             s1_,
             N[:, i2],
