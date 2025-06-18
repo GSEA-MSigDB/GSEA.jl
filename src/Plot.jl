@@ -144,9 +144,9 @@ function writ(
 
 end
 
-function writ(ts, s1_, s2_, N)
+function writ(ts, s1_, s2_, E)
 
-    Nucleus.Table.writ(ts, Nucleus.Table.make("Set", s1_, s2_, N))
+    Nucleus.Table.writ(ts, Nucleus.Table.make("Set", s1_, s2_, E))
 
 end
 

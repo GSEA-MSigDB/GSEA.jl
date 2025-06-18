@@ -10,7 +10,7 @@ function read_cls(cl)
 
     s3_ = split(l3)
 
-    st_, N = if l1 == "#numeric"
+    st, N = if l1 == "#numeric"
 
         l2, [parse(Float64, st) for _ in 1:1, st in s3_]
 
@@ -30,7 +30,7 @@ function read_cls(cl)
 
     end
 
-    "Phenotype", st_, map!(id -> "Sample $id", s3_, eachindex(s3_)), N
+    "Phenotype", st, map!(id -> "Sample $id", s3_, eachindex(s3_)), N
 
 end
 

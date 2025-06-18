@@ -12,7 +12,7 @@ end
 
 # ---- #
 
-# 277.625 μs (1500 allocations: 2.34 MiB)
+# 276.458 μs (1500 allocations: 2.34 MiB)
 
 for (en_, R) in ((randn(100), randn(100, 1000)),)
 

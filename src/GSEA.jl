@@ -68,6 +68,14 @@ Merge .gmts into .json.
 
 end
 
+function rea(js)
+
+    di = Nucleus.Dictionary.rea(js)
+
+    collect(keys(di)), collect(values(di))
+
+end
+
 function update!(N, st)
 
     if iszero(st)
@@ -128,23 +136,27 @@ Run data-rank (single-sample) GSEA.
 
     update!(N, standard_deviation)
 
-    di = Nucleus.Dictionary.rea(json)
+    s3_, st__ = rea(json)
 
-    st__ = collect(values(di))
+    E = reduce(
+        hcat,
+        Interface.make(al, s1_, nu_, st__; mi = minimum, ma = maximum, pr = fraction)
+        for nu_ in eachcol(N)
+    )
+
+    fi = joinpath(directory, "result")
+
+    Plot.writ("$fi.tsv", s3_, s2_, E)
 
     Plot.writ(
-        joinpath(directory, "result"),
+        "$fi.html",
         al,
         s1_,
         s2_,
         N,
-        collect(keys(di)),
+        s3_,
         st__,
-        reduce(
-            hcat,
-            Interface.make(al, s1_, nu_, st__; mi = minimum, ma = maximum, pr = fraction)
-            for nu_ in eachcol(N)
-        );
+        E;
         um = number_of_plots,
         t1 = score,
         t2 = low,
@@ -195,25 +207,23 @@ Run user-rank (pre-rank) GSEA.
     high = "High",
 )
 
-    st_, nu_ = eachcol(Nucleus.Table.rea(tsv)[!, 1:2])
+    s1_, nu_ = eachcol(Nucleus.Table.rea(tsv)[!, 1:2])
 
     al = Algorithm.make(algorithm)
 
-    di = Nucleus.Dictionary.rea(json)
-
-    st__ = collect(values(di))
+    s2_, st__ = rea(json)
 
     ke_ = (mi = minimum, ma = maximum, pr = fraction)
 
     Result.writ(
         directory,
         al,
-        st_,
+        s1_,
         nu_,
-        collect(keys(di)),
+        s2_,
         st__,
-        Interface.make(al, st_, nu_, st__; ke_...),
-        Rando.make(number_of_permutations, seed, al, st_, nu_, st__; ke_...),
+        Interface.make(al, s1_, nu_, st__; ke_...),
+        Rando.make(number_of_permutations, seed, al, s1_, nu_, st__; ke_...),
         number_of_plots,
         split(more_plots, ';'),
         score,
@@ -273,15 +283,15 @@ Run metric-rank (standard) GSEA.
     high = "High",
 )
 
-    _, _, s1_, N1 = Nucleus.Table.ge(Nucleus.Table.rea(tsv1))
+    _, _, s1_, N = Nucleus.Table.ge(Nucleus.Table.rea(tsv1))
 
-    st, s2_, s3_, N2 = Nucleus.Table.ge(Nucleus.Table.rea(tsv2))
+    bo_::Vector{Bool} = view(N, 1, :)
 
-    bo_::Vector{Bool} = N1[1, :]
+    st, s2_, s3_, N = Nucleus.Table.ge(Nucleus.Table.rea(tsv2))
 
-    N2 = N2[:, indexin(s1_, s3_)]
+    N = N[:, indexin(s1_, s3_)]
 
-    update!(N2, standard_deviation)
+    update!(N, standard_deviation)
 
     fu = if metric == "mean-difference"
 
@@ -297,7 +307,9 @@ Run metric-rank (standard) GSEA.
 
     end
 
-    nu_ = map(nu_ -> Nucleus.PairMap.make(fu, bo_, nu_), eachrow(N2))
+    # TODO: Consider Match
+
+    nu_ = map(nu_ -> Nucleus.PairMap.make(fu, bo_, nu_), eachrow(N))
 
     Nucleus.Table.writ(
         joinpath(directory, "metric.tsv"),
@@ -306,9 +318,7 @@ Run metric-rank (standard) GSEA.
 
     al = Algorithm.make(algorithm)
 
-    di = Nucleus.Dictionary.rea(json)
-
-    st__ = collect(values(di))
+    s3_, st__ = rea(json)
 
     ke_ = (mi = minimum, ma = maximum, pr = fraction)
 
@@ -317,7 +327,7 @@ Run metric-rank (standard) GSEA.
         al,
         s2_,
         nu_,
-        collect(keys(di)),
+        s3_,
         st__,
         Interface.make(al, s2_, nu_, st__; ke_...),
         if permutation == "set"
@@ -326,7 +336,7 @@ Run metric-rank (standard) GSEA.
 
         elseif permutation == "sample"
 
-            Rando.make(number_of_permutations, seed, al, s2_, fu, bo_, N2, st__; ke_...)
+            Rando.make(number_of_permutations, seed, al, s2_, fu, bo_, N, st__; ke_...)
 
         end,
         number_of_plots,
