@@ -120,7 +120,7 @@ end
 
 function make!(al::GSEA.Algorithm.DA2, nu_, bo_, cu_ = nothing)
 
-    de, _ = make_delta(al, nu_, bo_)
+    de = make_delta(al, nu_, bo_)[1]
 
     r1 = r2 = eps()
 

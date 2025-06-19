@@ -34,7 +34,7 @@ end
 
 for (ba, re) in (("1.gct", (13321, 189)),)
 
-    _, _, _, N = GSEA.File.read_gct(joinpath(DA, ba))
+    N = GSEA.File.read_gct(joinpath(DA, ba))[4]
 
     @test typeof(N) === Matrix{Float64}
 
