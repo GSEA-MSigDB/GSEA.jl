@@ -64,7 +64,7 @@ Merge .gmts into .json.
 """
 @cast function gmt(json, gmts...)
 
-    Nucleus.Dictionary.writ(json, reduce(merge!, (File.read_gmt(gm) for gm in gmts)))
+    Nucleus.Dictionary.writ(json, reduce(merge!, File.read_gmt(gm) for gm in gmts))
 
 end
 
