@@ -1,5 +1,3 @@
-using StatsBase: Weights, sample
-
 using Test: @test
 
 include("_.jl")
@@ -16,10 +14,11 @@ const D1 = 1 / 12
 
 const D2 = 1 / 42
 
-const R1_ = randn(100000)
+const UM = 100000
 
-# TODO: Use rand
-const R2_ = sample([false, true], Weights([0.9, 0.1]), lastindex(R1_))
+const R1_ = randn(UM)
+
+const R2_ = rand(push!(falses(9), true), UM)
 
 # ---- #
 
@@ -38,7 +37,7 @@ end
 # ---- #
 
 # 5.708 ns (0 allocations: 0 bytes)
-# 49.042 μs (0 allocations: 0 bytes)
+# 48.958 μs (0 allocations: 0 bytes)
 
 for (nu_, bo_, r0, r1) in ((N1_, B1_, -1 / 11, D1), (R1_, R2_, nothing, nothing))
 
@@ -48,8 +47,8 @@ end
 
 # ---- #
 
-# 5.500 ns (0 allocations: 0 bytes)
-# 56.000 μs (0 allocations: 0 bytes)
+# 5.250 ns (0 allocations: 0 bytes)
+# 55.958 μs (0 allocations: 0 bytes)
 
 for (nu_, bo_, r1, r2) in ((N1_, B1_, D1, D2), (R1_, R2_, nothing, nothing))
 
@@ -89,7 +88,7 @@ const B2_ = Nucleus.Collection.is_in(S3_, S4_)
 
 function test(al, nu_, bo_, re)
 
-    @test isapprox(GSEA.Enrichment.make!(al, nu_, bo_), re; atol = 1e-15)
+    @test GSEA.Enrichment.make!(al, nu_, bo_) === re
 
     #@btime GSEA.Enrichment.make!($al, $nu_, $bo_)
 
@@ -98,9 +97,9 @@ end
 # ---- #
 
 # 10.343 ns (0 allocations: 0 bytes)
-# 22.166 μs (0 allocations: 0 bytes)
+# 22.208 μs (0 allocations: 0 bytes)
 
-for (nu_, bo_, re) in ((N1_, B1_, -0.5), (N2_, B2_, 0.7651927829281453))
+for (nu_, bo_, re) in ((N1_, B1_, -0.5000000000000001), (N2_, B2_, 0.7651927829281453))
 
     test(A1, nu_, bo_, re)
 
@@ -108,10 +107,10 @@ end
 
 # ---- #
 
-# 10.343 ns (0 allocations: 0 bytes)
+# 10.594 ns (0 allocations: 0 bytes)
 # 21.583 μs (0 allocations: 0 bytes)
 
-for (nu_, bo_, re) in ((N1_, B1_, 0), (N2_, B2_, 0.41482514169516305))
+for (nu_, bo_, re) in ((N1_, B1_, -7.686159401251084e-17), (N2_, B2_, 0.41482514169516305))
 
     test(AL_[2], nu_, bo_, re)
 
@@ -119,10 +118,10 @@ end
 
 # ---- #
 
-# 84.372 ns (0 allocations: 0 bytes)
-# 127.167 μs (0 allocations: 0 bytes)
+# 84.458 ns (0 allocations: 0 bytes)
+# 127.166 μs (0 allocations: 0 bytes)
 
-for (nu_, bo_, re) in ((N1_, B1_, 0), (N2_, B2_, 1.2297916337424049))
+for (nu_, bo_, re) in ((N1_, B1_, 4.099285014000578e-16), (N2_, B2_, 1.2297916337424049))
 
     test(A3, nu_, bo_, re)
 
@@ -130,10 +129,10 @@ end
 
 # ---- #
 
-# 85.975 ns (0 allocations: 0 bytes)
-# 135.334 μs (0 allocations: 0 bytes)
+# 86.057 ns (0 allocations: 0 bytes)
+# 135.208 μs (0 allocations: 0 bytes)
 
-for (nu_, bo_, re) in ((N1_, B1_, 0), (N2_, B2_, 1.1161382190540838))
+for (nu_, bo_, re) in ((N1_, B1_, 1.964240735875277e-16), (N2_, B2_, 1.1161382190540838))
 
     test(AL_[4], nu_, bo_, re)
 
@@ -141,10 +140,10 @@ end
 
 # ---- #
 
-# 154.689 ns (0 allocations: 0 bytes)
-# 224.750 μs (0 allocations: 0 bytes)
+# 154.732 ns (0 allocations: 0 bytes)
+# 225.208 μs (0 allocations: 0 bytes)
 
-for (nu_, bo_, re) in ((N1_, B1_, 0), (N2_, B2_, 1.1181841586127337))
+for (nu_, bo_, re) in ((N1_, B1_, 1.0248212535001446e-16), (N2_, B2_, 1.1181841586127337))
 
     test(AL_[5], nu_, bo_, re)
 
