@@ -24,13 +24,13 @@ function read_cls(cl)
 
         @assert parse(Int, s1_[2]) == lastindex(s2_) == lastindex(unique(s3_))
 
-        di = Dict(s2_[id] => id for id in eachindex(s2_))
+        di = Dict(s2_[nd] => nd for nd in eachindex(s2_))
 
         join(s2_, '_'), [di[st] for _ in 1:1, st in s3_]
 
     end
 
-    "Phenotype", st, map!(id -> "Sample $id", s3_, eachindex(s3_)), N
+    "Phenotype", st, map!(nd -> "Sample $nd", s3_, eachindex(s3_)), N
 
 end
 

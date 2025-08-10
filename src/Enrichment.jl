@@ -8,11 +8,11 @@ function make_delta(::Union{GSEA.Algorithm.KS0, GSEA.Algorithm.A0}, nu_, bo_)
 
     s0 = s1 = 0.0
 
-    for id in eachindex(nu_)
+    for nd in eachindex(nu_)
 
-        if bo_[id]
+        if bo_[nd]
 
-            s1 += abs(nu_[id])
+            s1 += abs(nu_[nd])
 
         else
 
@@ -34,11 +34,11 @@ function make_delta(
 
     s1 = s2 = 0.0
 
-    for id in eachindex(nu_)
+    for nd in eachindex(nu_)
 
-        s2 += ab = abs(nu_[id])
+        s2 += ab = abs(nu_[nd])
 
-        if bo_[id]
+        if bo_[nd]
 
             s1 += ab
 
@@ -70,13 +70,13 @@ function make!(al::GSEA.Algorithm.KS0, nu_, bo_, cu_ = nothing)
 
     c1 = a2 = c2 = 0.0
 
-    for id in eachindex(nu_)
+    for nd in eachindex(nu_)
 
-        c1 += bo_[id] ? d1 * abs(nu_[id]) : d0
+        c1 += bo_[nd] ? d1 * abs(nu_[nd]) : d0
 
         if !isnothing(cu_)
 
-            cu_[id] = c1
+            cu_[nd] = c1
 
         end
 
@@ -102,13 +102,13 @@ function make!(al::GSEA.Algorithm.A0, nu_, bo_, cu_ = nothing)
 
     cu = su = 0.0
 
-    for id in eachindex(nu_)
+    for nd in eachindex(nu_)
 
-        su += cu += bo_[id] ? d1 * abs(nu_[id]) : d0
+        su += cu += bo_[nd] ? d1 * abs(nu_[nd]) : d0
 
         if !isnothing(cu_)
 
-            cu_[id] = cu
+            cu_[nd] = cu
 
         end
 
@@ -130,13 +130,13 @@ function make!(al::GSEA.Algorithm.DA2, nu_, bo_, cu_ = nothing)
 
     l2 += e2 = inv(lastindex(nu_))
 
-    for id in eachindex(nu_)
+    for nd in eachindex(nu_)
 
         l1 = make_eps(l1 - e1)
 
         l2 = make_eps(l2 - e2)
 
-        r1 += e1 = bo_[id] ? de * abs(nu_[id]) : 0.0
+        r1 += e1 = bo_[nd] ? de * abs(nu_[nd]) : 0.0
 
         r2 += e2
 
@@ -150,7 +150,7 @@ function make!(al::GSEA.Algorithm.DA2, nu_, bo_, cu_ = nothing)
 
         if !isnothing(cu_)
 
-            cu_[id] = cu
+            cu_[nd] = cu
 
         end
 
@@ -170,15 +170,15 @@ function make!(al::GSEA.Algorithm.DA2W, nu_, bo_, cu_ = nothing)
 
     e1 = e2 = su = 0.0
 
-    for id in eachindex(nu_)
+    for nd in eachindex(nu_)
 
-        ab = abs(nu_[id])
+        ab = abs(nu_[nd])
 
         l1 = make_eps(l1 - e1)
 
         l2 = make_eps(l2 - e2)
 
-        r1 += e1 = bo_[id] ? d1 * ab : 0.0
+        r1 += e1 = bo_[nd] ? d1 * ab : 0.0
 
         r2 += e2 = d2 * ab
 
@@ -192,7 +192,7 @@ function make!(al::GSEA.Algorithm.DA2W, nu_, bo_, cu_ = nothing)
 
         if !isnothing(cu_)
 
-            cu_[id] = cu
+            cu_[nd] = cu
 
         end
 
@@ -214,9 +214,9 @@ function make!(al::GSEA.Algorithm.DA2W0W, nu_, bo_, cu_ = nothing)
 
     e0 = e1 = e2 = su = 0.0
 
-    for id in eachindex(nu_)
+    for nd in eachindex(nu_)
 
-        ab = abs(nu_[id])
+        ab = abs(nu_[nd])
 
         l0 = make_eps(l0 - e0)
 
@@ -224,9 +224,9 @@ function make!(al::GSEA.Algorithm.DA2W0W, nu_, bo_, cu_ = nothing)
 
         l2 = make_eps(l2 - e2)
 
-        r0 += e0 = bo_[id] ? 0.0 : d0 * ab
+        r0 += e0 = bo_[nd] ? 0.0 : d0 * ab
 
-        r1 += e1 = bo_[id] ? d1 * ab : 0.0
+        r1 += e1 = bo_[nd] ? d1 * ab : 0.0
 
         r2 += e2 = d2 * ab
 
@@ -244,7 +244,7 @@ function make!(al::GSEA.Algorithm.DA2W0W, nu_, bo_, cu_ = nothing)
 
         if !isnothing(cu_)
 
-            cu_[id] = cu
+            cu_[nd] = cu
 
         end
 

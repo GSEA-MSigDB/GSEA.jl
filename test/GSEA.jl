@@ -117,7 +117,7 @@ const _, S7_, _, N2 = rea(D2)
 
 @test size(N2) === (UM, 4)
 
-for (id, r1, r2) in (
+for (nd, r1, r2) in (
     (
         45,
         "HALLMARK_PANCREAS_BETA_CELLS",
@@ -150,9 +150,9 @@ for (id, r1, r2) in (
     ),
 )
 
-    @test S7_[id] === r1
+    @test S7_[nd] === r1
 
-    @test is_egal(N2[id, :], r2)
+    @test is_egal(N2[nd, :], r2)
 
 end
 

@@ -39,18 +39,18 @@ function writ(di, al, s1_, nu_, s2_, st__, en_, R, um, s3_, t1, t2, t3)
 
     N = N[in_, :]
 
-    for id in unique!(
+    for nd in unique!(
         vcat(Nucleus.Extreme.index(N[:, 1], um), filter!(!isnothing, indexin(s3_, s2_))),
     )
 
-        st = s2_[id]
+        st = s2_[nd]
 
         GSEA.Plot.writ(
-            joinpath(di, "$(Nucleus.Numbe.text_2(N[id, 1])).$st.html"),
+            joinpath(di, "$(Nucleus.Numbe.text_2(N[nd, 1])).$st.html"),
             al,
             s1_,
             nu_,
-            st__[id],
+            st__[nd],
             Dict("title" => Dict("text" => st));
             t1,
             t2,

@@ -18,9 +18,9 @@ function make(um, se, al, s1_, nu_, st__; ke_...)
 
     seed!(se)
 
-    @showprogress for id in 1:um
+    @showprogress for nd in 1:um
 
-        R[:, id] = GSEA.Interface.make(
+        R[:, nd] = GSEA.Interface.make(
             al,
             s1_,
             nu_,
@@ -40,9 +40,9 @@ function make(um, se, al, st_, fu, bo_, N, st__; ke_...)
 
     seed!(se)
 
-    @showprogress for id in 1:um
+    @showprogress for nd in 1:um
 
-        R[:, id] = GSEA.Interface.make(
+        R[:, nd] = GSEA.Interface.make(
             al,
             st_,
             map(nu_ -> Nucleus.PairMap.make(fu, shuffle!(bo_), nu_), eachrow(N)),
