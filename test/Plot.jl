@@ -30,7 +30,7 @@ const N = hcat(N2_, N2_ * 2)
 for al in AL_
 
     GSEA.Plot.writ(
-        joinpath(TE, "$al"),
+        joinpath(TE, "$al.html"),
         al,
         S3_,
         map(nd -> "Sa $nd", axes(N, 2)),
