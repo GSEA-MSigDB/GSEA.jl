@@ -26,7 +26,7 @@ const N1_ = [-6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6.0]
 
 const S2_ = ["Aa", "Kk", "Jo"]
 
-const DA = pkgdir(GSEA, "data")
+const DA = pkgdir(GSEA, "da")
 
 const S3_, N2_ = eachcol(Nucleus.Table.rea(joinpath(DA, "myc.tsv"))[!, 1:2])
 
