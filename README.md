@@ -16,9 +16,9 @@ Run the sarcopenia example
 ```bash
 gsea metric-rank \
   ~/Downloads \
-  example/target.tsv \
-  example/data.tsv \
-  example/set.json \
+  ex/target.tsv \
+  ex/data.tsv \
+  ex/set.json \
   --standard-deviation 3 \
   --number-of-permutations 10 \
   --more-plots "WP_DNA_MISMATCH_REPAIR;WP_CELL_CYCLE"
