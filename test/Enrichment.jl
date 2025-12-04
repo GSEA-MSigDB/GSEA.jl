@@ -78,9 +78,9 @@ end
 
 # ---- #
 
-S1_, N1_ = GSEA.Sort.make(S1_, N1_)
+const S1_, N1_ = GSEA.Sort.make(S1_, N1_)
 
-S3_, N2_ = GSEA.Sort.make(S3_, N2_)
+const S3_, N2_ = GSEA.Sort.make(S3_, N2_)
 
 const B2_ = Nucleus.Collection.is_in(S3_, S4_)
 
