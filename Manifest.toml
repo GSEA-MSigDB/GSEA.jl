@@ -394,7 +394,7 @@ uuid = "ca575930-c2e3-43a9-ace4-1e988b2c1908"
 version = "1.3.0"
 
 [[deps.Nucleus]]
-deps = ["CSV", "CodecZlib", "ColorSchemes", "Colors", "DataFrames", "Dates", "Distributions", "JSON", "Mmap", "MultipleTesting", "OrderedCollections", "Printf", "Random", "StatsBase", "TOML", "Test", "XLSX"]
+deps = ["CSV", "CodecZlib", "ColorSchemes", "Colors", "DataFrames", "Dates", "Distributions", "JSON", "Mmap", "MultipleTesting", "OrderedCollections", "Printf", "Random", "StatsBase", "TOML", "XLSX"]
 path = "../Nucleus.jl"
 uuid = "cd814215-3b54-4e50-ac5e-8a2c7852bc16"
 version = "0.1.0"
