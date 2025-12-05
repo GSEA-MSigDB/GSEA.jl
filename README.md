@@ -59,4 +59,4 @@ If you have any questions, issues, or concerns, feel free to [open a GitHub issu
 
 ---
 
-Made by [Kata](https://github.com/KwatMDPhD/Kata.jl) 🥋
+Made by [Kata](https://github.com/KwatMDPhD/Kata.jl) ✅
