@@ -14,11 +14,13 @@ function is_egal(a1, a2)
 
 end
 
-const AL_ = GSEA.Algorithm.KS0(),
-GSEA.Algorithm.A0(),
-GSEA.Algorithm.DA2(),
-GSEA.Algorithm.DA2W(),
-GSEA.Algorithm.DA2W0W()
+const AL_ = (
+    GSEA.Algorithm.KS0(),
+    GSEA.Algorithm.A0(),
+    GSEA.Algorithm.DA2(),
+    GSEA.Algorithm.DA2W(),
+    GSEA.Algorithm.DA2W0W(),
+)
 
 const S1_ = ["Aa", "22", "33", "44", "55", "66", "77", "88", "99", "Xx", "Jj", "Qq", "Kk"]
 
