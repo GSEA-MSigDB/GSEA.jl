@@ -20,7 +20,11 @@ function writ(
 
     um = lastindex(s1_)
 
-    tr = Dict("mode" => "lines", "line" => Dict("width" => 0), "fill" => "tozeroy")
+    tr = Dict(
+        "mode" => "lines",
+        "line" => Dict("width" => 0),
+        "fill" => "tozeroy",
+    )
 
     xc_ = 1:um
 
@@ -93,14 +97,17 @@ function writ(
         Nucleus.Dictionary.make(
             Dict(
                 "showlegend" => false,
-                "yaxis" => Dict("domain" => (0, 0.24), "title" => Dict("text" => t1)),
+                "yaxis" =>
+                    Dict("domain" => (0, 0.24), "title" => Dict("text" => t1)),
                 "yaxis2" => Dict(
                     "domain" => (0.248, 0.32),
                     "title" => Dict("text" => "Set"),
                     "tickvals" => (),
                 ),
-                "yaxis3" =>
-                    Dict("domain" => (0.328, 1), "title" => Dict("text" => "Δ Enrichment")),
+                "yaxis3" => Dict(
+                    "domain" => (0.328, 1),
+                    "title" => Dict("text" => "Δ Enrichment"),
+                ),
                 "xaxis" => Dict(
                     "title" => Dict("text" => "Feature ($um)"),
                     "showspikes" => true,
@@ -150,7 +157,19 @@ function writ(ts, s1_, s2_, E)
 
 end
 
-function writ(ht, al, s1_, s2_, N, s3_, st__, E, la = Dict{String, Any}(); um = 2, ke_...)
+function writ(
+    ht,
+    al,
+    s1_,
+    s2_,
+    N,
+    s3_,
+    st__,
+    E,
+    la = Dict{String, Any}();
+    um = 2,
+    ke_...,
+)
 
     Nucleus.HeatPlot.writ(
         ht,

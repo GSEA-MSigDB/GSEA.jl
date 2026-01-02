@@ -45,7 +45,10 @@ function make(um, se, al, st_, fu, bo_, N, st__; ke_...)
         R[:, nd] = GSEA.Interface.make(
             al,
             st_,
-            map(nu_ -> Nucleus.PairMap.make(fu, shuffle!(bo_), nu_), eachrow(N)),
+            map(
+                nu_ -> Nucleus.PairMap.make(fu, shuffle!(bo_), nu_),
+                eachrow(N),
+            ),
             st__;
             ke_...,
         )

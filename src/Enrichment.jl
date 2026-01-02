@@ -141,12 +141,13 @@ function make!(al::GSEA.Algorithm.DA2, nu_, bo_, cu_ = nothing)
         r2 += e2
 
         su +=
-            cu = Nucleus.Information.make_antisymmetric_kullback_leibler_divergence(
-                r1,
-                l1,
-                r2,
-                l2,
-            )
+            cu =
+                Nucleus.Information.make_antisymmetric_kullback_leibler_divergence(
+                    r1,
+                    l1,
+                    r2,
+                    l2,
+                )
 
         if !isnothing(cu_)
 
@@ -183,12 +184,13 @@ function make!(al::GSEA.Algorithm.DA2W, nu_, bo_, cu_ = nothing)
         r2 += e2 = d2 * ab
 
         su +=
-            cu = Nucleus.Information.make_antisymmetric_kullback_leibler_divergence(
-                r1,
-                l1,
-                r2,
-                l2,
-            )
+            cu =
+                Nucleus.Information.make_antisymmetric_kullback_leibler_divergence(
+                    r1,
+                    l1,
+                    r2,
+                    l2,
+                )
 
         if !isnothing(cu_)
 
@@ -236,7 +238,8 @@ function make!(al::GSEA.Algorithm.DA2W0W, nu_, bo_, cu_ = nothing)
                     r1,
                     r0,
                     r2,
-                ) - Nucleus.Information.make_antisymmetric_kullback_leibler_divergence(
+                ) -
+                Nucleus.Information.make_antisymmetric_kullback_leibler_divergence(
                     l1,
                     l0,
                     l2,

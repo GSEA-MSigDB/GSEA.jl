@@ -39,7 +39,8 @@ end
 # 5.708 ns (0 allocations: 0 bytes)
 # 48.958 μs (0 allocations: 0 bytes)
 
-for (nu_, bo_, r0, r1) in ((N1_, B1_, -1 / 11, D1), (R1_, R2_, nothing, nothing))
+for (nu_, bo_, r0, r1) in
+    ((N1_, B1_, -1 / 11, D1), (R1_, R2_, nothing, nothing))
 
     test(A1, nu_, bo_, r0, r1)
 
@@ -99,7 +100,8 @@ end
 # 10.343 ns (0 allocations: 0 bytes)
 # 22.208 μs (0 allocations: 0 bytes)
 
-for (nu_, bo_, re) in ((N1_, B1_, -0.5000000000000001), (N2_, B2_, 0.7651927829281453))
+for (nu_, bo_, re) in
+    ((N1_, B1_, -0.5000000000000001), (N2_, B2_, 0.7651927829281453))
 
     test(A1, nu_, bo_, re)
 
@@ -110,7 +112,8 @@ end
 # 10.594 ns (0 allocations: 0 bytes)
 # 21.583 μs (0 allocations: 0 bytes)
 
-for (nu_, bo_, re) in ((N1_, B1_, -7.686159401251084e-17), (N2_, B2_, 0.41482514169516305))
+for (nu_, bo_, re) in
+    ((N1_, B1_, -7.686159401251084e-17), (N2_, B2_, 0.41482514169516305))
 
     test(AL_[2], nu_, bo_, re)
 
@@ -121,7 +124,8 @@ end
 # 84.458 ns (0 allocations: 0 bytes)
 # 127.166 μs (0 allocations: 0 bytes)
 
-for (nu_, bo_, re) in ((N1_, B1_, 4.099285014000578e-16), (N2_, B2_, 1.2297916337424049))
+for (nu_, bo_, re) in
+    ((N1_, B1_, 4.099285014000578e-16), (N2_, B2_, 1.2297916337424049))
 
     test(A3, nu_, bo_, re)
 
@@ -132,7 +136,8 @@ end
 # 86.057 ns (0 allocations: 0 bytes)
 # 135.208 μs (0 allocations: 0 bytes)
 
-for (nu_, bo_, re) in ((N1_, B1_, 1.964240735875277e-16), (N2_, B2_, 1.1161382190540838))
+for (nu_, bo_, re) in
+    ((N1_, B1_, 1.964240735875277e-16), (N2_, B2_, 1.1161382190540838))
 
     test(AL_[4], nu_, bo_, re)
 
@@ -143,7 +148,8 @@ end
 # 154.732 ns (0 allocations: 0 bytes)
 # 225.208 μs (0 allocations: 0 bytes)
 
-for (nu_, bo_, re) in ((N1_, B1_, 1.0248212535001446e-16), (N2_, B2_, 1.1181841586127337))
+for (nu_, bo_, re) in
+    ((N1_, B1_, 1.0248212535001446e-16), (N2_, B2_, 1.1181841586127337))
 
     test(AL_[5], nu_, bo_, re)
 

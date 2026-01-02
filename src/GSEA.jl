@@ -1,6 +1,6 @@
 module GSEA
 
-# ----------------------------------------------------------------------------------------------- #
+# ------------------------------------ #
 
 for st in (
     "Algorithm",
@@ -64,7 +64,10 @@ Merge .gmts into .json.
 """
 @cast function gmt(json, gmts...)
 
-    Nucleus.Dictionary.writ(json, reduce(merge!, File.read_gmt(gm) for gm in gmts))
+    Nucleus.Dictionary.writ(
+        json,
+        reduce(merge!, File.read_gmt(gm) for gm in gmts),
+    )
 
 end
 
@@ -140,8 +143,15 @@ Run data-rank (single-sample) GSEA.
 
     E = reduce(
         hcat,
-        Interface.make(al, s1_, nu_, st__; mi = minimum, ma = maximum, pr = fraction)
-        for nu_ in eachcol(N)
+        Interface.make(
+            al,
+            s1_,
+            nu_,
+            st__;
+            mi = minimum,
+            ma = maximum,
+            pr = fraction,
+        ) for nu_ in eachcol(N)
     )
 
     fi = joinpath(directory, "result")
@@ -332,11 +342,29 @@ Run metric-rank (standard) GSEA.
         Interface.make(al, s2_, nu_, st__; ke_...),
         if permutation == "set"
 
-            Rando.make(number_of_permutations, seed, al, s2_, nu_, st__; ke_...)
+            Rando.make(
+                number_of_permutations,
+                seed,
+                al,
+                s2_,
+                nu_,
+                st__;
+                ke_...,
+            )
 
         elseif permutation == "sample"
 
-            Rando.make(number_of_permutations, seed, al, s2_, fu, bo_, N, st__; ke_...)
+            Rando.make(
+                number_of_permutations,
+                seed,
+                al,
+                s2_,
+                fu,
+                bo_,
+                N,
+                st__;
+                ke_...,
+            )
 
         end,
         number_of_plots,

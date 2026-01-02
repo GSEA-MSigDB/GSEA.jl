@@ -14,7 +14,16 @@ for (ba, r1, r2) in (
     (
         "CCLE_mRNA_20Q2_no_haem_phen.cls",
         "HER2",
-        [1.087973, -1.358492, -1.178614, -0.77898, 0.157222, 1.168224, -0.360195, 0.608629],
+        [
+            1.087973,
+            -1.358492,
+            -1.178614,
+            -0.77898,
+            0.157222,
+            1.168224,
+            -0.360195,
+            0.608629,
+        ],
     ),
 )
 
@@ -47,7 +56,8 @@ end
 # 184.125 μs (7986 allocations: 1.16 MiB)
 # 15.507 ms (537841 allocations: 66.19 MiB)
 
-for (ba, re) in (("h.all.v7.1.symbols.gmt", 50), ("c2.all.v7.1.symbols.gmt", 5529))
+for (ba, re) in
+    (("h.all.v7.1.symbols.gmt", 50), ("c2.all.v7.1.symbols.gmt", 5529))
 
     gm = joinpath(DA, ba)
 

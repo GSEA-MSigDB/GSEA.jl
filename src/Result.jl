@@ -40,7 +40,10 @@ function writ(di, al, s1_, nu_, s2_, st__, en_, R, um, s3_, t1, t2, t3)
     N = N[in_, :]
 
     for nd in unique!(
-        vcat(Nucleus.Extreme.index(N[:, 1], um), filter!(!isnothing, indexin(s3_, s2_))),
+        vcat(
+            Nucleus.Extreme.index(N[:, 1], um),
+            filter!(!isnothing, indexin(s3_, s2_)),
+        ),
     )
 
         st = s2_[nd]
