@@ -1,5 +1,9 @@
 module GSEA
 
+const P1 = pkgdir(GSEA, "in")
+
+const P2 = pkgdir(GSEA, "ou")
+
 # ------------------------------------ #
 
 for st in (
