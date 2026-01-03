@@ -1,4 +1,4 @@
-# Gene Set Enrichment Analysis (GSEA) 🏔️
+# Gene set enrichment analysis (GSEA) 🏔️
 
 This is the new GSEA.
 Rebuilt from scratch.
