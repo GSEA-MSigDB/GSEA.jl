@@ -2,8 +2,6 @@
 
 *log
 
-Manifest.toml
-
 ou/*
 
 !ou/.keep
