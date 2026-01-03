@@ -5,18 +5,13 @@ authors = ["KwatMDPhD"]
 
 [deps]
 Comonicon = "863f3e99-da2a-4334-8734-de3dacbe5542"
-Nucleus = "cd814215-3b54-4e50-ac5e-8a2c7852bc16"
 ProgressMeter = "92933f4c-e287-5a05-a399-4b506db050ca"
 Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
 StatsBase = "2913bbd2-ae8a-5f71-8c99-4fb6c76f3a91"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
-[sources]
-Nucleus = { path = "../Nucleus.jl" }
-
 [compat]
 Comonicon = "1.0.8"
-Nucleus = "0.1.0"
 ProgressMeter = "1.10.2"
 Random = "1.11.0"
 StatsBase = "0.34.4"
