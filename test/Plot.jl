@@ -19,11 +19,6 @@ for (s1_, nu_, s2_) in
 end
 
 # ---- #
-# TODO
-
-GSEA.Plot.writ
-
-# ---- #
 
 const N = hcat(N2_, N2_ * 2)
 

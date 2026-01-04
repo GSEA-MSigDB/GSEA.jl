@@ -6,10 +6,33 @@ const P2 = pkgdir(GSEA, "ou")
 
 # ------------------------------------ #
 
+function is_in(a1_, a2_)
+
+    map(in(Set(a2_)), a1_)
+
+end
+
+function is_in!(bo_, di, an_)
+
+    for an in an_
+
+        nd = get(di, an, nothing)
+
+        if !isnothing(nd)
+
+            bo_[nd] = true
+
+        end
+
+    end
+
+end
+
 for st in (
     "Algorithm",
     "Enrichment",
     "File",
+    "Information",
     "Interface",
     "Normalization",
     "Plot",
@@ -24,7 +47,7 @@ end
 
 using Comonicon: @cast, @main
 
-using Nucleus
+using Public
 
 """
 Convert .cls to .tsv.
@@ -38,7 +61,7 @@ Convert .cls to .tsv.
 
     s1, s2, st_, N = File.read_cls(cls)
 
-    Nucleus.Table.writ(tsv, Nucleus.Table.make(s1, s2, st_, N))
+    Public.write_table(tsv, Public.make_table(s1, s2, st_, N))
 
 end
 
@@ -54,7 +77,7 @@ Convert .gct to .tsv.
 
     st, s1_, s2_, N = File.read_gct(gct)
 
-    Nucleus.Table.writ(tsv, Nucleus.Table.make(st, s1_, s2_, N))
+    Public.write_table(tsv, Public.make_table(st, s1_, s2_, N))
 
 end
 
@@ -68,16 +91,13 @@ Merge .gmts into .json.
 """
 @cast function gmt(json, gmts...)
 
-    Nucleus.Dictionary.writ(
-        json,
-        reduce(merge!, File.read_gmt(gm) for gm in gmts),
-    )
+    Public.write_pair(json, reduce(merge!, File.read_gmt(gm) for gm in gmts))
 
 end
 
 function rea(js)
 
-    di = Nucleus.Dictionary.rea(js)
+    di = Public.read_pair(js)
 
     collect(keys(di)), collect(values(di))
 
@@ -93,7 +113,7 @@ function update!(N, st)
 
     for nu_ in eachcol(N)
 
-        Nucleus.Normalization.update_0_clamp!(nu_, st)
+        clamp!(Public.number_z!(nu_), -st, st)
 
     end
 
@@ -139,7 +159,7 @@ Run data-rank (single-sample) GSEA.
 
     al = Algorithm.make(algorithm)
 
-    st, s1_, s2_, N = Nucleus.Table.ge(Nucleus.Table.rea(tsv))
+    st, s1_, s2_, N = Public.make_part(Public.read_table(tsv))
 
     update!(N, standard_deviation)
 
@@ -221,7 +241,7 @@ Run user-rank (pre-rank) GSEA.
     high = "High",
 )
 
-    s1_, nu_ = eachcol(Nucleus.Table.rea(tsv)[!, 1:2])
+    s1_, nu_ = eachcol(Public.read_table(tsv)[!, 1:2])
 
     al = Algorithm.make(algorithm)
 
@@ -297,11 +317,11 @@ Run metric-rank (standard) GSEA.
     high = "High",
 )
 
-    _, _, s1_, N = Nucleus.Table.ge(Nucleus.Table.rea(tsv1))
+    _, _, s1_, N = Public.make_part(Public.read_table(tsv1))
 
     bo_::Vector{Bool} = view(N, 1, :)
 
-    st, s2_, s3_, N = Nucleus.Table.ge(Nucleus.Table.rea(tsv2))
+    st, s2_, s3_, N = Public.make_part(Public.read_table(tsv2))
 
     N = N[:, indexin(s1_, s3_)]
 
@@ -309,25 +329,25 @@ Run metric-rank (standard) GSEA.
 
     fu = if metric == "mean-difference"
 
-        Nucleus.PairMetric.make_mean_difference
+        Public.number_difference
 
     elseif metric == "log-ratio"
 
-        Nucleus.PairMetric.make_log_ratio
+        Public.number_ratio
 
     elseif metric == "signal-to-noise-ratio"
 
-        Nucleus.PairMetric.make_signal_to_noise_ratio
+        Public.number_signal
 
     end
 
     # TODO: Consider Match
 
-    nu_ = map(nu_ -> Nucleus.PairMap.make(fu, bo_, nu_), eachrow(N))
+    nu_ = map(nu_ -> Public.make_2(fu, bo_, nu_), eachrow(N))
 
-    Nucleus.Table.writ(
+    Public.write_table(
         joinpath(directory, "metric.tsv"),
-        Nucleus.Table.make(st, s2_, [metric], reshape(nu_, :, 1)),
+        Public.make_table(st, s2_, [metric], reshape(nu_, :, 1)),
     )
 
     al = Algorithm.make(algorithm)

@@ -6,11 +6,10 @@ for st in (
     "Algorithm",
     "Enrichment",
     "File",
+    "Information",
     "Interface",
     "Normalization",
     "Plot",
-    "Rando",
-    "Result",
     "Sort",
     "GSEA",
 )

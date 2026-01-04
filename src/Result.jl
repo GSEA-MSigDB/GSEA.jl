@@ -1,6 +1,6 @@
 module Result
 
-using Nucleus
+using Public
 
 using ..GSEA
 
@@ -14,15 +14,15 @@ function writ(di, al, s1_, nu_, s2_, st__, en_, R, um, s3_, t1, t2, t3)
 
     N[:, 2] = en_
 
-    in_, pv_, qv_ = Nucleus.Significance.make(en_, R)
+    in_, pv_, qv_ = Public.number_significance(en_, R)
 
     N[in_, 3] = pv_
 
     N[in_, 4] = qv_
 
-    Nucleus.Table.writ(
+    Public.write_table(
         joinpath(di, "result.tsv"),
-        Nucleus.Table.make(
+        Public.make_table(
             "Set",
             s2_,
             ["Enrichment", "Normalized Enrichment", "P-Value", "Q-Value"],
@@ -41,7 +41,7 @@ function writ(di, al, s1_, nu_, s2_, st__, en_, R, um, s3_, t1, t2, t3)
 
     for nd in unique!(
         vcat(
-            Nucleus.Extreme.index(N[:, 1], um),
+            Public.index_extreme(N[:, 1], um),
             filter!(!isnothing, indexin(s3_, s2_)),
         ),
     )
@@ -49,7 +49,7 @@ function writ(di, al, s1_, nu_, s2_, st__, en_, R, um, s3_, t1, t2, t3)
         st = s2_[nd]
 
         GSEA.Plot.writ(
-            joinpath(di, "$(Nucleus.Numbe.text_2(N[nd, 1])).$st.html"),
+            joinpath(di, "$(Public.text_2(N[nd, 1])).$st.html"),
             al,
             s1_,
             nu_,

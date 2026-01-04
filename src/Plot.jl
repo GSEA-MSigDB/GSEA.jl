@@ -1,6 +1,6 @@
 module Plot
 
-using Nucleus
+using Public
 
 using ..GSEA
 
@@ -32,7 +32,7 @@ function writ(
 
     i2_ = findall(>=(0), nu_)
 
-    bo_ = Nucleus.Collection.is_in(s1_, s2_)
+    bo_ = GSEA.is_in(s1_, s2_)
 
     cu_ = Vector{Float64}(undef, um)
 
@@ -43,13 +43,13 @@ function writ(
         "font" => Dict("size" => 16),
         "borderpad" => 4.8,
         "borderwidth" => 2.64,
-        "bordercolor" => Nucleus.Color.LI,
+        "bordercolor" => Public.LI,
         "showarrow" => false,
     )
 
     po = um * 0.008
 
-    Nucleus.Plotly.writ(
+    Public.write_plotly(
         ht,
         (
             merge(
@@ -58,7 +58,7 @@ function writ(
                     "y" => nu_[i1_],
                     "x" => xc_[i1_],
                     "text" => s1_[i1_],
-                    "fillcolor" => Nucleus.Color.BL,
+                    "fillcolor" => Public.BL,
                 ),
             ),
             merge(
@@ -67,7 +67,7 @@ function writ(
                     "y" => nu_[i2_],
                     "x" => xc_[i2_],
                     "text" => s1_[i2_],
-                    "fillcolor" => Nucleus.Color.RE,
+                    "fillcolor" => Public.RE,
                 ),
             ),
             Dict(
@@ -94,7 +94,7 @@ function writ(
                 ),
             ),
         ),
-        Nucleus.Dictionary.make(
+        Public.pair_merge(
             Dict(
                 "showlegend" => false,
                 "yaxis" =>
@@ -121,7 +121,7 @@ function writ(
                         "yref" => "paper",
                         "xref" => "paper",
                         "y" => 1.056,
-                        "text" => "Enrichment = <b>$(Nucleus.Numbe.text_4(en))</b>",
+                        "text" => "Enrichment = <b>$(Public.text_4(en))</b>",
                         "font" => Dict("size" => 24, "color" => "#000000"),
                         "showarrow" => false,
                     ),
@@ -131,7 +131,7 @@ function writ(
                             "x" => 1 - po,
                             "xanchor" => "right",
                             "text" => t3,
-                            "font" => Dict("color" => Nucleus.Color.RE),
+                            "font" => Dict("color" => Public.RE),
                         ),
                     ),
                     merge(
@@ -140,7 +140,7 @@ function writ(
                             "x" => um + po,
                             "xanchor" => "left",
                             "text" => t2,
-                            "font" => Dict("color" => Nucleus.Color.BL),
+                            "font" => Dict("color" => Public.BL),
                         ),
                     ),
                 ),
@@ -153,7 +153,7 @@ end
 
 function writ(ts, s1_, s2_, E)
 
-    Nucleus.Table.writ(ts, Nucleus.Table.make("Set", s1_, s2_, E))
+    Public.write_table(ts, Public.make_table("Set", s1_, s2_, E))
 
 end
 
@@ -171,12 +171,12 @@ function writ(
     ke_...,
 )
 
-    Nucleus.HeatPlot.writ(
+    Public.write_heat(
         ht,
         s3_,
         s2_,
         E,
-        Nucleus.Dictionary.make(
+        Public.pair_merge(
             Dict(
                 "title" => Dict("text" => "Enrichment"),
                 "yaxis" => Dict("title" => Dict("text" => "Set")),
@@ -194,14 +194,14 @@ function writ(
 
     E = E[in_, :]
 
-    for in_ in CartesianIndices(E)[Nucleus.Extreme.index(vec(E), um)]
+    for in_ in CartesianIndices(E)[Public.index_extreme(vec(E), um)]
 
         i3, i2 = Tuple(in_)
 
         st = s3_[i3]
 
         writ(
-            "$(Nucleus.Strin.get_not_end(ht, '.')).$(Nucleus.Numbe.text_2(E[in_])).$(s2_[i2]).$st.html",
+            "$(rsplit(ht, '.'; limit = 2)[1]).$(Public.text_2(E[in_])).$(s2_[i2]).$st.html",
             al,
             s1_,
             N[:, i2],

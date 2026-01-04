@@ -1,7 +1,5 @@
 module Interface
 
-using Nucleus
-
 using ..GSEA
 
 function make(al, s1_, nu_, st__; mi = 1, ma = 1000, pr = 0)
@@ -18,7 +16,7 @@ function make(al, s1_, nu_, st__; mi = 1, ma = 1000, pr = 0)
 
         s2_ = st__[nd]
 
-        Nucleus.Collection.is_in!(bo_, di, s2_)
+        GSEA.is_in!(bo_, di, s2_)
 
         um = sum(bo_)
 

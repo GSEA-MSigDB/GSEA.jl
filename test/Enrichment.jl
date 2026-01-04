@@ -8,7 +8,7 @@ const A1 = AL_[1]
 
 const A3 = AL_[3]
 
-const B1_ = Nucleus.Collection.is_in(S1_, S2_)
+const B1_ = GSEA.is_in(S1_, S2_)
 
 const D1 = 1 / 12
 
@@ -83,7 +83,7 @@ const S1_, N1_ = GSEA.Sort.make(S1_, N1_)
 
 const S3_, N2_ = GSEA.Sort.make(S3_, N2_)
 
-const B2_ = Nucleus.Collection.is_in(S3_, S4_)
+const B2_ = GSEA.is_in(S3_, S4_)
 
 # ---- #
 

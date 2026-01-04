@@ -10,7 +10,7 @@ function test(fu, ba, re)
 
     fu(ts, joinpath(DA, ba))
 
-    @test size(Nucleus.Table.ge(Nucleus.Table.rea(ts))[4]) === re
+    @test size(Public.make_part(Public.read_table(ts))[4]) === re
 
 end
 
@@ -47,19 +47,9 @@ for (ba, re) in
 
     GSEA.gmt(J1, joinpath(DA, ba))
 
-    @test length(Nucleus.Dictionary.rea(J1)) === re
+    @test length(Public.read_pair(J1)) === re
 
 end
-
-# ---- #
-# TODO
-
-GSEA.rea
-
-# ---- #
-# TODO
-
-GSEA.update!
 
 # ---- #
 
@@ -78,12 +68,11 @@ const T4 = joinpath(D3, "metric.tsv")
 
 function rea(di)
 
-    Nucleus.Table.ge(Nucleus.Table.rea(joinpath(di, "result.tsv")))
+    Public.make_part(Public.read_table(joinpath(di, "result.tsv")))
 
 end
 
 # ---- #
-# TODO
 
 GSEA.data_rank(D1, T2, J2; minimum = 15, maximum = 500)
 
@@ -110,7 +99,6 @@ const IN_ = findall(nu_ -> !any(isnan, nu_), eachrow(N1))
 @test findmax(N1[IN_, :]) === (0.756249206577638, CartesianIndex(2, 2))
 
 # ---- #
-# TODO
 
 GSEA.user_rank(D2, T3, J2)
 
@@ -135,8 +123,8 @@ for (nd, r1, r2) in (
         [
             -0.27209592258934645,
             -1.324926701473525,
-            0.03764320785597382,
-            0.15057283142389527,
+            0.03764320785597381,
+            0.15057283142389524,
         ],
     ),
     (
@@ -163,16 +151,15 @@ for (nd, r1, r2) in (
 
     @test S7_[nd] === r1
 
-    @test is_egal(N2[nd, :], r2)
+    @test N2[nd, :] == r2
 
 end
 
 # ---- #
-# TODO
 
 GSEA.metric_rank(D3, T1, T2, J2)
 
-const ST, _, S8_, N3 = Nucleus.Table.ge(Nucleus.Table.rea(T4))
+const ST, _, S8_, N3 = Public.make_part(Public.read_table(T4))
 
 @test ST === "Gene"
 

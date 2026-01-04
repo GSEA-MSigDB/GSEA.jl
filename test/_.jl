@@ -1,4 +1,4 @@
-using Nucleus
+using Public
 
 using GSEA
 
@@ -42,9 +42,9 @@ const N1_ = [-6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6.0]
 
 const S2_ = ["Aa", "Kk", "Jo"]
 
-const DA = pkgdir(GSEA, "da")
+const DA = pkgdir(GSEA, "in")
 
-const S3_, N2_ = eachcol(Nucleus.Table.rea(joinpath(DA, "myc.tsv"))[!, 1:2])
+const S3_, N2_ = eachcol(Public.read_table(joinpath(DA, "myc.tsv"))[!, 1:2])
 
 const S4_ =
     GSEA.File.read_gmt(joinpath(DA, "c2.all.v7.1.symbols.gmt"))["COLLER_MYC_TARGETS_UP"]

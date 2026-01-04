@@ -1,6 +1,6 @@
 module File
 
-using Nucleus
+using Public
 
 function read_cls(cl)
 
@@ -36,7 +36,7 @@ end
 
 function read_gct(gc)
 
-    Nucleus.Table.ge(Nucleus.Table.rea(gc; header = 3, drop = ["Description"]))
+    Public.make_part(Public.read_table(gc; header = 3, drop = ["Description"]))
 
 end
 

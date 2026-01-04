@@ -2,7 +2,7 @@ module Normalization
 
 using StatsBase: mean
 
-using Nucleus
+using Public
 
 using ..GSEA
 
@@ -16,7 +16,7 @@ function make!(en_, R)
 
     for i1 in axes(R, 1)
 
-        ne_, po_ = Nucleus.Numbe.ge(R[i1, :])
+        ne_, po_ = Public.number_sign(R[i1, :])
 
         m1 = mean(ne_)
 
