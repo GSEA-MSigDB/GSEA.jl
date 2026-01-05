@@ -17,21 +17,20 @@ using StatsBase: mean, sample
 using Public
 
 ########################################
-# TODO: Rename
 
-struct KS0 end
+struct S0 end
 
-struct A0 end
+struct S0a end
 
-struct DA2 end
+struct D2 end
 
-struct DA2W end
+struct D2f end
 
-struct DA2W0W end
+struct D0f2f end
 
 ########################################
 
-function number_delta(::Union{KS0, A0}, nu_, bo_)
+function number_delta(::Union{S0, S0a}, nu_, bo_)
 
     n1 = n2 = 0.0
 
@@ -53,7 +52,7 @@ function number_delta(::Union{KS0, A0}, nu_, bo_)
 
 end
 
-function number_delta(::Union{DA2, DA2W, DA2W0W}, nu_, bo_)
+function number_delta(::Union{D2, D2f, D0f2f}, nu_, bo_)
 
     n1 = n2 = 0.0
 
@@ -81,7 +80,7 @@ end
 
 ########################################
 
-function number_enrichment!(al::KS0, n1_, bo_, n2_ = nothing)
+function number_enrichment!(al::S0, n1_, bo_, n2_ = nothing)
 
     p1, p2 = number_delta(al, n1_, bo_)
 
@@ -121,7 +120,7 @@ function number_enrichment!(al::KS0, n1_, bo_, n2_ = nothing)
 
 end
 
-function number_enrichment!(al::A0, n1_, bo_, n2_ = nothing)
+function number_enrichment!(al::S0a, n1_, bo_, n2_ = nothing)
 
     p1, p2 = number_delta(al, n1_, bo_)
 
@@ -161,7 +160,7 @@ end
 
 ########################################
 
-function number_enrichment!(al::DA2, n1_, bo_, n2_ = nothing)
+function number_enrichment!(al::D2, n1_, bo_, n2_ = nothing)
 
     um = length(n1_)
 
@@ -207,7 +206,7 @@ function number_enrichment!(al::DA2, n1_, bo_, n2_ = nothing)
 
 end
 
-function number_enrichment!(al::DA2W, n1_, bo_, n2_ = nothing)
+function number_enrichment!(al::D2f, n1_, bo_, n2_ = nothing)
 
     p1, p2 = number_delta(al, n1_, bo_)
 
@@ -253,7 +252,7 @@ end
 
 ########################################
 
-function number_enrichment!(al::DA2W0W, n1_, bo_, n2_ = nothing)
+function number_enrichment!(al::D0f2f, n1_, bo_, n2_ = nothing)
 
     p1, p2 = number_delta(al, n1_, bo_)
 
@@ -638,25 +637,25 @@ end
 
 function make_algorithm(st)
 
-    if st == "ks0"
+    if st == "S0"
 
-        KS0()
+        S0()
 
-    elseif st == "a0"
+    elseif st == "S0a"
 
-        A0()
+        S0a()
 
-    elseif st == "da2"
+    elseif st == "D2"
 
-        DA2()
+        D2()
 
-    elseif st == "da2w"
+    elseif st == "D2f"
 
-        DA2W()
+        D2f()
 
-    elseif st == "da2w0w"
+    elseif st == "D0f2f"
 
-        DA2W0W()
+        D0f2f()
 
     end
 
@@ -701,7 +700,7 @@ Run data-rank (single-sample) GSEA.
 
   - `--standard-deviation`: For column-wise normalization. 0 skips normalization.
   - `--exponent`:
-  - `--algorithm`: "ks0" | "a0" | "da2" | "da2w" | "da2w0w".
+  - `--algorithm`: "S0" | "S0a" | "D2" | "D2f" | "D0f2f".
   - `--minimum`: The minimum set size.
   - `--maximum`: The maximum set size.
   - `--fraction`: The minimum fraction of set members present.
@@ -716,7 +715,7 @@ Run data-rank (single-sample) GSEA.
     json;
     standard_deviation::Float64 = 0.0,
     exponent::Float64 = 1.0,
-    algorithm = "ks0",
+    algorithm = "S0",
     minimum::Int = 1,
     maximum::Int = 1000,
     fraction::Float64 = 0.0,
@@ -918,7 +917,7 @@ Run user-rank (pre-rank) GSEA.
 # Options
 
   - `--exponent`:
-  - `--algorithm`: "ks0" | "a0" | "da2" | "da2w" | "da2w0w".
+  - `--algorithm`: "S0" | "S0a" | "D2" | "D2f" | "D0f2f".
   - `--minimum`: The minimum set size.
   - `--maximum`: The maximum set size.
   - `--fraction`: The minimum fraction of set members present.
@@ -935,7 +934,7 @@ Run user-rank (pre-rank) GSEA.
     tsv,
     json;
     exponent::Float64 = 1.0,
-    algorithm = "ks0",
+    algorithm = "S0",
     minimum::Int = 1,
     maximum::Int = 1000,
     fraction::Float64 = 0.0,
@@ -991,7 +990,7 @@ Run metric-rank (standard) GSEA.
   - `--standard-deviation`: For column-wise normalization. 0 skips normalization.
   - `--metric`: "signal-to-noise-ratio" | "mean-difference" | "log-ratio".
   - `--exponent`:
-  - `--algorithm`: "ks0" | "a0" | "da2" | "da2w" | "da2w0w".
+  - `--algorithm`: "S0" | "S0a" | "D2" | "D2f" | "D0f2f".
   - `--minimum`: The minimum set size.
   - `--maximum`: The maximum set size.
   - `--fraction`: The minimum fraction of set members present.
@@ -1012,7 +1011,7 @@ Run metric-rank (standard) GSEA.
     standard_deviation::Float64 = 0.0,
     metric = "signal-to-noise-ratio",
     exponent::Float64 = 1.0,
-    algorithm = "ks0",
+    algorithm = "S0",
     minimum::Int = 1,
     maximum::Int = 1000,
     fraction::Float64 = 0.0,

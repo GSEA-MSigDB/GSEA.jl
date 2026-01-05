@@ -12,7 +12,7 @@ using GSEA
 
 ########################################
 
-const AL_ = GSEA.KS0(), GSEA.A0(), GSEA.DA2(), GSEA.DA2W(), GSEA.DA2W0W()
+const AL_ = GSEA.S0(), GSEA.S0a(), GSEA.D2(), GSEA.D2f(), GSEA.D0f2f()
 
 ########################################
 
