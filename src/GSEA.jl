@@ -585,66 +585,6 @@ end
 
 ########################################
 
-# #numeric
-# #Score
-# 1 2 4 8 1
-#
-# 6 2 1
-# #Aa Bb
-# Aa Aa Aa Bb Bb Bb
-function read_cls(pa)
-
-    s1, s2, s3 = readlines(pa)
-
-    s4 = s2[2:end]
-
-    s1_ = split(s3)
-
-    s5, nu_ = if s1 == "#numeric"
-
-        s4, map(s6 -> parse(Float64, s6), s1_)
-
-    else
-
-        s2_ = split(s4)
-
-        di = Dict(s2_[nd] => nd for nd in eachindex(s2_))
-
-        join(s2_, " vs "), map(s6 -> di[s6], s1_)
-
-    end
-
-    "Phenotype",
-    s5,
-    map!(nd -> "Sample$nd", s1_, eachindex(s1_)),
-    reshape(nu_, 1, :)
-
-end
-
-function read_gct(pa)
-
-    Public.make_part(Public.read_table(pa; header = 3, drop = ["Description"]))
-
-end
-
-function read_gmt(pa)
-
-    di = Dict{String, Vector{String}}()
-
-    for s1 in eachline(pa)
-
-        st_ = split(s1, '\t')
-
-        di[st_[1]] = filter!(!isempty, st_[3:end])
-
-    end
-
-    di
-
-end
-
-########################################
-
 function make_algorithm(st)
 
     if st == "S0"
