@@ -152,7 +152,6 @@ function number_enrichment!(al::A0, n1_, bo_, n2_ = nothing)
 end
 
 ########################################
-# TODO: Pick up
 
 function number_eps(nu)
 
@@ -160,39 +159,49 @@ function number_eps(nu)
 
 end
 
+########################################
+
 function number_enrichment!(al::DA2, n1_, bo_, n2_ = nothing)
 
-    de = number_delta(al, n1_, bo_)[1]
+    pr ,_ = number_delta(al, n1_, bo_)
 
-    r1 = r2 = eps()
+    n1 = n2 = eps()
 
-    l1 = l2 = 1.0
+    n3 = n4 = 1.0
 
-    e1 = su = 0.0
+    n5 = n7 = 0.0
 
-    l2 += e2 = inv(length(n1_))
+    n4 += n6 = inv(length(n1_))
 
     for nd in eachindex(n1_)
 
-        l1 = number_eps(l1 - e1)
+        n3 = number_eps(n3 - n5)
 
-        l2 = number_eps(l2 - e2)
+        n4 = number_eps(n4 - n6)
 
-        r1 += e1 = bo_[nd] ? de * abs(n1_[nd]) : 0.0
+        n1 += n5 = if bo_[nd] 
 
-        r2 += e2
+            pr * abs(n1_[nd]) 
 
-        su += cu = Public.number_divergence(-, r1, l1, r2, l2)
+            else
+
+                0.0
+
+            end
+
+        n2 += n6
+
+        n7 += n8 = Public.number_divergence(-, n1, n3, n2, n4)
 
         if !isnothing(n2_)
 
-            n2_[nd] = cu
+            n2_[nd] = n8
 
         end
 
     end
 
-    su / length(n1_)
+    n7 / length(n1_)
 
 end
 
@@ -200,37 +209,47 @@ function number_enrichment!(al::DA2W, n1_, bo_, n2_ = nothing)
 
     p1, p2 = number_delta(al, n1_, bo_)
 
-    r1 = r2 = eps()
+    n1 = n2 = eps()
 
-    l1 = l2 = 1.0
+    n3 = n4 = 1.0
 
-    e1 = e2 = su = 0.0
+    n5 = n6 = n7 = 0.0
 
     for nd in eachindex(n1_)
 
-        ab = abs(n1_[nd])
+        n8 = abs(n1_[nd])
 
-        l1 = number_eps(l1 - e1)
+        n3 = number_eps(n3 - n5)
 
-        l2 = number_eps(l2 - e2)
+        n4 = number_eps(n4 - n6)
 
-        r1 += e1 = bo_[nd] ? p1 * ab : 0.0
+        n1 += n5 = if bo_[nd] 
 
-        r2 += e2 = p2 * ab
+            p1 * n8 
 
-        su += cu = Public.number_divergence(-, r1, l1, r2, l2)
+            else
+
+                0.0
+
+            end
+
+        n2 += n6 = p2 * n8
+
+        n7 += n9 = Public.number_divergence(-, n1, n3, n2, n4)
 
         if !isnothing(n2_)
 
-            n2_[nd] = cu
+            n2_[nd] = n9
 
         end
 
     end
 
-    su / length(n1_)
+    n7 / length(n1_)
 
 end
+
+########################################
 
 function number_enrichment!(al::DA2W0W, n1_, bo_, n2_ = nothing)
 
