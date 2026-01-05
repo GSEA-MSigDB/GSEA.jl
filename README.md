@@ -2,7 +2,7 @@
 
 This is the new GSEA.
 Rebuilt from scratch.
-It runs 1,000 times faster, delivers 99% more accurate results, and creates beautiful plots.
+It runs 1,000 times faster, delivers 99% more accurate results, and creates prettier plots.
 It’s amazing!
 
 ## Get started

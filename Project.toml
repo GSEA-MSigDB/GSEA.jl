@@ -4,6 +4,7 @@ version = "0.25.0"
 authors = ["KwatMDPhD"]
 
 [deps]
+BenchmarkTools = "6e4b80f9-dd63-53aa-95a3-0cdb28fa8baf"
 Comonicon = "863f3e99-da2a-4334-8734-de3dacbe5542"
 ProgressMeter = "92933f4c-e287-5a05-a399-4b506db050ca"
 Public = "c947c6f8-4499-4aba-9a07-9ad9f868b827"
@@ -12,6 +13,7 @@ StatsBase = "2913bbd2-ae8a-5f71-8c99-4fb6c76f3a91"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
 [compat]
+BenchmarkTools = "1.6.3"
 Comonicon = "1.0.8"
 ProgressMeter = "1.10.2"
 Random = "1.11.0"

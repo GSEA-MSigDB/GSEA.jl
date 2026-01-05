@@ -6,96 +6,625 @@ const P2 = pkgdir(GSEA, "ou")
 
 # ------------------------------------ #
 
-function is_in(a1_, a2_)
+using Comonicon: @cast, @main
 
-    map(in(Set(a2_)), a1_)
+using ProgressMeter: @showprogress
 
-end
+using Random: seed!, shuffle!
 
-function is_in!(bo_, di, an_)
+using StatsBase: mean, sample
 
-    for an in an_
+using Public
 
-        nd = get(di, an, nothing)
+########################################
+# TODO: Rename
 
-        if !isnothing(nd)
+struct KS0 end
 
-            bo_[nd] = true
+struct A0 end
+
+struct DA2 end
+
+struct DA2W end
+
+struct DA2W0W end
+
+########################################
+
+function number_delta(::Union{KS0, A0}, nu_, bo_)
+
+    s0 = s1 = 0.0
+
+    for nd in eachindex(nu_)
+
+        if bo_[nd]
+
+            s1 += abs(nu_[nd])
+
+        else
+
+            s0 += 1.0
 
         end
 
     end
 
+    -inv(s0), inv(s1)
+
 end
 
-for st in (
-    "Algorithm",
-    "Enrichment",
-    "File",
-    "Information",
-    "Interface",
-    "Normalization",
-    "Plot",
-    "Rando",
-    "Result",
-    "Sort",
+function number_delta(::Union{DA2, DA2W, DA2W0W}, nu_, bo_)
+
+    s1 = s2 = 0.0
+
+    for nd in eachindex(nu_)
+
+        s2 += ab = abs(nu_[nd])
+
+        if bo_[nd]
+
+            s1 += ab
+
+        end
+
+    end
+
+    inv(s1), inv(s2)
+
+end
+
+function number_delta(d1, d2)
+
+    inv(inv(d2) - inv(d1))
+
+end
+
+########################################
+
+function number_eps(nu)
+
+    ep = eps()
+
+    if nu < ep
+
+        ep
+
+    else
+
+        nu
+
+    end
+
+end
+
+########################################
+
+function number_enrichment!(al::KS0, nu_, bo_, cu_ = nothing)
+
+    d0, d1 = number_delta(al, nu_, bo_)
+
+    c1 = a2 = c2 = 0.0
+
+    for nd in eachindex(nu_)
+
+        c1 += bo_[nd] ? d1 * abs(nu_[nd]) : d0
+
+        if !isnothing(cu_)
+
+            cu_[nd] = c1
+
+        end
+
+        a1 = abs(c1)
+
+        if a2 < a1
+
+            a2 = a1
+
+            c2 = c1
+
+        end
+
+    end
+
+    c2
+
+end
+
+function number_enrichment!(al::A0, nu_, bo_, cu_ = nothing)
+
+    d0, d1 = number_delta(al, nu_, bo_)
+
+    cu = su = 0.0
+
+    for nd in eachindex(nu_)
+
+        su += cu += bo_[nd] ? d1 * abs(nu_[nd]) : d0
+
+        if !isnothing(cu_)
+
+            cu_[nd] = cu
+
+        end
+
+    end
+
+    su / length(nu_)
+
+end
+
+function number_enrichment!(al::DA2, nu_, bo_, cu_ = nothing)
+
+    de = number_delta(al, nu_, bo_)[1]
+
+    r1 = r2 = eps()
+
+    l1 = l2 = 1.0
+
+    e1 = su = 0.0
+
+    l2 += e2 = inv(length(nu_))
+
+    for nd in eachindex(nu_)
+
+        l1 = number_eps(l1 - e1)
+
+        l2 = number_eps(l2 - e2)
+
+        r1 += e1 = bo_[nd] ? de * abs(nu_[nd]) : 0.0
+
+        r2 += e2
+
+        su += cu = Public.number_divergence(-, r1, l1, r2, l2)
+
+        if !isnothing(cu_)
+
+            cu_[nd] = cu
+
+        end
+
+    end
+
+    su / length(nu_)
+
+end
+
+function number_enrichment!(al::DA2W, nu_, bo_, cu_ = nothing)
+
+    d1, d2 = number_delta(al, nu_, bo_)
+
+    r1 = r2 = eps()
+
+    l1 = l2 = 1.0
+
+    e1 = e2 = su = 0.0
+
+    for nd in eachindex(nu_)
+
+        ab = abs(nu_[nd])
+
+        l1 = number_eps(l1 - e1)
+
+        l2 = number_eps(l2 - e2)
+
+        r1 += e1 = bo_[nd] ? d1 * ab : 0.0
+
+        r2 += e2 = d2 * ab
+
+        su += cu = Public.number_divergence(-, r1, l1, r2, l2)
+
+        if !isnothing(cu_)
+
+            cu_[nd] = cu
+
+        end
+
+    end
+
+    su / length(nu_)
+
+end
+
+function number_enrichment!(al::DA2W0W, nu_, bo_, cu_ = nothing)
+
+    d1, d2 = number_delta(al, nu_, bo_)
+
+    d0 = number_delta(d1, d2)
+
+    r0 = r1 = r2 = eps()
+
+    l0 = l1 = l2 = 1.0
+
+    e0 = e1 = e2 = su = 0.0
+
+    for nd in eachindex(nu_)
+
+        ab = abs(nu_[nd])
+
+        l0 = number_eps(l0 - e0)
+
+        l1 = number_eps(l1 - e1)
+
+        l2 = number_eps(l2 - e2)
+
+        r0 += e0 = bo_[nd] ? 0.0 : d0 * ab
+
+        r1 += e1 = bo_[nd] ? d1 * ab : 0.0
+
+        r2 += e2 = d2 * ab
+
+        su +=
+            cu =
+                Public.number_divergence(-, r1, r0, r2, r2) -
+                Public.number_divergence(-, l1, l0, l2, l2)
+
+        if !isnothing(cu_)
+
+            cu_[nd] = cu
+
+        end
+
+    end
+
+    su / length(nu_)
+
+end
+
+########################################
+
+function make_sort(a1_, n1_)
+
+    in_ = findall(!isnan, n1_)
+
+    a2_ = a1_[in_]
+
+    n2_ = n1_[in_]
+
+    sortperm!(in_, n2_; rev = true)
+
+    a2_[in_], n2_[in_]
+
+end
+
+########################################
+
+function number_enrichment(al, s1_, nu_, st__; mi = 1, ma = 1000, pr = 0)
+
+    s1_, nu_ = make_sort(s1_, nu_)
+
+    di = Dict(s1_[nd] => nd for nd in eachindex(s1_))
+
+    bo_ = falses(length(s1_))
+
+    en_ = Vector{Float64}(undef, length(st__))
+
+    for i1 in eachindex(st__)
+
+        s2_ = st__[i1]
+
+        for x1 in s2_
+
+            i2 = get(di, x1, nothing)
+
+            if !isnothing(i2)
+
+                bo_[i2] = true
+
+            end
+
+        end
+
+        um = sum(bo_)
+
+        en_[i1] =
+            um < mi || ma < um || um / length(s2_) < pr ? NaN :
+            number_enrichment!(al, nu_, bo_)
+
+        fill!(bo_, false)
+
+    end
+
+    en_
+
+end
+
+########################################
+
+function write_enrichment(
+    ht,
+    al,
+    s1_,
+    nu_,
+    s2_,
+    la = Dict{String, Any}();
+    t1 = "Score",
+    t2 = "Low",
+    t3 = "High",
 )
 
-    include("$st.jl")
+    s1_, nu_ = make_sort(s1_, nu_)
+
+    um = length(s1_)
+
+    tr = Dict(
+        "mode" => "lines",
+        "line" => Dict("width" => 0),
+        "fill" => "tozeroy",
+    )
+
+    xc_ = 1:um
+
+    i1_ = findall(<(0), nu_)
+
+    i2_ = findall(>=(0), nu_)
+
+    bo_ = map(in(s2_), s1_)
+
+    cu_ = Vector{Float64}(undef, um)
+
+    en = number_enrichment!(al, nu_, bo_, cu_)
+
+    an = Dict(
+        "y" => 0,
+        "font" => Dict("size" => 16),
+        "borderpad" => 4.8,
+        "borderwidth" => 2.64,
+        "bordercolor" => Public.LI,
+        "showarrow" => false,
+    )
+
+    po = um * 0.008
+
+    Public.write_plotly(
+        ht,
+        (
+            merge(
+                tr,
+                Dict(
+                    "y" => nu_[i1_],
+                    "x" => xc_[i1_],
+                    "text" => s1_[i1_],
+                    "fillcolor" => Public.BL,
+                ),
+            ),
+            merge(
+                tr,
+                Dict(
+                    "y" => nu_[i2_],
+                    "x" => xc_[i2_],
+                    "text" => s1_[i2_],
+                    "fillcolor" => Public.RE,
+                ),
+            ),
+            Dict(
+                "yaxis" => "y2",
+                "y" => zeros(sum(bo_)),
+                "x" => xc_[bo_],
+                "mode" => "markers",
+                "marker" => Dict(
+                    "symbol" => "line-ns",
+                    "size" => 24,
+                    "line" => Dict("width" => 2, "color" => "#000000cc"),
+                ),
+                "text" => s1_[bo_],
+                "hoverinfo" => "x+text",
+            ),
+            merge(
+                tr,
+                Dict(
+                    "yaxis" => "y3",
+                    "y" => cu_,
+                    "x" => xc_,
+                    "text" => s1_,
+                    "fillcolor" => "#07fa07",
+                ),
+            ),
+        ),
+        Public.pair_merge(
+            Dict(
+                "showlegend" => false,
+                "yaxis" =>
+                    Dict("domain" => (0, 0.24), "title" => Dict("text" => t1)),
+                "yaxis2" => Dict(
+                    "domain" => (0.248, 0.32),
+                    "title" => Dict("text" => "Set"),
+                    "tickvals" => (),
+                ),
+                "yaxis3" => Dict(
+                    "domain" => (0.328, 1),
+                    "title" => Dict("text" => "Δ Enrichment"),
+                ),
+                "xaxis" => Dict(
+                    "title" => Dict("text" => "Feature ($um)"),
+                    "showspikes" => true,
+                    "spikemode" => "across",
+                    "spikedash" => "solid",
+                    "spikethickness" => -1,
+                    "spikecolor" => "#000000",
+                ),
+                "annotations" => (
+                    Dict(
+                        "yref" => "paper",
+                        "xref" => "paper",
+                        "y" => 1.056,
+                        "text" => "Enrichment = <b>$(Public.text_4(en))</b>",
+                        "font" => Dict("size" => 24, "color" => "#000000"),
+                        "showarrow" => false,
+                    ),
+                    merge(
+                        an,
+                        Dict(
+                            "x" => 1 - po,
+                            "xanchor" => "right",
+                            "text" => t3,
+                            "font" => Dict("color" => Public.RE),
+                        ),
+                    ),
+                    merge(
+                        an,
+                        Dict(
+                            "x" => um + po,
+                            "xanchor" => "left",
+                            "text" => t2,
+                            "font" => Dict("color" => Public.BL),
+                        ),
+                    ),
+                ),
+            ),
+            la,
+        ),
+    )
 
 end
 
-using Comonicon: @cast, @main
+########################################
 
-using Public
+function write_enrichment(
+    ht,
+    al,
+    s1_,
+    s2_,
+    N,
+    s3_,
+    st__,
+    E,
+    la = Dict{String, Any}();
+    um = 2,
+    ke_...,
+)
 
-"""
-Convert .cls to .tsv.
+    Public.write_heat(
+        ht,
+        s3_,
+        s2_,
+        E,
+        Public.pair_merge(
+            Dict(
+                "title" => Dict("text" => "Enrichment"),
+                "yaxis" => Dict("title" => Dict("text" => "Set")),
+                "xaxis" => Dict("title" => Dict("text" => "Sample")),
+            ),
+            la,
+        ),
+    )
 
-# Arguments
+    in_ = findall(en_ -> all(!isnan, en_), eachrow(E))
 
-  - `tsv`:
-  - `cls`:
-"""
-@cast function cls(tsv, cls)
+    s3_ = s3_[in_]
 
-    s1, s2, st_, N = File.read_cls(cls)
+    st__ = st__[in_]
 
-    Public.write_table(tsv, Public.make_table(s1, s2, st_, N))
+    E = E[in_, :]
+
+    for in_ in CartesianIndices(E)[Public.index_extreme(vec(E), um)]
+
+        i3, i2 = Tuple(in_)
+
+        st = s3_[i3]
+
+        write_enrichment(
+            "$(rsplit(ht, '.'; limit = 2)[1]).$(Public.text_2(E[in_])).$(s2_[i2]).$st.html",
+            al,
+            s1_,
+            N[:, i2],
+            st__[i3],
+            Dict("title" => Dict("text" => st));
+            ke_...,
+        )
+
+    end
 
 end
 
-"""
-Convert .gct to .tsv.
+########################################
 
-# Arguments
+# #numeric
+# #Score
+# 1 2 4 8 1
+#
+# 6 2 1
+# #Aa Bb
+# Aa Aa Aa Bb Bb Bb
+function read_cls(pa)
 
-  - `tsv`:
-  - `gct`:
-"""
-@cast function gct(tsv, gct)
+    s1, s2, s3 = readlines(pa)
 
-    st, s1_, s2_, N = File.read_gct(gct)
+    s4 = s2[2:end]
 
-    Public.write_table(tsv, Public.make_table(st, s1_, s2_, N))
+    s1_ = split(s3)
+
+    s5, nu_ = if s1 == "#numeric"
+
+        s4, map(s6 -> parse(Float64, s6), s1_)
+
+    else
+
+        s2_ = split(s4)
+
+        di = Dict(s2_[nd] => nd for nd in eachindex(s2_))
+
+        join(s2_, " vs "), map(s6 -> di[s6], s1_)
+
+    end
+
+    "Phenotype",
+    s5,
+    map!(nd -> "Sample$nd", s1_, eachindex(s1_)),
+    reshape(nu_, 1, :)
 
 end
 
-"""
-Merge .gmts into .json.
+function read_gct(pa)
 
-# Arguments
-
-  - `json`:
-  - `gmts`:
-"""
-@cast function gmt(json, gmts...)
-
-    Public.write_pair(json, reduce(merge!, File.read_gmt(gm) for gm in gmts))
+    Public.make_part(Public.read_table(pa; header = 3, drop = ["Description"]))
 
 end
 
-function rea(js)
+function read_gmt(pa)
+
+    di = Dict{String, Vector{String}}()
+
+    for s1 in eachline(pa)
+
+        st_ = split(s1, '\t')
+
+        di[st_[1]] = filter!(!isempty, st_[3:end])
+
+    end
+
+    di
+
+end
+
+########################################
+
+function make_algorithm(st)
+
+    if st == "ks0"
+
+        KS0()
+
+    elseif st == "a0"
+
+        A0()
+
+    elseif st == "da2"
+
+        DA2()
+
+    elseif st == "da2w"
+
+        DA2W()
+
+    elseif st == "da2w0w"
+
+        DA2W0W()
+
+    end
+
+end
+
+function read_pair(js)
 
     di = Public.read_pair(js)
 
@@ -103,7 +632,7 @@ function rea(js)
 
 end
 
-function update!(N, st)
+function number_z!(N, st)
 
     if iszero(st)
 
@@ -118,6 +647,8 @@ function update!(N, st)
     end
 
 end
+
+########################################
 
 """
 Run data-rank (single-sample) GSEA.
@@ -157,17 +688,17 @@ Run data-rank (single-sample) GSEA.
     high = "High",
 )
 
-    al = Algorithm.make(algorithm)
+    al = make_algorithm(algorithm)
 
     st, s1_, s2_, N = Public.make_part(Public.read_table(tsv))
 
-    update!(N, standard_deviation)
+    number_z!(N, standard_deviation)
 
-    s3_, st__ = rea(json)
+    s3_, st__ = read_pair(json)
 
     E = reduce(
         hcat,
-        Interface.make(
+        number_enrichment(
             al,
             s1_,
             nu_,
@@ -180,9 +711,9 @@ Run data-rank (single-sample) GSEA.
 
     fi = joinpath(directory, "result")
 
-    Plot.writ("$fi.tsv", s3_, s2_, E)
+    Public.write_table("$fi.tsv", Public.make_table("Set", s3_, s2_, E))
 
-    Plot.writ(
+    write_enrichment(
         "$fi.html",
         al,
         s1_,
@@ -198,6 +729,144 @@ Run data-rank (single-sample) GSEA.
     )
 
 end
+
+########################################
+
+function number_random(um, se, al, s1_, nu_, st__; ke_...)
+
+    R = Matrix{Float64}(undef, length(st__), um)
+
+    um_ = map(s2_ -> length(intersect(s1_, s2_)), st__)
+
+    seed!(se)
+
+    @showprogress for nd in 1:um
+
+        R[:, nd] = number_enrichment(
+            al,
+            s1_,
+            nu_,
+            map(um -> sample(s1_, um; replace = false), um_);
+            ke_...,
+        )
+
+    end
+
+    R
+
+end
+
+function number_random(um, se, al, st_, fu, bo_, N, st__; ke_...)
+
+    R = Matrix{Float64}(undef, length(st__), um)
+
+    seed!(se)
+
+    @showprogress for nd in 1:um
+
+        R[:, nd] = number_enrichment(
+            al,
+            st_,
+            map(nu_ -> Public.make_2(fu, shuffle!(bo_), nu_), eachrow(N)),
+            st__;
+            ke_...,
+        )
+
+    end
+
+    R
+
+end
+
+########################################
+
+function number_normalization(n1, n2, n3)
+
+    n1 / if n1 < 0
+
+        -n2
+
+    else
+
+        n3
+
+    end
+
+end
+
+function write_result(di, al, s1_, nu_, s2_, st__, en_, R, um, s3_, t1, t2, t3)
+
+    N = Matrix{Float64}(undef, length(s2_), 4)
+
+    N[:, 1] = en_
+
+    for i1 in axes(R, 1)
+
+        m1, m2 = (mean(nu_) for nu_ in Public.number_sign(R[i1, :]))
+
+        en_[i1] = number_normalization(en_[i1], m1, m2)
+
+        for i2 in axes(R, 2)
+
+            R[i1, i2] = number_normalization(R[i1, i2], m1, m2)
+
+        end
+
+    end
+
+    N[:, 2] = en_
+
+    in_, pv_, qv_ = Public.number_significance(en_, R)
+
+    N[in_, 3] = pv_
+
+    N[in_, 4] = qv_
+
+    Public.write_table(
+        joinpath(di, "result.tsv"),
+        Public.make_table(
+            "Set",
+            s2_,
+            ["Enrichment", "Normalized Enrichment", "P-Value", "Q-Value"],
+            N,
+        ),
+    )
+
+    # TODO: Use normalized enrichment
+    in_ = findall(!isnan, N[:, 1])
+
+    s2_ = s2_[in_]
+
+    st__ = st__[in_]
+
+    N = N[in_, :]
+
+    for nd in unique!(
+        vcat(
+            Public.index_extreme(N[:, 1], um),
+            filter!(!isnothing, indexin(s3_, s2_)),
+        ),
+    )
+
+        st = s2_[nd]
+
+        write_enrichment(
+            joinpath(di, "$(Public.text_2(N[nd, 1])).$st.html"),
+            al,
+            s1_,
+            nu_,
+            st__[nd],
+            Dict("title" => Dict("text" => st));
+            t1,
+            t2,
+            t3,
+        )
+
+    end
+
+end
+
+########################################
 
 """
 Run user-rank (pre-rank) GSEA.
@@ -243,21 +912,21 @@ Run user-rank (pre-rank) GSEA.
 
     s1_, nu_ = eachcol(Public.read_table(tsv)[!, 1:2])
 
-    al = Algorithm.make(algorithm)
+    al = make_algorithm(algorithm)
 
-    s2_, st__ = rea(json)
+    s2_, st__ = read_pair(json)
 
     ke_ = (mi = minimum, ma = maximum, pr = fraction)
 
-    Result.writ(
+    write_result(
         directory,
         al,
         s1_,
         nu_,
         s2_,
         st__,
-        Interface.make(al, s1_, nu_, st__; ke_...),
-        Rando.make(number_of_permutations, seed, al, s1_, nu_, st__; ke_...),
+        number_enrichment(al, s1_, nu_, st__; ke_...),
+        number_random(number_of_permutations, seed, al, s1_, nu_, st__; ke_...),
         number_of_plots,
         split(more_plots, ';'),
         score,
@@ -266,6 +935,8 @@ Run user-rank (pre-rank) GSEA.
     )
 
 end
+
+########################################
 
 """
 Run metric-rank (standard) GSEA.
@@ -325,7 +996,7 @@ Run metric-rank (standard) GSEA.
 
     N = N[:, indexin(s1_, s3_)]
 
-    update!(N, standard_deviation)
+    number_z!(N, standard_deviation)
 
     fu = if metric == "mean-difference"
 
@@ -350,23 +1021,23 @@ Run metric-rank (standard) GSEA.
         Public.make_table(st, s2_, [metric], reshape(nu_, :, 1)),
     )
 
-    al = Algorithm.make(algorithm)
+    al = make_algorithm(algorithm)
 
-    s3_, st__ = rea(json)
+    s3_, st__ = read_pair(json)
 
     ke_ = (mi = minimum, ma = maximum, pr = fraction)
 
-    Result.writ(
+    write_result(
         directory,
         al,
         s2_,
         nu_,
         s3_,
         st__,
-        Interface.make(al, s2_, nu_, st__; ke_...),
+        number_enrichment(al, s2_, nu_, st__; ke_...),
         if permutation == "set"
 
-            Rando.make(
+            number_random(
                 number_of_permutations,
                 seed,
                 al,
@@ -378,7 +1049,7 @@ Run metric-rank (standard) GSEA.
 
         elseif permutation == "sample"
 
-            Rando.make(
+            number_random(
                 number_of_permutations,
                 seed,
                 al,

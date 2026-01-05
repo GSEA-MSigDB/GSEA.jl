@@ -2,20 +2,10 @@ using GSEA
 
 # ------------------------------------ #
 
-for st in (
-    "Algorithm",
-    "Enrichment",
-    "File",
-    "Information",
-    "Interface",
-    "Normalization",
-    "Plot",
-    "Sort",
-    "GSEA",
-)
+for nd in 1:4
 
-    @info "🎬 Testing $st"
+    @info "🎬 Testing $nd"
 
-    run(`julia --project $st.jl`)
+    run(`julia --project $nd.jl`)
 
 end
