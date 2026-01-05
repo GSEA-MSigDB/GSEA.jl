@@ -32,11 +32,11 @@ const B1_ = map(
     S1_,
 )
 
-# 22.208 μs (0 allocations: 0 bytes)
-# 21.583 μs (0 allocations: 0 bytes)
-# 123.292 μs (0 allocations: 0 bytes)
-# 134.542 μs (0 allocations: 0 bytes)
-# 218.792 μs (0 allocations: 0 bytes)
+# 22.167 μs (0 allocations: 0 bytes)
+# 21.542 μs (0 allocations: 0 bytes)
+# 123.458 μs (0 allocations: 0 bytes)
+# 133.334 μs (0 allocations: 0 bytes)
+# 217.000 μs (0 allocations: 0 bytes)
 for (nd, re) in (
     (1, 0.7651927829281453),
     (2, 0.41482514169516305),
@@ -63,11 +63,11 @@ const S2_ = collect(keys(DI))
 
 const ST__ = collect(values(DI))
 
-# 1.622 ms (32 allocations: 1.88 MiB)
-# 1.619 ms (32 allocations: 1.88 MiB)
-# 7.284 ms (32 allocations: 1.88 MiB)
-# 7.815 ms (32 allocations: 1.88 MiB)
-# 12.704 ms (32 allocations: 1.88 MiB)
+# 1.618 ms (32 allocations: 1.88 MiB)
+# 1.606 ms (32 allocations: 1.88 MiB)
+# 7.232 ms (32 allocations: 1.88 MiB)
+# 7.629 ms (32 allocations: 1.88 MiB)
+# 12.515 ms (32 allocations: 1.88 MiB)
 for al in AL_
 
     @test S2_[sortperm(GSEA.number_enrichment(al, S1_, N1_, ST__))][49:50] ==

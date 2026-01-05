@@ -59,11 +59,11 @@ function number_delta(::Union{DA2, DA2W, DA2W0W}, nu_, bo_)
 
     for nd in eachindex(nu_)
 
-        n2 += ab = abs(nu_[nd])
+        n2 += n3 = abs(nu_[nd])
 
         if bo_[nd]
 
-            n1 += ab
+            n1 += n3
 
         end
 
@@ -252,7 +252,6 @@ function number_enrichment!(al::DA2W, n1_, bo_, n2_ = nothing)
 end
 
 ########################################
-# TODO: Pick up
 
 function number_enrichment!(al::DA2W0W, n1_, bo_, n2_ = nothing)
 
@@ -260,42 +259,52 @@ function number_enrichment!(al::DA2W0W, n1_, bo_, n2_ = nothing)
 
     p3 = number_delta(p1, p2)
 
-    r0 = r1 = r2 = eps()
+    r1 = r2 = r3 = eps()
 
-    l0 = l1 = l2 = 1.0
+    l1 = l2 = l3 = 1.0
 
-    e0 = e1 = e2 = su = 0.0
+    c1 = c2 = c3 = n1 = 0.0
 
     for nd in eachindex(n1_)
 
-        ab = abs(n1_[nd])
+        l1 = number_eps(l1 - c1)
 
-        l0 = number_eps(l0 - e0)
+        l2 = number_eps(l2 - c2)
 
-        l1 = number_eps(l1 - e1)
+        l3 = number_eps(l3 - c3)
 
-        l2 = number_eps(l2 - e2)
+        n2 = abs(n1_[nd])
 
-        r0 += e0 = bo_[nd] ? 0.0 : p3 * ab
+        c1, c2 = if bo_[nd]
 
-        r1 += e1 = bo_[nd] ? p1 * ab : 0.0
+            0.0, p1 * n2
 
-        r2 += e2 = p2 * ab
+        else
 
-        su +=
-            cu =
-                Public.number_divergence(-, r1, r0, r2, r2) -
-                Public.number_divergence(-, l1, l0, l2, l2)
+            p3 * n2, 0.0
+
+        end
+
+        r1 += c1
+
+        r2 += c2
+
+        r3 += c3 = p2 * n2
+
+        n1 +=
+            n3 =
+                Public.number_divergence(-, r2, r1, r3, r3) -
+                Public.number_divergence(-, l2, l1, l3, l3)
 
         if !isnothing(n2_)
 
-            n2_[nd] = cu
+            n2_[nd] = n3
 
         end
 
     end
 
-    su / length(n1_)
+    n1 / length(n1_)
 
 end
 
