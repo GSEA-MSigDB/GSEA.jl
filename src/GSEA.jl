@@ -163,45 +163,47 @@ end
 
 function number_enrichment!(al::DA2, n1_, bo_, n2_ = nothing)
 
-    pr ,_ = number_delta(al, n1_, bo_)
+    um = length(n1_)
 
-    n1 = n2 = eps()
+    p1, _ = number_delta(al, n1_, bo_)
 
-    n3 = n4 = 1.0
+    p2 = p3 = eps()
 
-    n5 = n7 = 0.0
+    p4 = p5 = 1.0
 
-    n4 += n6 = inv(length(n1_))
+    p6 = n1 = 0.0
+
+    p5 += p7 = inv(um)
 
     for nd in eachindex(n1_)
 
-        n3 = number_eps(n3 - n5)
+        p4 = number_eps(p4 - p6)
 
-        n4 = number_eps(n4 - n6)
+        p5 = number_eps(p5 - p7)
 
-        n1 += n5 = if bo_[nd] 
+        p2 += p6 = if bo_[nd]
 
-            pr * abs(n1_[nd]) 
+            p1 * abs(n1_[nd])
 
-            else
+        else
 
-                0.0
+            0.0
 
-            end
+        end
 
-        n2 += n6
+        p3 += p7
 
-        n7 += n8 = Public.number_divergence(-, n1, n3, n2, n4)
+        n1 += n2 = Public.number_divergence(-, p2, p4, p3, p5)
 
         if !isnothing(n2_)
 
-            n2_[nd] = n8
+            n2_[nd] = n2
 
         end
 
     end
 
-    n7 / length(n1_)
+    n1 / um
 
 end
 
@@ -209,47 +211,48 @@ function number_enrichment!(al::DA2W, n1_, bo_, n2_ = nothing)
 
     p1, p2 = number_delta(al, n1_, bo_)
 
-    n1 = n2 = eps()
+    p3 = p4 = eps()
 
-    n3 = n4 = 1.0
+    p5 = p6 = 1.0
 
-    n5 = n6 = n7 = 0.0
+    p7 = p8 = n1 = 0.0
 
     for nd in eachindex(n1_)
 
-        n8 = abs(n1_[nd])
+        p5 = number_eps(p5 - p7)
 
-        n3 = number_eps(n3 - n5)
+        p6 = number_eps(p6 - p8)
 
-        n4 = number_eps(n4 - n6)
+        n2 = abs(n1_[nd])
 
-        n1 += n5 = if bo_[nd] 
+        p3 += p7 = if bo_[nd]
 
-            p1 * n8 
+            p1 * n2
 
-            else
+        else
 
-                0.0
+            0.0
 
-            end
+        end
 
-        n2 += n6 = p2 * n8
+        p4 += p8 = p2 * n2
 
-        n7 += n9 = Public.number_divergence(-, n1, n3, n2, n4)
+        n1 += n3 = Public.number_divergence(-, p3, p5, p4, p6)
 
         if !isnothing(n2_)
 
-            n2_[nd] = n9
+            n2_[nd] = n3
 
         end
 
     end
 
-    n7 / length(n1_)
+    n1 / length(n1_)
 
 end
 
 ########################################
+# TODO: Pick up
 
 function number_enrichment!(al::DA2W0W, n1_, bo_, n2_ = nothing)
 
