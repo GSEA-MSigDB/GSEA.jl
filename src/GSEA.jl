@@ -33,43 +33,43 @@ struct DA2W0W end
 
 function number_delta(::Union{KS0, A0}, nu_, bo_)
 
-    s0 = s1 = 0.0
+    n1 = n2 = 0
 
     for nd in eachindex(nu_)
 
         if bo_[nd]
 
-            s1 += abs(nu_[nd])
+            n2 += abs(nu_[nd])
 
         else
 
-            s0 += 1.0
+            n1 += 1
 
         end
 
     end
 
-    -inv(s0), inv(s1)
+    -inv(n1), inv(n2)
 
 end
 
 function number_delta(::Union{DA2, DA2W, DA2W0W}, nu_, bo_)
 
-    s1 = s2 = 0.0
+    n1 = n2 = 0.0
 
     for nd in eachindex(nu_)
 
-        s2 += ab = abs(nu_[nd])
+        n2 += ab = abs(nu_[nd])
 
         if bo_[nd]
 
-            s1 += ab
+            n1 += ab
 
         end
 
     end
 
-    inv(s1), inv(s2)
+    inv(n1), inv(n2)
 
 end
 
@@ -83,21 +83,12 @@ end
 
 function number_eps(nu)
 
-    ep = eps()
-
-    if nu < ep
-
-        ep
-
-    else
-
-        nu
-
-    end
+    max(eps(), nu)
 
 end
 
 ########################################
+# TODO: Pick up
 
 function number_enrichment!(al::KS0, nu_, bo_, cu_ = nothing)
 
