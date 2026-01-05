@@ -317,6 +317,7 @@ function make_sort(a1_, n1_)
 
     n2_ = n1_[in_]
 
+    # TODO: Make increasing
     sortperm!(in_, n2_; rev = true)
 
     a2_[in_], n2_[in_]
@@ -325,48 +326,57 @@ end
 
 ########################################
 
-function number_enrichment(al, s1_, nu_, st__; mi = 1, ma = 1000, pr = 0)
+function number_enrichment(al, s1_, n1_, st__; u1 = 1, u2 = 1000, pr = 0)
 
-    s1_, nu_ = make_sort(s1_, nu_)
+    s2_, n2_ = make_sort(s1_, n1_)
 
-    di = Dict(s1_[nd] => nd for nd in eachindex(s1_))
+    u3 = length(s2_)
 
-    bo_ = falses(length(s1_))
+    bo_ = falses(u3)
 
-    en_ = Vector{Float64}(undef, length(st__))
+    di = Dict(s2_[nd] => nd for nd in 1:u3)
 
-    for i1 in eachindex(st__)
+    u4 = length(st__)
 
-        s2_ = st__[i1]
+    n3_ = Vector{Float64}(undef, u4)
 
-        for x1 in s2_
+    for nd in 1:u4
 
-            i2 = get(di, x1, nothing)
+        s3_ = st__[nd]
 
-            if !isnothing(i2)
+        for st in s3_
 
-                bo_[i2] = true
+            if haskey(di, st)
+
+                bo_[di[st]] = true
 
             end
 
         end
 
-        um = sum(bo_)
+        u5 = count(bo_)
 
-        en_[i1] =
-            um < mi || ma < um || um / length(s2_) < pr ? NaN :
-            number_enrichment!(al, nu_, bo_)
+        n3_[nd] = if u1 <= u5 <= u2 && pr <= u5 / length(s3_)
+
+            number_enrichment!(al, n2_, bo_)
+
+        else
+
+            NaN
+
+        end
 
         fill!(bo_, false)
 
     end
 
-    en_
+    n3_
 
 end
 
 ########################################
 
+# TODO: Pick up
 function write_enrichment(
     ht,
     al,
@@ -545,7 +555,7 @@ function write_enrichment(
         ),
     )
 
-    in_ = findall(en_ -> all(!isnan, en_), eachrow(E))
+    in_ = findall(nu_ -> all(!isnan, nu_), eachrow(E))
 
     s3_ = s3_[in_]
 
@@ -740,8 +750,8 @@ Run data-rank (single-sample) GSEA.
             s1_,
             nu_,
             st__;
-            mi = minimum,
-            ma = maximum,
+            u1 = minimum,
+            u2 = maximum,
             pr = fraction,
         ) for nu_ in eachcol(N)
     )
@@ -831,17 +841,17 @@ function number_normalization(n1, n2, n3)
 
 end
 
-function write_result(di, al, s1_, nu_, s2_, st__, en_, R, um, s3_, t1, t2, t3)
+function write_result(di, al, s1_, nu_, s2_, st__, n2_, R, um, s3_, t1, t2, t3)
 
     N = Matrix{Float64}(undef, length(s2_), 4)
 
-    N[:, 1] = en_
+    N[:, 1] = n2_
 
     for i1 in axes(R, 1)
 
         m1, m2 = (mean(nu_) for nu_ in Public.number_sign(R[i1, :]))
 
-        en_[i1] = number_normalization(en_[i1], m1, m2)
+        n2_[i1] = number_normalization(n2_[i1], m1, m2)
 
         for i2 in axes(R, 2)
 
@@ -851,9 +861,9 @@ function write_result(di, al, s1_, nu_, s2_, st__, en_, R, um, s3_, t1, t2, t3)
 
     end
 
-    N[:, 2] = en_
+    N[:, 2] = n2_
 
-    in_, pv_, qv_ = Public.number_significance(en_, R)
+    in_, pv_, qv_ = Public.number_significance(n2_, R)
 
     N[in_, 3] = pv_
 
@@ -953,7 +963,7 @@ Run user-rank (pre-rank) GSEA.
 
     s2_, st__ = read_pair(json)
 
-    ke_ = (mi = minimum, ma = maximum, pr = fraction)
+    ke_ = (u1 = minimum, u2 = maximum, pr = fraction)
 
     write_result(
         directory,
@@ -1062,7 +1072,7 @@ Run metric-rank (standard) GSEA.
 
     s3_, st__ = read_pair(json)
 
-    ke_ = (mi = minimum, ma = maximum, pr = fraction)
+    ke_ = (u1 = minimum, u2 = maximum, pr = fraction)
 
     write_result(
         directory,
