@@ -33,7 +33,7 @@ struct DA2W0W end
 
 function number_delta(::Union{KS0, A0}, nu_, bo_)
 
-    n1 = n2 = 0
+    n1 = n2 = 0.0
 
     for nd in eachindex(nu_)
 
@@ -43,7 +43,7 @@ function number_delta(::Union{KS0, A0}, nu_, bo_)
 
         else
 
-            n1 += 1
+            n1 += 1.0
 
         end
 
@@ -73,13 +73,86 @@ function number_delta(::Union{DA2, DA2W, DA2W0W}, nu_, bo_)
 
 end
 
-function number_delta(d1, d2)
+function number_delta(p1, p2)
 
-    inv(inv(d2) - inv(d1))
+    inv(inv(p2) - inv(p1))
 
 end
 
 ########################################
+
+function number_enrichment!(al::KS0, n1_, bo_, n2_ = nothing)
+
+    p1, p2 = number_delta(al, n1_, bo_)
+
+    n1 = n2 = n3 = 0.0
+
+    for nd in eachindex(n1_)
+
+        n1 += if bo_[nd]
+
+            p2 * abs(n1_[nd])
+
+        else
+
+            p1
+
+        end
+
+        if !isnothing(n2_)
+
+            n2_[nd] = n1
+
+        end
+
+        n4 = abs(n1)
+
+        if n2 < n4
+
+            n2 = n4
+
+            n3 = n1
+
+        end
+
+    end
+
+    n3
+
+end
+
+function number_enrichment!(al::A0, n1_, bo_, n2_ = nothing)
+
+    p1, p2 = number_delta(al, n1_, bo_)
+
+    n1 = n2 = 0.0
+
+    for nd in eachindex(n1_)
+
+        n2 += n1 += if bo_[nd]
+
+            p2 * abs(n1_[nd])
+
+        else
+
+            p1
+
+        end
+
+        if !isnothing(n2_)
+
+            n2_[nd] = n1
+
+        end
+
+    end
+
+    n2 / length(n1_)
+
+end
+
+########################################
+# TODO: Pick up
 
 function number_eps(nu)
 
@@ -87,66 +160,9 @@ function number_eps(nu)
 
 end
 
-########################################
-# TODO: Pick up
+function number_enrichment!(al::DA2, n1_, bo_, n2_ = nothing)
 
-function number_enrichment!(al::KS0, nu_, bo_, cu_ = nothing)
-
-    d0, d1 = number_delta(al, nu_, bo_)
-
-    c1 = a2 = c2 = 0.0
-
-    for nd in eachindex(nu_)
-
-        c1 += bo_[nd] ? d1 * abs(nu_[nd]) : d0
-
-        if !isnothing(cu_)
-
-            cu_[nd] = c1
-
-        end
-
-        a1 = abs(c1)
-
-        if a2 < a1
-
-            a2 = a1
-
-            c2 = c1
-
-        end
-
-    end
-
-    c2
-
-end
-
-function number_enrichment!(al::A0, nu_, bo_, cu_ = nothing)
-
-    d0, d1 = number_delta(al, nu_, bo_)
-
-    cu = su = 0.0
-
-    for nd in eachindex(nu_)
-
-        su += cu += bo_[nd] ? d1 * abs(nu_[nd]) : d0
-
-        if !isnothing(cu_)
-
-            cu_[nd] = cu
-
-        end
-
-    end
-
-    su / length(nu_)
-
-end
-
-function number_enrichment!(al::DA2, nu_, bo_, cu_ = nothing)
-
-    de = number_delta(al, nu_, bo_)[1]
+    de = number_delta(al, n1_, bo_)[1]
 
     r1 = r2 = eps()
 
@@ -154,35 +170,35 @@ function number_enrichment!(al::DA2, nu_, bo_, cu_ = nothing)
 
     e1 = su = 0.0
 
-    l2 += e2 = inv(length(nu_))
+    l2 += e2 = inv(length(n1_))
 
-    for nd in eachindex(nu_)
+    for nd in eachindex(n1_)
 
         l1 = number_eps(l1 - e1)
 
         l2 = number_eps(l2 - e2)
 
-        r1 += e1 = bo_[nd] ? de * abs(nu_[nd]) : 0.0
+        r1 += e1 = bo_[nd] ? de * abs(n1_[nd]) : 0.0
 
         r2 += e2
 
         su += cu = Public.number_divergence(-, r1, l1, r2, l2)
 
-        if !isnothing(cu_)
+        if !isnothing(n2_)
 
-            cu_[nd] = cu
+            n2_[nd] = cu
 
         end
 
     end
 
-    su / length(nu_)
+    su / length(n1_)
 
 end
 
-function number_enrichment!(al::DA2W, nu_, bo_, cu_ = nothing)
+function number_enrichment!(al::DA2W, n1_, bo_, n2_ = nothing)
 
-    d1, d2 = number_delta(al, nu_, bo_)
+    p1, p2 = number_delta(al, n1_, bo_)
 
     r1 = r2 = eps()
 
@@ -190,37 +206,37 @@ function number_enrichment!(al::DA2W, nu_, bo_, cu_ = nothing)
 
     e1 = e2 = su = 0.0
 
-    for nd in eachindex(nu_)
+    for nd in eachindex(n1_)
 
-        ab = abs(nu_[nd])
+        ab = abs(n1_[nd])
 
         l1 = number_eps(l1 - e1)
 
         l2 = number_eps(l2 - e2)
 
-        r1 += e1 = bo_[nd] ? d1 * ab : 0.0
+        r1 += e1 = bo_[nd] ? p1 * ab : 0.0
 
-        r2 += e2 = d2 * ab
+        r2 += e2 = p2 * ab
 
         su += cu = Public.number_divergence(-, r1, l1, r2, l2)
 
-        if !isnothing(cu_)
+        if !isnothing(n2_)
 
-            cu_[nd] = cu
+            n2_[nd] = cu
 
         end
 
     end
 
-    su / length(nu_)
+    su / length(n1_)
 
 end
 
-function number_enrichment!(al::DA2W0W, nu_, bo_, cu_ = nothing)
+function number_enrichment!(al::DA2W0W, n1_, bo_, n2_ = nothing)
 
-    d1, d2 = number_delta(al, nu_, bo_)
+    p1, p2 = number_delta(al, n1_, bo_)
 
-    d0 = number_delta(d1, d2)
+    p3 = number_delta(p1, p2)
 
     r0 = r1 = r2 = eps()
 
@@ -228,9 +244,9 @@ function number_enrichment!(al::DA2W0W, nu_, bo_, cu_ = nothing)
 
     e0 = e1 = e2 = su = 0.0
 
-    for nd in eachindex(nu_)
+    for nd in eachindex(n1_)
 
-        ab = abs(nu_[nd])
+        ab = abs(n1_[nd])
 
         l0 = number_eps(l0 - e0)
 
@@ -238,26 +254,26 @@ function number_enrichment!(al::DA2W0W, nu_, bo_, cu_ = nothing)
 
         l2 = number_eps(l2 - e2)
 
-        r0 += e0 = bo_[nd] ? 0.0 : d0 * ab
+        r0 += e0 = bo_[nd] ? 0.0 : p3 * ab
 
-        r1 += e1 = bo_[nd] ? d1 * ab : 0.0
+        r1 += e1 = bo_[nd] ? p1 * ab : 0.0
 
-        r2 += e2 = d2 * ab
+        r2 += e2 = p2 * ab
 
         su +=
             cu =
                 Public.number_divergence(-, r1, r0, r2, r2) -
                 Public.number_divergence(-, l1, l0, l2, l2)
 
-        if !isnothing(cu_)
+        if !isnothing(n2_)
 
-            cu_[nd] = cu
+            n2_[nd] = cu
 
         end
 
     end
 
-    su / length(nu_)
+    su / length(n1_)
 
 end
 
