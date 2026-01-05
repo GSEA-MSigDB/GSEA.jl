@@ -24,7 +24,10 @@ const S1_, N1_ = GSEA.make_sort(
 
 const B1_ = map(
     in(
-        Public.read_pair(joinpath(GSEA.P1, "c2.all.v7.1.symbols.json"))["COLLER_MYC_TARGETS_UP"],
+        convert(
+            Dict{String, Vector{String}},
+            Public.read_pair(joinpath(GSEA.P1, "c2.all.v7.1.symbols.json")),
+        )["COLLER_MYC_TARGETS_UP"],
     ),
     S1_,
 )
@@ -54,7 +57,7 @@ end
 
 const P1 = joinpath(GSEA.P1, "h.all.v7.1.symbols.json")
 
-const DI = Public.read_pair(P1)
+const DI::Dict{String, Vector{String}} = Public.read_pair(P1)
 
 const S2_ = collect(keys(DI))
 
