@@ -311,7 +311,7 @@ end
 
 function make_sort(a1_, n1_)
 
-    in_ = findall(!isnan, n1_)
+    in_ = findall(isfinite, n1_)
 
     a2_ = a1_[in_]
 
@@ -418,7 +418,10 @@ function write_enrichment(pa, al, s1_, n1_, s2_, d1 = Dict{String, Any}())
                 "marker" => Dict(
                     "symbol" => "line-ns",
                     "size" => 24,
-                    "line" => Dict("width" => 2, "color" => Public.TU),
+                    "line" => Dict(
+                        "width" => 2,
+                        "color" => Public.text_color(Public.IN, 0.8),
+                    ),
                 ),
             ),
             merge(
@@ -441,6 +444,7 @@ function write_enrichment(pa, al, s1_, n1_, s2_, d1 = Dict{String, Any}())
         Public.pair_merge(
             Dict(
                 "showlegend" => false,
+                # TODO: Keep subtitle
                 Public.pair_title("", "Enrichment = <b>$st</b>"),
                 "yaxis3" => Dict(
                     "domain" => (0.328, 1),
@@ -465,66 +469,6 @@ function write_enrichment(pa, al, s1_, n1_, s2_, d1 = Dict{String, Any}())
             d1,
         ),
     )
-
-end
-
-########################################
-# TODO: Pick up
-
-function write_enrichment(
-    pa,
-    al,
-    s1_,
-    s2_,
-    N,
-    s3_,
-    st__,
-    E,
-    di = Dict{String, Any}();
-    um = 2,
-    ke_...,
-)
-
-    Public.write_heat(
-        pa,
-        s3_,
-        s2_,
-        E,
-        Public.pair_merge(
-            Dict(
-                "title" => Dict("text" => "Enrichment"),
-                "yaxis" => Dict("title" => Dict("text" => "Set")),
-                "xaxis" => Dict("title" => Dict("text" => "Sample")),
-            ),
-            di,
-        ),
-    )
-
-    in_ = findall(nu_ -> all(!isnan, nu_), eachrow(E))
-
-    s3_ = s3_[in_]
-
-    st__ = st__[in_]
-
-    E = E[in_, :]
-
-    for in_ in CartesianIndices(E)[Public.index_extreme(vec(E), um)]
-
-        i3, i2 = Tuple(in_)
-
-        st = s3_[i3]
-
-        write_enrichment(
-            "$(rsplit(pa, '.'; limit = 2)[1]).$(Public.text_2(E[in_])).$(s2_[i2]).$st.html",
-            al,
-            s1_,
-            N[:, i2],
-            st__[i3],
-            Dict("title" => Dict("text" => st));
-            ke_...,
-        )
-
-    end
 
 end
 
@@ -556,27 +500,15 @@ function make_algorithm(st)
 
 end
 
-function read_pair(js)
+function read_pair(pa)
 
-    di = Public.read_pair(js)
+    di::Dict{String, Vector{String}} = Public.read_pair(pa)
 
-    collect(keys(di)), collect(values(di))
+    st_ = collect(keys(di))
 
-end
+    in_ = sortperm(st_)
 
-function number_z!(N, st)
-
-    if iszero(st)
-
-        return
-
-    end
-
-    for nu_ in eachcol(N)
-
-        clamp!(Public.number_z!(nu_), -st, st)
-
-    end
+    st_[in_], collect(values(di))[in_]
 
 end
 
@@ -593,20 +525,16 @@ Run data-rank (single-sample) GSEA.
 
 # Options
 
-  - `--standard-deviation`: For column-wise normalization. 0 skips normalization.
-  - `--exponent`:
   - `--algorithm`: "S0" | "S0a" | "D2" | "D2f" | "D0f2f".
   - `--minimum`: The minimum set size.
   - `--maximum`: The maximum set size.
-  - `--fraction`: The minimum fraction of set members present.
+  - `--fraction`: The minimum fraction of set members.
   - `--number-of-plots`:
 """
 @cast function data_rank(
     directory,
     tsv,
     json;
-    standard_deviation::Float64 = 0.0,
-    exponent::Float64 = 1.0,
     algorithm = "S0",
     minimum::Int = 1,
     maximum::Int = 1000,
@@ -616,56 +544,84 @@ Run data-rank (single-sample) GSEA.
 
     al = make_algorithm(algorithm)
 
-    st, s1_, s2_, N = Public.make_part(Public.read_table(tsv))
+    _, s1_, s2_, N1 = Public.make_part(Public.read_table(tsv))
 
-    number_z!(N, standard_deviation)
+    s3_, s1__ = read_pair(json)
 
-    s3_, st__ = read_pair(json)
-
-    E = reduce(
+    N2 = reduce(
         hcat,
         number_enrichment(
             al,
             s1_,
             nu_,
-            st__;
+            s1__;
             u1 = minimum,
             u2 = maximum,
             pr = fraction,
-        ) for nu_ in eachcol(N)
+        ) for nu_ in eachcol(N1)
     )
 
-    fi = joinpath(directory, "result")
+    pa = joinpath(directory, "result")
 
-    Public.write_table("$fi.tsv", Public.make_table("Set", s3_, s2_, E))
+    Public.write_table("$pa.tsv", Public.make_table("Set", s3_, s2_, N2))
 
-    write_enrichment(
-        "$fi.html",
-        al,
-        s1_,
-        s2_,
-        N,
+    Public.write_heat(
+        "$pa.html",
         s3_,
-        st__,
-        E;
-        um = number_of_plots,
+        s2_,
+        N2,
+        Dict(
+            Public.pair_title("Enrichment"),
+            "yaxis" => Dict(Public.pair_title("Set")),
+            "xaxis" => Dict(Public.pair_title("Sample")),
+        ),
     )
+
+    bo_ = map(nu_ -> any(isfinite, nu_), eachrow(N2))
+
+    s4_ = s3_[bo_]
+
+    s2__ = s1__[bo_]
+
+    N3 = N2[bo_, :]
+
+    for in_ in
+        CartesianIndices(N3)[Public.index_extreme(vec(N3), number_of_plots)]
+
+        i1, i2 = Tuple(in_)
+
+        s1 = s4_[i1]
+
+        s2 = s2_[i2]
+
+        s3 = Public.text_2(N3[in_])
+
+        write_enrichment(
+            "$pa.$s1.$s2.$s3.html",
+            al,
+            s1_,
+            N1[:, i2],
+            s2__[i1],
+            Dict(Public.pair_title(s1)),
+        )
+
+    end
 
 end
 
 ########################################
 
-function number_random(um, se, al, s1_, nu_, st__; ke_...)
+function number_random(um, nu, al, s1_, nu_, st__; ke_...)
 
-    R = Matrix{Float64}(undef, length(st__), um)
+    N = Matrix{Float64}(undef, length(st__), um)
 
     um_ = map(s2_ -> length(intersect(s1_, s2_)), st__)
 
-    seed!(se)
+    seed!(nu)
 
     @showprogress for nd in 1:um
 
-        R[:, nd] = number_enrichment(
+        N[:, nd] = number_enrichment(
             al,
             s1_,
             nu_,
@@ -675,29 +631,29 @@ function number_random(um, se, al, s1_, nu_, st__; ke_...)
 
     end
 
-    R
+    N
 
 end
 
-function number_random(um, se, al, st_, fu, bo_, N, st__; ke_...)
+function number_random!(um, nu, al, st_, fu, bo_, N1, st__; ke_...)
 
-    R = Matrix{Float64}(undef, length(st__), um)
+    N2 = Matrix{Float64}(undef, length(st__), um)
 
-    seed!(se)
+    seed!(nu)
 
     @showprogress for nd in 1:um
 
-        R[:, nd] = number_enrichment(
+        N2[:, nd] = number_enrichment(
             al,
             st_,
-            map(nu_ -> Public.make_2(fu, shuffle!(bo_), nu_), eachrow(N)),
+            map(nu_ -> Public.make_2(fu, shuffle!(bo_), nu_), eachrow(N1)),
             st__;
             ke_...,
         )
 
     end
 
-    R
+    N2
 
 end
 
@@ -717,69 +673,77 @@ function number_normalization(n1, n2, n3)
 
 end
 
-function write_result(di, al, s1_, nu_, s2_, st__, n2_, R, um, s3_)
+function write_result(di, al, s1_, n1_, s2_, s1__, n2_, N1, u1, s3_)
 
-    N = Matrix{Float64}(undef, length(s2_), 4)
+    u2 = length(s2_)
 
-    N[:, 1] = n2_
+    N2 = Matrix{Float64}(undef, u2, 4)
 
-    for i1 in axes(R, 1)
+    N2[:, 1] = n2_
 
-        m1, m2 = (mean(nu_) for nu_ in Public.number_sign(R[i1, :]))
+    for i1 in 1:u2
 
-        n2_[i1] = number_normalization(n2_[i1], m1, m2)
+        n1, n2 = (mean(n6_) for n6_ in Public.number_sign(N1[i1, :]))
 
-        for i2 in axes(R, 2)
+        n2_[i1] = number_normalization(n2_[i1], n1, n2)
 
-            R[i1, i2] = number_normalization(R[i1, i2], m1, m2)
+        for i2 in axes(N1, 2)
+
+            N1[i1, i2] = number_normalization(N1[i1, i2], n1, n2)
 
         end
 
     end
 
-    N[:, 2] = n2_
+    N2[:, 2] = n2_
 
-    in_, pv_, qv_ = Public.number_significance(n2_, R)
+    in_, n3_, n4_ = Public.number_significance(n2_, N1)
 
-    N[in_, 3] = pv_
+    N2[in_, 3] = n3_
 
-    N[in_, 4] = qv_
+    N2[in_, 4] = n4_
 
     Public.write_table(
         joinpath(di, "result.tsv"),
         Public.make_table(
             "Set",
             s2_,
-            ["Enrichment", "Normalized Enrichment", "P-Value", "Q-Value"],
-            N,
+            ["Enrichment", "Normalized enrichment", "P value", "Q value"],
+            N2,
         ),
     )
 
-    # TODO: Use normalized enrichment
-    in_ = findall(!isnan, N[:, 1])
+    # TODO: Use 2
+    i1 = 1
 
-    s2_ = s2_[in_]
+    bo_ = map(isfinite, N2[:, i1])
 
-    st__ = st__[in_]
+    s4_ = s2_[bo_]
 
-    N = N[in_, :]
+    s2__ = s1__[bo_]
 
-    for nd in unique!(
+    N3 = N2[bo_, :]
+
+    n5_ = N3[:, i1]
+
+    for i2 in unique!(
         vcat(
-            Public.index_extreme(N[:, 1], um),
-            filter!(!isnothing, indexin(s3_, s2_)),
+            Public.index_extreme(n5_, u1),
+            filter!(!isnothing, indexin(s3_, s4_)),
         ),
     )
 
-        st = s2_[nd]
+        s1 = s4_[i2]
+
+        s2 = Public.text_2(n5_[i2])
 
         write_enrichment(
-            joinpath(di, "$(Public.text_2(N[nd, 1])).$st.html"),
+            joinpath(di, "$s2.$s1.html"),
             al,
             s1_,
-            nu_,
-            st__[nd],
-            Dict(Public.pair_title(st)),
+            n1_,
+            s2__[i2],
+            Dict(Public.pair_title(s1)),
         )
 
     end
@@ -799,11 +763,10 @@ Run user-rank (pre-rank) GSEA.
 
 # Options
 
-  - `--exponent`:
   - `--algorithm`: "S0" | "S0a" | "D2" | "D2f" | "D0f2f".
   - `--minimum`: The minimum set size.
   - `--maximum`: The maximum set size.
-  - `--fraction`: The minimum fraction of set members present.
+  - `--fraction`: The minimum fraction of set members.
   - `--number-of-permutations`:
   - `--seed`:
   - `--number-of-plots`:
@@ -813,7 +776,6 @@ Run user-rank (pre-rank) GSEA.
     directory,
     tsv,
     json;
-    exponent::Float64 = 1.0,
     algorithm = "S0",
     minimum::Int = 1,
     maximum::Int = 1000,
@@ -861,13 +823,11 @@ Run metric-rank (standard) GSEA.
 
 # Options
 
-  - `--standard-deviation`: For column-wise normalization. 0 skips normalization.
   - `--metric`: "signal-to-noise-ratio" | "mean-difference" | "log-ratio".
-  - `--exponent`:
   - `--algorithm`: "S0" | "S0a" | "D2" | "D2f" | "D0f2f".
   - `--minimum`: The minimum set size.
   - `--maximum`: The maximum set size.
-  - `--fraction`: The minimum fraction of set members present.
+  - `--fraction`: The minimum fraction of set members.
   - `--permutation`: "sample" | "set".
   - `--number-of-permutations`:
   - `--seed`:
@@ -879,9 +839,7 @@ Run metric-rank (standard) GSEA.
     tsv1,
     tsv2,
     json;
-    standard_deviation::Float64 = 0.0,
     metric = "signal-to-noise-ratio",
-    exponent::Float64 = 1.0,
     algorithm = "S0",
     minimum::Int = 1,
     maximum::Int = 1000,
@@ -893,15 +851,13 @@ Run metric-rank (standard) GSEA.
     more_plots = "",
 )
 
-    _, _, s1_, N = Public.make_part(Public.read_table(tsv1))
+    _, _, s1_, N1 = Public.make_part(Public.read_table(tsv1))
 
-    bo_::Vector{Bool} = view(N, 1, :)
+    bo_::BitVector = N1[1, :]
 
-    st, s2_, s3_, N = Public.make_part(Public.read_table(tsv2))
+    st, s2_, s3_, N1 = Public.make_part(Public.read_table(tsv2))
 
-    N = N[:, indexin(s1_, s3_)]
-
-    number_z!(N, standard_deviation)
+    N2 = N1[:, indexin(s1_, s3_)]
 
     fu = if metric == "mean-difference"
 
@@ -917,18 +873,16 @@ Run metric-rank (standard) GSEA.
 
     end
 
-    # TODO: Consider Match
-
-    nu_ = map(nu_ -> Public.make_2(fu, bo_, nu_), eachrow(N))
+    n1_ = map(n2_ -> Public.make_2(fu, bo_, n2_), eachrow(N2))
 
     Public.write_table(
         joinpath(directory, "metric.tsv"),
-        Public.make_table(st, s2_, [metric], reshape(nu_, :, 1)),
+        Public.make_table(st, s2_, [metric], reshape(n1_, :, 1)),
     )
 
     al = make_algorithm(algorithm)
 
-    s3_, st__ = read_pair(json)
+    s4_, st__ = read_pair(json)
 
     ke_ = (u1 = minimum, u2 = maximum, pr = fraction)
 
@@ -936,10 +890,10 @@ Run metric-rank (standard) GSEA.
         directory,
         al,
         s2_,
-        nu_,
-        s3_,
+        n1_,
+        s4_,
         st__,
-        number_enrichment(al, s2_, nu_, st__; ke_...),
+        number_enrichment(al, s2_, n1_, st__; ke_...),
         if permutation == "set"
 
             number_random(
@@ -947,21 +901,21 @@ Run metric-rank (standard) GSEA.
                 seed,
                 al,
                 s2_,
-                nu_,
+                n1_,
                 st__;
                 ke_...,
             )
 
         elseif permutation == "sample"
 
-            number_random(
+            number_random!(
                 number_of_permutations,
                 seed,
                 al,
                 s2_,
                 fu,
                 bo_,
-                N,
+                N2,
                 st__;
                 ke_...,
             )
