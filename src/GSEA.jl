@@ -459,8 +459,7 @@ function write_enrichment(pa, al, s1_, n1_, s2_, d1 = Dict{String, Any}())
                     "spikemode" => "across",
                     "spikedash" => "solid",
                     "spikethickness" => -1,
-                    # TODO
-                    #"spikecolor" => Public.DA,
+                    "spikecolor" => Public.DA,
                 ),
             ),
             d1,
