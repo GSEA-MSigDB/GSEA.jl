@@ -36,12 +36,12 @@ Run the sarcopenia example
 
 ```bash
 gsea metric-rank \
-    ~/Downloads \
-    in/ex.target.tsv \
-    in/ex.data.tsv \
-    in/ex.set.json \
-    --number-of-permutations 10 \
-    --more-plots "WP_DNA_MISMATCH_REPAIR;WP_CELL_CYCLE"
+  ~/Downloads \
+  in/ex.target.tsv \
+  in/ex.data.tsv \
+  in/ex.set.json \
+  --number-of-permutations 10 \
+  --more-plots "WP_DNA_MISMATCH_REPAIR;WP_CELL_CYCLE"
 ```
 
 ## Contact us

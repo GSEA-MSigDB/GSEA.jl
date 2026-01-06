@@ -250,8 +250,6 @@ function number_enrichment!(al::D2f, n1_, bo_, n2_ = nothing)
 
 end
 
-########################################
-
 function number_enrichment!(al::D0f2f, n1_, bo_, n2_ = nothing)
 
     p1, p2 = number_delta(al, n1_, bo_)
