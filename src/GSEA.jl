@@ -560,7 +560,7 @@ Run data-rank (single-sample) GSEA.
         ) for nu_ in eachcol(N1)
     )
 
-    pa = joinpath(directory, "result")
+    pa = joinpath(directory, "enrichment")
 
     Public.write_table("$pa.tsv", Public.make_table("Set", s3_, s2_, N2))
 
@@ -672,7 +672,7 @@ function number_normalization(n1, n2, n3)
 
 end
 
-function write_result(di, al, s1_, n1_, s2_, s1__, n2_, N1, u1, s3_)
+function write_table(di, al, s1_, n1_, s2_, s1__, n2_, N1, u1, s3_)
 
     u2 = length(s2_)
 
@@ -703,7 +703,7 @@ function write_result(di, al, s1_, n1_, s2_, s1__, n2_, N1, u1, s3_)
     N2[in_, 4] = n4_
 
     Public.write_table(
-        joinpath(di, "result.tsv"),
+        joinpath(di, "enrichment.tsv"),
         Public.make_table(
             "Set",
             s2_,
@@ -793,7 +793,7 @@ Run user-rank (pre-rank) GSEA.
 
     ke_ = (u1 = minimum, u2 = maximum, pr = fraction)
 
-    write_result(
+    write_table(
         directory,
         al,
         s1_,
@@ -885,7 +885,7 @@ Run metric-rank (standard) GSEA.
 
     ke_ = (u1 = minimum, u2 = maximum, pr = fraction)
 
-    write_result(
+    write_table(
         directory,
         al,
         s2_,

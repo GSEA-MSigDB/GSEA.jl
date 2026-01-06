@@ -28,7 +28,7 @@ const P3, P4, P5, P6, P7 = (
     )
 )
 
-function read(pa, st = "result")
+function read(pa, st = "enrichment")
 
     Public.make_part(Public.read_table(joinpath(pa, "$st.tsv")))
 

@@ -19,7 +19,7 @@ git clone https://github.com/GSEA-MSigDB/GSEA.jl
 
 cd GSEA.jl
 
-julia --project deps/build.jl app tarball
+julia --project deps/build.jl app
 
 # Find the executable at `build/gsea/bin/gsea`
 ```
