@@ -10,6 +10,10 @@ It uses information theory to deliver the most accurate, interpretable, and robu
 
 ## Install
 
+Download and extract the latest [release](https://github.com/GSEA-MSigDB/GSEA.jl/releases/latest), and find the executable at `bin/gsea`.
+
+Or clone this repository and build it on your own machine
+
 ```bash
 julia --project deps/build.jl app tarball
 ```
