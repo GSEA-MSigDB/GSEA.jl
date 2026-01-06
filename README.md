@@ -8,8 +8,6 @@ They run 1,000 times faster, reproduce all results, and create prettier plots.
 We also implemented a new `D2` algorithm.  
 It uses information theory to deliver the most accurate, interpretable, and robust gene-set scores.
 
-![GSEA command-line interface screenshot](screenshot.png)
-
 ## Install
 
 ```bash
@@ -21,6 +19,8 @@ julia --project deps/build.jl app tarball
 ```bash
 gsea --help
 ```
+
+![GSEA command-line interface screenshot](screenshot.png)
 
 Run the sarcopenia example
 
