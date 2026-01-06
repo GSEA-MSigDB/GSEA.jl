@@ -376,158 +376,104 @@ end
 
 ########################################
 
-# TODO: Pick up
-function write_enrichment(
-    ht,
-    al,
-    s1_,
-    nu_,
-    s2_,
-    la = Dict{String, Any}();
-    t1 = "Score",
-    t2 = "Low",
-    t3 = "High",
-)
+function write_enrichment(pa, al, s1_, n1_, s2_, d1 = Dict{String, Any}())
 
-    s1_, nu_ = make_sort(s1_, nu_)
+    s3_, n2_ = make_sort(s1_, n1_)
 
-    um = length(s1_)
+    um = length(s3_)
 
-    tr = Dict(
+    n3_ = Vector{Float64}(undef, um)
+
+    bo_ = map(in(s2_), s3_)
+
+    st = Public.text_4(number_enrichment!(al, n2_, bo_, n3_))
+
+    d2 = Dict(
         "mode" => "lines",
         "line" => Dict("width" => 0),
         "fill" => "tozeroy",
     )
 
-    xc_ = 1:um
+    i1_ = findall(<(0), n2_)
 
-    i1_ = findall(<(0), nu_)
-
-    i2_ = findall(>=(0), nu_)
-
-    bo_ = map(in(s2_), s1_)
-
-    cu_ = Vector{Float64}(undef, um)
-
-    en = number_enrichment!(al, nu_, bo_, cu_)
-
-    an = Dict(
-        "y" => 0,
-        "font" => Dict("size" => 16),
-        "borderpad" => 4.8,
-        "borderwidth" => 2.64,
-        "bordercolor" => Public.LI,
-        "showarrow" => false,
-    )
-
-    po = um * 0.008
+    i2_ = findall(>=(0), n2_)
 
     Public.write_plotly(
-        ht,
+        pa,
         (
             merge(
-                tr,
+                d2,
                 Dict(
-                    "y" => nu_[i1_],
-                    "x" => xc_[i1_],
-                    "text" => s1_[i1_],
-                    "fillcolor" => Public.BL,
-                ),
-            ),
-            merge(
-                tr,
-                Dict(
-                    "y" => nu_[i2_],
-                    "x" => xc_[i2_],
-                    "text" => s1_[i2_],
-                    "fillcolor" => Public.RE,
+                    "yaxis" => "y3",
+                    "y" => n3_,
+                    "x" => s3_,
+                    "fillcolor" => "#07fa07",
                 ),
             ),
             Dict(
                 "yaxis" => "y2",
-                "y" => zeros(sum(bo_)),
-                "x" => xc_[bo_],
+                "y" => zeros(count(bo_)),
+                "x" => s3_[bo_],
                 "mode" => "markers",
                 "marker" => Dict(
                     "symbol" => "line-ns",
                     "size" => 24,
-                    "line" => Dict("width" => 2, "color" => "#000000cc"),
+                    "line" => Dict("width" => 2, "color" => Public.TU),
                 ),
-                "text" => s1_[bo_],
-                "hoverinfo" => "x+text",
             ),
             merge(
-                tr,
+                d2,
                 Dict(
-                    "yaxis" => "y3",
-                    "y" => cu_,
-                    "x" => xc_,
-                    "text" => s1_,
-                    "fillcolor" => "#07fa07",
+                    "y" => n2_[i1_],
+                    "x" => s3_[i1_],
+                    "fillcolor" => Public.BL,
+                ),
+            ),
+            merge(
+                d2,
+                Dict(
+                    "y" => n2_[i2_],
+                    "x" => s3_[i2_],
+                    "fillcolor" => Public.RE,
                 ),
             ),
         ),
         Public.pair_merge(
             Dict(
                 "showlegend" => false,
-                "yaxis" =>
-                    Dict("domain" => (0, 0.24), "title" => Dict("text" => t1)),
-                "yaxis2" => Dict(
-                    "domain" => (0.248, 0.32),
-                    "title" => Dict("text" => "Set"),
-                    "tickvals" => (),
-                ),
+                Public.pair_title("", "Enrichment = <b>$st</b>"),
                 "yaxis3" => Dict(
                     "domain" => (0.328, 1),
-                    "title" => Dict("text" => "Δ Enrichment"),
+                    Public.pair_title("Δ Enrichment"),
                 ),
+                "yaxis2" => Dict(
+                    "domain" => (0.248, 0.32),
+                    Public.pair_title("Set"),
+                    "tickvals" => (),
+                ),
+                "yaxis" =>
+                    Dict("domain" => (0, 0.24), Public.pair_title("Score")),
                 "xaxis" => Dict(
-                    "title" => Dict("text" => "Feature ($um)"),
+                    Public.pair_title("Feature ($um)"),
                     "showspikes" => true,
                     "spikemode" => "across",
                     "spikedash" => "solid",
                     "spikethickness" => -1,
-                    "spikecolor" => "#000000",
-                ),
-                "annotations" => (
-                    Dict(
-                        "yref" => "paper",
-                        "xref" => "paper",
-                        "y" => 1.056,
-                        "text" => "Enrichment = <b>$(Public.text_4(en))</b>",
-                        "font" => Dict("size" => 24, "color" => "#000000"),
-                        "showarrow" => false,
-                    ),
-                    merge(
-                        an,
-                        Dict(
-                            "x" => 1 - po,
-                            "xanchor" => "right",
-                            "text" => t3,
-                            "font" => Dict("color" => Public.RE),
-                        ),
-                    ),
-                    merge(
-                        an,
-                        Dict(
-                            "x" => um + po,
-                            "xanchor" => "left",
-                            "text" => t2,
-                            "font" => Dict("color" => Public.BL),
-                        ),
-                    ),
+                    # TODO
+                    #"spikecolor" => Public.DA,
                 ),
             ),
-            la,
+            d1,
         ),
     )
 
 end
 
 ########################################
+# TODO: Pick up
 
 function write_enrichment(
-    ht,
+    pa,
     al,
     s1_,
     s2_,
@@ -535,13 +481,13 @@ function write_enrichment(
     s3_,
     st__,
     E,
-    la = Dict{String, Any}();
+    di = Dict{String, Any}();
     um = 2,
     ke_...,
 )
 
     Public.write_heat(
-        ht,
+        pa,
         s3_,
         s2_,
         E,
@@ -551,7 +497,7 @@ function write_enrichment(
                 "yaxis" => Dict("title" => Dict("text" => "Set")),
                 "xaxis" => Dict("title" => Dict("text" => "Sample")),
             ),
-            la,
+            di,
         ),
     )
 
@@ -570,7 +516,7 @@ function write_enrichment(
         st = s3_[i3]
 
         write_enrichment(
-            "$(rsplit(ht, '.'; limit = 2)[1]).$(Public.text_2(E[in_])).$(s2_[i2]).$st.html",
+            "$(rsplit(pa, '.'; limit = 2)[1]).$(Public.text_2(E[in_])).$(s2_[i2]).$st.html",
             al,
             s1_,
             N[:, i2],
@@ -655,9 +601,6 @@ Run data-rank (single-sample) GSEA.
   - `--maximum`: The maximum set size.
   - `--fraction`: The minimum fraction of set members present.
   - `--number-of-plots`:
-  - `--score`:
-  - `--low`:
-  - `--high`:
 """
 @cast function data_rank(
     directory,
@@ -670,9 +613,6 @@ Run data-rank (single-sample) GSEA.
     maximum::Int = 1000,
     fraction::Float64 = 0.0,
     number_of_plots::Int = 2,
-    score = "Data",
-    low = "Low",
-    high = "High",
 )
 
     al = make_algorithm(algorithm)
@@ -710,9 +650,6 @@ Run data-rank (single-sample) GSEA.
         st__,
         E;
         um = number_of_plots,
-        t1 = score,
-        t2 = low,
-        t3 = high,
     )
 
 end
@@ -781,7 +718,7 @@ function number_normalization(n1, n2, n3)
 
 end
 
-function write_result(di, al, s1_, nu_, s2_, st__, n2_, R, um, s3_, t1, t2, t3)
+function write_result(di, al, s1_, nu_, s2_, st__, n2_, R, um, s3_)
 
     N = Matrix{Float64}(undef, length(s2_), 4)
 
@@ -843,10 +780,7 @@ function write_result(di, al, s1_, nu_, s2_, st__, n2_, R, um, s3_, t1, t2, t3)
             s1_,
             nu_,
             st__[nd],
-            Dict("title" => Dict("text" => st));
-            t1,
-            t2,
-            t3,
+            Dict(Public.pair_title(st)),
         )
 
     end
@@ -875,9 +809,6 @@ Run user-rank (pre-rank) GSEA.
   - `--seed`:
   - `--number-of-plots`:
   - `--more-plots`: ;-separated set names.
-  - `--score`:
-  - `--low`:
-  - `--high`:
 """
 @cast function user_rank(
     directory,
@@ -892,9 +823,6 @@ Run user-rank (pre-rank) GSEA.
     seed::Int = 20150603,
     number_of_plots::Int = 2,
     more_plots = "",
-    score = "",
-    low = "Low",
-    high = "High",
 )
 
     s1_, nu_ = eachcol(Public.read_table(tsv)[!, 1:2])
@@ -916,9 +844,6 @@ Run user-rank (pre-rank) GSEA.
         number_random(number_of_permutations, seed, al, s1_, nu_, st__; ke_...),
         number_of_plots,
         split(more_plots, ';'),
-        score,
-        low,
-        high,
     )
 
 end
@@ -949,9 +874,6 @@ Run metric-rank (standard) GSEA.
   - `--seed`:
   - `--number-of-plots`:
   - `--more-plots`: ;-separated set names.
-  - `--score`:
-  - `--low`:
-  - `--high`:
 """
 @cast function metric_rank(
     directory,
@@ -970,9 +892,6 @@ Run metric-rank (standard) GSEA.
     seed::Int = 20150603,
     number_of_plots::Int = 2,
     more_plots = "",
-    score = metric,
-    low = "Low",
-    high = "High",
 )
 
     _, _, s1_, N = Public.make_part(Public.read_table(tsv1))
@@ -1051,9 +970,6 @@ Run metric-rank (standard) GSEA.
         end,
         number_of_plots,
         split(more_plots, ';'),
-        score,
-        low,
-        high,
     )
 
 end

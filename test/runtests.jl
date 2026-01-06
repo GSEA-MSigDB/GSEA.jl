@@ -87,7 +87,7 @@ for st_ in (['A', 'I', '_'], ['D', 'E', 'F', '_']), al in AL_
         'A':'I',
         -4:4.0,
         st_,
-        Dict("title" => Dict("text" => "$al")),
+        #Dict("title" => Dict("text" => "$al")),
     )
 
 end
