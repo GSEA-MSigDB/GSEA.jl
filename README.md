@@ -2,17 +2,17 @@
 
 This is the new GSEA.
 
-We reimplemented the `S0` and `S0a` algorithms.  
+We have reimplemented the `S0` and `S0a` algorithms.
 They run 1,000 times faster, reproduce all results, and create prettier plots.
 
-We also implemented a new `D2` algorithm.  
-It uses information theory to deliver the most accurate, interpretable, and robust gene-set scores.
+We also developed a new `D2` algorithm.
+It uses information theory to provide the most accurate, interpretable, and robust gene-set scores.
 
 ## Install
 
-Download the latest [release](https://github.com/GSEA-MSigDB/GSEA.jl/releases/latest), extract it, and find the executable at `gsea/bin/gsea`.
+Download the latest [release](https://github.com/GSEA-MSigDB/GSEA.jl/releases/latest), extract it, and find the executable at `build/gsea/bin/gsea`.
 
-Or clone this repository and build
+Or clone the repository and build it yourself
 
 ```bash
 git clone https://github.com/GSEA-MSigDB/GSEA.jl
@@ -21,10 +21,10 @@ cd GSEA.jl
 
 julia --project deps/build.jl app tarball
 
-# Find the executable at `build/gsea/bin/gsea`.
+# Find the executable at `build/gsea/bin/gsea`
 ```
 
-## Get started
+## Use command-line interface
 
 ```bash
 gsea --help
@@ -37,18 +37,22 @@ Run the sarcopenia example
 ```bash
 gsea metric-rank \
   ~/Downloads \
-  in/ex.target.tsv \
-  in/ex.data.tsv \
-  in/ex.set.json \
+  in/target2.tsv \
+  in/data2.tsv \
+  in/set2.json \
   --number-of-permutations 10 \
   --more-plots "WP_DNA_MISMATCH_REPAIR;WP_CELL_CYCLE"
 ```
 
+## Use julia functions
+
+See `test/1.jl` for examples.
+
 ## Contact us
 
-If you have any questions, issues, or concerns, feel free to [open a GitHub issue](https://github.com/GSEA-MSigDB/GSEA.jl/issues/new/choose).
+If you have questions, encounter issues, or have suggestions, please [open a GitHub issue](https://github.com/GSEA-MSigDB/GSEA.jl/issues/new/choose).
 
-Every report helps make GSEA better.
+Every report makes GSEA better.
 
 ---
 

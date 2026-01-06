@@ -192,7 +192,7 @@ function number_enrichment!(al::D2, n1_, bo_, n2_ = nothing)
 
         p3 += p7
 
-        n1 += n2 = Public.number_divergence(-, p2, p4, p3, p5)
+        n1 += n2 = Public.number_divergence(-, p2, p3, p4, p5)
 
         if !isnothing(n2_)
 
@@ -236,7 +236,7 @@ function number_enrichment!(al::D2f, n1_, bo_, n2_ = nothing)
 
         p4 += p8 = p2 * n2
 
-        n1 += n3 = Public.number_divergence(-, p3, p5, p4, p6)
+        n1 += n3 = Public.number_divergence(-, p3, p4, p5, p6)
 
         if !isnothing(n2_)
 
@@ -290,8 +290,8 @@ function number_enrichment!(al::D0f2f, n1_, bo_, n2_ = nothing)
 
         n1 +=
             n3 =
-                Public.number_divergence(-, r2, r1, r3, r3) -
-                Public.number_divergence(-, l2, l1, l3, l3)
+                Public.number_divergence(-, r2, r3, r1, r3) -
+                Public.number_divergence(-, l2, l3, l1, l3)
 
         if !isnothing(n2_)
 
@@ -442,7 +442,6 @@ function write_enrichment(pa, al, s1_, n1_, s2_, d1 = Dict{String, Any}())
         Public.pair_merge(
             Dict(
                 "showlegend" => false,
-                # TODO: Keep subtitle
                 Public.pair_title("", "Enrichment = <b>$st</b>"),
                 "yaxis3" => Dict(
                     "domain" => (0.328, 1),
@@ -469,6 +468,8 @@ function write_enrichment(pa, al, s1_, n1_, s2_, d1 = Dict{String, Any}())
     )
 
 end
+
+# TODO: Consider splitting
 
 ########################################
 
