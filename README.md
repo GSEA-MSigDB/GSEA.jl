@@ -1,4 +1,4 @@
-# Gene Set Enrichment Analysis (GSEA) 🏔️
+# Gene set enrichment analysis (GSEA) 🏔️
 
 This is the new GSEA.
 
@@ -10,12 +10,18 @@ It uses information theory to deliver the most accurate, interpretable, and robu
 
 ## Install
 
-Download and extract the latest [release](https://github.com/GSEA-MSigDB/GSEA.jl/releases/latest), and find the executable at `bin/gsea`.
+Download the latest [release](https://github.com/GSEA-MSigDB/GSEA.jl/releases/latest), extract it, and find the executable at `gsea/bin/gsea`.
 
-Or clone this repository and build it on your own machine
+Or clone this repository and build
 
 ```bash
+git clone https://github.com/GSEA-MSigDB/GSEA.jl
+
+cd GSEA.jl
+
 julia --project deps/build.jl app tarball
+
+# Find the executable at `build/gsea/bin/gsea`.
 ```
 
 ## Get started
@@ -29,12 +35,20 @@ gsea --help
 Run the sarcopenia example
 
 ```bash
-gsea metric-rank ~/Downloads in/ex.target.tsv in/ex.data.tsv in/ex.set.json --number-of-permutations 10 --more-plots "WP_DNA_MISMATCH_REPAIR;WP_CELL_CYCLE"
+gsea metric-rank \
+    ~/Downloads \
+    in/ex.target.tsv \
+    in/ex.data.tsv \
+    in/ex.set.json \
+    --number-of-permutations 10 \
+    --more-plots "WP_DNA_MISMATCH_REPAIR;WP_CELL_CYCLE"
 ```
 
 ## Contact us
 
 If you have any questions, issues, or concerns, feel free to [open a GitHub issue](https://github.com/GSEA-MSigDB/GSEA.jl/issues/new/choose).
+
+Every report helps make GSEA better.
 
 ---
 
