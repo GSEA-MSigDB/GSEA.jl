@@ -19,9 +19,9 @@ git clone https://github.com/GSEA-MSigDB/GSEA.jl
 
 cd GSEA.jl
 
-julia --project deps/build.jl app
+julia --project deps/build.jl
 
-# Find the executable at `build/gsea/bin/gsea`
+# Find the executable at `~/.julia/bin/gsea`
 ```
 
 ## Use command-line interface
