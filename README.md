@@ -10,19 +10,19 @@ It uses information theory to provide the most accurate, interpretable, and robu
 
 ## Install
 
-Download the latest [release](https://github.com/GSEA-MSigDB/GSEA.jl/releases/latest), extract it, and find the executable at `build/gsea/bin/gsea`.
-
-Or build it yourself
-
 ```bash
 git clone https://github.com/GSEA-MSigDB/GSEA.jl
 
 cd GSEA.jl
 
-julia --project deps/build.jl
-
-# Find the executable at `~/.julia/bin/gsea`
+julia --project
 ```
+
+```julia
+]build
+```
+
+Find the executable at `~/.julia/bin/gsea`.
 
 ## Use command-line interface
 
