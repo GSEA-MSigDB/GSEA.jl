@@ -8,10 +8,10 @@ completion = true
 filter_stdlibs = false
 
 [sysimg.precompile]
-execution_file = ["test/runtests.jl"]
+execution_file = ["test/1.jl", "test/2.jl"]
 
 [application]
 filter_stdlibs = false
 
 [application.precompile]
-execution_file = ["test/runtests.jl"]
+execution_file = ["test/1.jl", "test/2.jl"]

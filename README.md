@@ -12,7 +12,7 @@ It uses information theory to provide the most accurate, interpretable, and robu
 
 Download the latest [release](https://github.com/GSEA-MSigDB/GSEA.jl/releases/latest), extract it, and find the executable at `build/gsea/bin/gsea`.
 
-Or clone the repository and build it yourself
+Or build it yourself
 
 ```bash
 git clone https://github.com/GSEA-MSigDB/GSEA.jl
@@ -46,11 +46,11 @@ gsea metric-rank \
 
 ## Use julia functions
 
-See `test/1.jl` for examples.
+See `test` for examples.
 
 ## Contact us
 
-If you have questions, encounter issues, or have suggestions, please [open a GitHub issue](https://github.com/GSEA-MSigDB/GSEA.jl/issues/new/choose).
+If you have questions, issues, or suggestions, please [open a GitHub issue](https://github.com/GSEA-MSigDB/GSEA.jl/issues/new/choose).
 
 Every report makes GSEA better.
 

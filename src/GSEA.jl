@@ -469,8 +469,6 @@ function write_enrichment(pa, al, s1_, n1_, s2_, d1 = Dict{String, Any}())
 
 end
 
-# TODO: Consider splitting
-
 ########################################
 
 function make_algorithm(st)
@@ -712,36 +710,31 @@ function write_table(di, al, s1_, n1_, s2_, s1__, n2_, N1, u1, s3_)
         ),
     )
 
-    # TODO: Use 2
-    i1 = 1
-
-    bo_ = map(isfinite, N2[:, i1])
+    bo_ = map(isfinite, n2_)
 
     s4_ = s2_[bo_]
 
     s2__ = s1__[bo_]
 
-    N3 = N2[bo_, :]
+    n5_ = n2_[bo_]
 
-    n5_ = N3[:, i1]
-
-    for i2 in unique!(
+    for nd in unique!(
         vcat(
             Public.index_extreme(n5_, u1),
             filter!(!isnothing, indexin(s3_, s4_)),
         ),
     )
 
-        s1 = s4_[i2]
+        s1 = s4_[nd]
 
-        s2 = Public.text_2(n5_[i2])
+        s2 = Public.text_2(n5_[nd])
 
         write_enrichment(
             joinpath(di, "$s2.$s1.html"),
             al,
             s1_,
             n1_,
-            s2__[i2],
+            s2__[nd],
             Dict(Public.pair_title(s1)),
         )
 
