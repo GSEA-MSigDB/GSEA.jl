@@ -36,17 +36,17 @@ Run the sarcopenia example
 
 ```zsh
 gsea metric-rank \
-    ~/Downloads \
-    in/target2.tsv \
-    in/data2.tsv \
-    in/set2.json \
-    --number-of-permutations 10 \
-    --more-plots "WP_DNA_MISMATCH_REPAIR;WP_CELL_CYCLE"
+  ~/Downloads \
+  in/target2.tsv \
+  in/data2.tsv \
+  in/set2.json \
+  --number-of-permutations 10 \
+  --more-plots "WP_DNA_MISMATCH_REPAIR;WP_CELL_CYCLE"
 ```
 
 ## Use julia functions
 
-See `test` for examples.
+See `test/runtests.jl` for examples.
 
 ## Contact us
 
