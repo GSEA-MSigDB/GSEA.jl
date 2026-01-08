@@ -9,7 +9,3 @@ ou/*
 !ou/.keep
 
 # ------------------------------------ #
-
-build
-
-*-application-*-julia-*-*-*.tar.gz
