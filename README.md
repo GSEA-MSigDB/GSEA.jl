@@ -10,7 +10,7 @@ It uses information theory to provide the most accurate, interpretable, and robu
 
 ## Install
 
-```bash
+```zsh
 git clone https://github.com/GSEA-MSigDB/GSEA.jl
 
 cd GSEA.jl
@@ -26,7 +26,7 @@ Find the executable at `~/.julia/bin/gsea`.
 
 ## Use command-line interface
 
-```bash
+```zsh
 gsea --help
 ```
 
@@ -34,14 +34,14 @@ gsea --help
 
 Run the sarcopenia example
 
-```bash
+```zsh
 gsea metric-rank \
-  ~/Downloads \
-  in/target2.tsv \
-  in/data2.tsv \
-  in/set2.json \
-  --number-of-permutations 10 \
-  --more-plots "WP_DNA_MISMATCH_REPAIR;WP_CELL_CYCLE"
+    ~/Downloads \
+    in/target2.tsv \
+    in/data2.tsv \
+    in/set2.json \
+    --number-of-permutations 10 \
+    --more-plots "WP_DNA_MISMATCH_REPAIR;WP_CELL_CYCLE"
 ```
 
 ## Use julia functions
