@@ -10,11 +10,11 @@ using Public
 
 ########################################
 
-const AL_ = GSEA.S0(), GSEA.S0a(), GSEA.D2(), GSEA.D2f(), GSEA.D0f2f()
+const AL_ = GSEA.S0(), GSEA.S0a(), GSEA.D2(), GSEA.D2w(), GSEA.DD()
 
 ########################################
 
-const S1_, N1_ = GSEA.make_sort(
+const S1_, N1_ = GSEA.make_score(
     eachcol(Public.read_table(joinpath(GSEA.P1, "metric.tsv"))[!, 1:2])...,
 )
 
@@ -50,11 +50,11 @@ const B1_ = map(
     S1_,
 )
 
-# 22.167 μs (0 allocations: 0 bytes)
-# 21.542 μs (0 allocations: 0 bytes)
-# 123.458 μs (0 allocations: 0 bytes)
-# 133.334 μs (0 allocations: 0 bytes)
-# 217.000 μs (0 allocations: 0 bytes)
+# 16.833 μs (0 allocations: 0 bytes)
+# 16.625 μs (0 allocations: 0 bytes)
+# 123.666 μs (0 allocations: 0 bytes)
+# 133.500 μs (0 allocations: 0 bytes)
+# 224.000 μs (0 allocations: 0 bytes)
 for (nd, re) in (
     (1, 0.7651927829281453),
     (2, 0.41482514169516305),
@@ -73,13 +73,25 @@ end
 
 ########################################
 
+const CH_ = 'A':'I'
+
+const IN_ = -4:4
+
+for ch_ in (['_', 'A', 'I'], ['D', 'E', 'F', '_']), al in AL_
+
+    GSEA.write_enrichment("", al, CH_, IN_, ch_, Dict(Public.pair_title(al)))
+
+end
+
+########################################
+
 const S2_, ST__ = GSEA.read_pair(joinpath(GSEA.P1, "set.json"))
 
-# 1.618 ms (32 allocations: 1.88 MiB)
-# 1.606 ms (32 allocations: 1.88 MiB)
-# 7.232 ms (32 allocations: 1.88 MiB)
-# 7.629 ms (32 allocations: 1.88 MiB)
-# 12.515 ms (32 allocations: 1.88 MiB)
+# 1.473 ms (31 allocations: 1.90 MiB)
+# 1.471 ms (31 allocations: 1.90 MiB)
+# 7.345 ms (31 allocations: 1.90 MiB)
+# 7.765 ms (31 allocations: 1.90 MiB)
+# 12.562 ms (31 allocations: 1.90 MiB)
 for al in AL_
 
     @test S2_[partialsortperm(
@@ -93,28 +105,11 @@ end
 
 ########################################
 
-const CH_ = 'A':'I'
-
-const IN_ = -4:4
-
-for ch_ in (['_', 'A', 'I'], ['D', 'E', 'F', '_']), al in AL_
-
-    GSEA.write_enrichment("", al, CH_, IN_, ch_, Dict(Public.pair_title(al)))
-
-end
-
-
-########################################
-
 const P1, P2 = (joinpath(GSEA.P1, st) for st in ("set.json", "data.tsv"))
 
-for pa in readdir(GSEA.P2; join = true)
+for st in filter!(!=(".keep"), readdir(GSEA.P2))
 
-    if basename(pa) != ".keep"
-
-        rm(pa; recursive = true)
-
-    end
+    rm(joinpath(GSEA.P2, st); recursive = true)
 
 end
 

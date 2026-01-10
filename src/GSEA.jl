@@ -24,35 +24,37 @@ struct S0a end
 
 struct D2 end
 
-struct D2f end
+struct D2w end
 
-struct D0f2f end
+struct DD end
 
 ########################################
 
-function number_delta(::Union{S0, S0a}, nu_, bo_)
+function number_weight(::Union{S0, S0a}, nu_, bo_)
 
-    n1 = n2 = 0.0
+    um = 0
+
+    nu = 0.0
 
     for nd in eachindex(nu_)
 
         if bo_[nd]
 
-            n2 += abs(nu_[nd])
+            nu += abs(nu_[nd])
 
         else
 
-            n1 += 1.0
+            um += 1
 
         end
 
     end
 
-    -inv(n1), inv(n2)
+    -inv(um), inv(nu)
 
 end
 
-function number_delta(::Union{D2, D2f, D0f2f}, nu_, bo_)
+function number_weight(::Union{D2, D2w, DD}, nu_, bo_)
 
     n1 = n2 = 0.0
 
@@ -72,7 +74,7 @@ function number_delta(::Union{D2, D2f, D0f2f}, nu_, bo_)
 
 end
 
-function number_delta(p1, p2)
+function number_weight(p1, p2)
 
     inv(inv(p2) - inv(p1))
 
@@ -82,7 +84,7 @@ end
 
 function number_enrichment!(al::S0, n1_, bo_, n2_ = nothing)
 
-    p1, p2 = number_delta(al, n1_, bo_)
+    p1, p2 = number_weight(al, n1_, bo_)
 
     n1 = n2 = n3 = 0.0
 
@@ -122,7 +124,7 @@ end
 
 function number_enrichment!(al::S0a, n1_, bo_, n2_ = nothing)
 
-    p1, p2 = number_delta(al, n1_, bo_)
+    p1, p2 = number_weight(al, n1_, bo_)
 
     n1 = n2 = 0.0
 
@@ -152,6 +154,7 @@ end
 
 ########################################
 
+# TODO: Avoid
 function number_eps(nu)
 
     max(eps(), nu)
@@ -164,7 +167,7 @@ function number_enrichment!(al::D2, n1_, bo_, n2_ = nothing)
 
     um = length(n1_)
 
-    p1, _ = number_delta(al, n1_, bo_)
+    p1, _ = number_weight(al, n1_, bo_)
 
     p2 = p3 = eps()
 
@@ -206,9 +209,9 @@ function number_enrichment!(al::D2, n1_, bo_, n2_ = nothing)
 
 end
 
-function number_enrichment!(al::D2f, n1_, bo_, n2_ = nothing)
+function number_enrichment!(al::D2w, n1_, bo_, n2_ = nothing)
 
-    p1, p2 = number_delta(al, n1_, bo_)
+    p1, p2 = number_weight(al, n1_, bo_)
 
     p3 = p4 = eps()
 
@@ -250,11 +253,13 @@ function number_enrichment!(al::D2f, n1_, bo_, n2_ = nothing)
 
 end
 
-function number_enrichment!(al::D0f2f, n1_, bo_, n2_ = nothing)
+########################################
 
-    p1, p2 = number_delta(al, n1_, bo_)
+function number_enrichment!(al::DD, n1_, bo_, n2_ = nothing)
 
-    p3 = number_delta(p1, p2)
+    p1, p2 = number_weight(al, n1_, bo_)
+
+    p3 = number_weight(p1, p2)
 
     r1 = r2 = r3 = eps()
 
@@ -307,68 +312,16 @@ end
 
 ########################################
 
-function make_sort(a1_, n1_)
+function make_score(an_, n1_)
 
-    in_ = findall(isfinite, n1_)
+    bo_ = map(isfinite, n1_)
 
-    a2_ = a1_[in_]
+    n2_ = n1_[bo_]
 
-    n2_ = n1_[in_]
+    # TODO: Remove rev
+    in_ = sortperm(n2_; rev = true)
 
-    # TODO: Make increasing
-    sortperm!(in_, n2_; rev = true)
-
-    a2_[in_], n2_[in_]
-
-end
-
-########################################
-
-function number_enrichment(al, s1_, n1_, st__; u1 = 1, u2 = 1000, pr = 0)
-
-    s2_, n2_ = make_sort(s1_, n1_)
-
-    u3 = length(s2_)
-
-    bo_ = falses(u3)
-
-    di = Dict(s2_[nd] => nd for nd in 1:u3)
-
-    u4 = length(st__)
-
-    n3_ = Vector{Float64}(undef, u4)
-
-    for nd in 1:u4
-
-        s3_ = st__[nd]
-
-        for st in s3_
-
-            if haskey(di, st)
-
-                bo_[di[st]] = true
-
-            end
-
-        end
-
-        u5 = count(bo_)
-
-        n3_[nd] = if u1 <= u5 <= u2 && pr <= u5 / length(s3_)
-
-            number_enrichment!(al, n2_, bo_)
-
-        else
-
-            NaN
-
-        end
-
-        fill!(bo_, false)
-
-    end
-
-    n3_
+    an_[bo_][in_], n2_[in_]
 
 end
 
@@ -376,13 +329,13 @@ end
 
 function write_enrichment(pa, al, s1_, n1_, s2_, d1 = Dict{String, Any}())
 
-    s3_, n2_ = make_sort(s1_, n1_)
+    s3_, n2_ = make_score(s1_, n1_)
 
     um = length(s3_)
 
-    n3_ = Vector{Float64}(undef, um)
-
     bo_ = map(in(s2_), s3_)
+
+    n3_ = Vector{Float64}(undef, um)
 
     st = Public.text_4(number_enrichment!(al, n2_, bo_, n3_))
 
@@ -418,7 +371,7 @@ function write_enrichment(pa, al, s1_, n1_, s2_, d1 = Dict{String, Any}())
                     "size" => 24,
                     "line" => Dict(
                         "width" => 2,
-                        "color" => Public.text_color(Public.IN, 0.8),
+                        "color" => Public.text_hex(Public.IN, 0.8),
                     ),
                 ),
             ),
@@ -471,6 +424,56 @@ end
 
 ########################################
 
+function number_enrichment(al, s1_, n1_, st__; u1 = 1, u2 = 1000, pr = 0)
+
+    s2_, n2_ = make_score(s1_, n1_)
+
+    u3 = length(s2_)
+
+    bo_ = falses(u3)
+
+    di = Dict(s2_[nd] => nd for nd in 1:u3)
+
+    u4 = length(st__)
+
+    n3_ = Vector{Float64}(undef, u4)
+
+    for nd in 1:u4
+
+        s3_ = st__[nd]
+
+        for st in s3_
+
+            if haskey(di, st)
+
+                bo_[di[st]] = true
+
+            end
+
+        end
+
+        u5 = count(bo_)
+
+        n3_[nd] = if u1 <= u5 <= u2 && pr <= u5 / length(s3_)
+
+            number_enrichment!(al, n2_, bo_)
+
+        else
+
+            NaN
+
+        end
+
+        fill!(bo_, false)
+
+    end
+
+    n3_
+
+end
+
+########################################
+
 function make_algorithm(st)
 
     if st == "S0"
@@ -485,13 +488,13 @@ function make_algorithm(st)
 
         D2()
 
-    elseif st == "D2f"
+    elseif st == "D2w"
 
-        D2f()
+        D2w()
 
-    elseif st == "D0f2f"
+    elseif st == "DD"
 
-        D0f2f()
+        DD()
 
     end
 
@@ -516,17 +519,17 @@ Run data-rank (single-sample) GSEA.
 
 # Arguments
 
-  - `directory`:
-  - `tsv`:
-  - `json`:
+  - `directory`: Output.
+  - `tsv`: Feature-by-sample.
+  - `json`: Set-to-features.
 
 # Options
 
-  - `--algorithm`: "S0" | "S0a" | "D2" | "D2f" | "D0f2f".
+  - `--algorithm`: S0 | S0a | D2 | D2w | DD.
   - `--minimum`: The minimum set size.
   - `--maximum`: The maximum set size.
-  - `--fraction`: The minimum fraction of set members.
-  - `--number-of-plots`:
+  - `--fraction`: The minimum set fraction in the data.
+  - `--number-of-plots`: The number of top sets to plot.
 """
 @cast function data_rank(
     directory,
@@ -539,11 +542,11 @@ Run data-rank (single-sample) GSEA.
     number_of_plots::Int = 2,
 )
 
-    al = make_algorithm(algorithm)
-
     _, s1_, s2_, N1 = Public.make_part(Public.read_table(tsv))
 
     s3_, s1__ = read_pair(json)
+
+    al = make_algorithm(algorithm)
 
     N2 = reduce(
         hcat,
@@ -608,21 +611,21 @@ end
 
 ########################################
 
-function number_random(um, nu, al, s1_, nu_, st__; ke_...)
+function number_random(u1, nu, al, s1_, nu_, st__; ke_...)
 
-    N = Matrix{Float64}(undef, length(st__), um)
+    N = Matrix{Float64}(undef, length(st__), u1)
 
     um_ = map(s2_ -> length(intersect(s1_, s2_)), st__)
 
     seed!(nu)
 
-    @showprogress for nd in 1:um
+    @showprogress for nd in 1:u1
 
         N[:, nd] = number_enrichment(
             al,
             s1_,
             nu_,
-            map(um -> sample(s1_, um; replace = false), um_);
+            map(u2 -> sample(s1_, u2; replace = false), um_);
             ke_...,
         )
 
@@ -643,7 +646,10 @@ function number_random!(um, nu, al, st_, fu, bo_, N1, st__; ke_...)
         N2[:, nd] = number_enrichment(
             al,
             st_,
-            map(nu_ -> Public.make_2(fu, shuffle!(bo_), nu_), eachrow(N1)),
+            map(
+                nu_ -> Public.make_function(fu, shuffle!(bo_), nu_),
+                eachrow(N1),
+            ),
             st__;
             ke_...,
         )
@@ -656,23 +662,9 @@ end
 
 ########################################
 
-function number_normalization(n1, n2, n3)
-
-    n1 / if n1 < 0
-
-        -n2
-
-    else
-
-        n3
-
-    end
-
-end
-
 function write_table(di, al, s1_, n1_, s2_, s1__, n2_, N1, u1, s3_)
 
-    u2 = length(s2_)
+    u2, u3 = size(N1)
 
     N2 = Matrix{Float64}(undef, u2, 4)
 
@@ -682,11 +674,13 @@ function write_table(di, al, s1_, n1_, s2_, s1__, n2_, N1, u1, s3_)
 
         n1, n2 = (mean(n6_) for n6_ in Public.number_sign(N1[i1, :]))
 
-        n2_[i1] = number_normalization(n2_[i1], n1, n2)
+        n3 = -n1
 
-        for i2 in axes(N1, 2)
+        n2_[i1] /= ifelse(n2_[i1] < 0, n3, n2)
 
-            N1[i1, i2] = number_normalization(N1[i1, i2], n1, n2)
+        for i2 in 1:u3
+
+            N1[i1, i2] /= ifelse(N1[i1, i2] < 0, n3, n2)
 
         end
 
@@ -730,7 +724,7 @@ function write_table(di, al, s1_, n1_, s2_, s1__, n2_, N1, u1, s3_)
         s2 = Public.text_2(n5_[nd])
 
         write_enrichment(
-            joinpath(di, "$s2.$s1.html"),
+            joinpath(di, "$s1.$s2.html"),
             al,
             s1_,
             n1_,
@@ -749,20 +743,20 @@ Run user-rank (pre-rank) GSEA.
 
 # Arguments
 
-  - `directory`:
-  - `tsv`:
-  - `json`:
+  - `directory`: Output.
+  - `tsv`: Feature-by-metric; the first two columns are features and scores.
+  - `json`: Set-to-features.
 
 # Options
 
-  - `--algorithm`: "S0" | "S0a" | "D2" | "D2f" | "D0f2f".
+  - `--algorithm`: S0 | S0a | D2 | D2w | DD.
   - `--minimum`: The minimum set size.
   - `--maximum`: The maximum set size.
-  - `--fraction`: The minimum fraction of set members.
-  - `--number-of-permutations`:
-  - `--seed`:
-  - `--number-of-plots`:
-  - `--more-plots`: ;-separated set names.
+  - `--fraction`: The minimum set fraction in the data.
+  - `--number-of-permutations`: For calculating significance.
+  - `--seed`: Random seed.
+  - `--number-of-plots`: The number of top sets to plot.
+  - `--more-plots`: ;-separated set names to plot.
 """
 @cast function user_rank(
     directory,
@@ -778,9 +772,9 @@ Run user-rank (pre-rank) GSEA.
     more_plots = "",
 )
 
-    s1_, nu_ = eachcol(Public.read_table(tsv)[!, 1:2])
-
     al = make_algorithm(algorithm)
+
+    s1_, nu_ = eachcol(Public.read_table(tsv)[!, 1:2])
 
     s2_, st__ = read_pair(json)
 
@@ -808,23 +802,23 @@ Run metric-rank (standard) GSEA.
 
 # Arguments
 
-  - `directory`:
-  - `tsv1`:
-  - `tsv2`:
-  - `json`:
+  - `directory`: Output.
+  - `tsv1`: Feature-by-sample; the first two rows are samples and phenotypes.
+  - `tsv2`: Feature-by-sample.
+  - `json`: Set-to-features.
 
 # Options
 
   - `--metric`: "signal-to-noise-ratio" | "mean-difference" | "log-ratio".
-  - `--algorithm`: "S0" | "S0a" | "D2" | "D2f" | "D0f2f".
+  - `--algorithm`: S0 | S0a | D2 | D2w | DD.
   - `--minimum`: The minimum set size.
   - `--maximum`: The maximum set size.
-  - `--fraction`: The minimum fraction of set members.
-  - `--permutation`: "sample" | "set".
-  - `--number-of-permutations`:
-  - `--seed`:
-  - `--number-of-plots`:
-  - `--more-plots`: ;-separated set names.
+  - `--fraction`: The minimum set fraction in the data.
+  - `--permutation`: sample | set.
+  - `--number-of-permutations`: For calculating significance.
+  - `--seed`: Random seed.
+  - `--number-of-plots`: The number of top sets to plot.
+  - `--more-plots`: ;-separated set names to plot.
 """
 @cast function metric_rank(
     directory,
@@ -865,7 +859,7 @@ Run metric-rank (standard) GSEA.
 
     end
 
-    n1_ = map(n2_ -> Public.make_2(fu, bo_, n2_), eachrow(N2))
+    n1_ = map(n2_ -> Public.make_function(fu, bo_, n2_), eachrow(N2))
 
     Public.write_table(
         joinpath(directory, "metric.tsv"),
