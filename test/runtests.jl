@@ -73,13 +73,16 @@ end
 
 ########################################
 
-const CH_ = 'A':'I'
-
-const IN_ = -4:4
-
 for ch_ in (['_', 'A', 'I'], ['D', 'E', 'F', '_']), al in AL_
 
-    GSEA.write_enrichment("", al, CH_, IN_, ch_, Dict(Public.pair_title(al)))
+    GSEA.write_enrichment(
+        "",
+        al,
+        'A':'I',
+        -4:4,
+        ch_,
+        Dict(Public.pair_title(al)),
+    )
 
 end
 
