@@ -108,7 +108,9 @@ end
 
 ########################################
 
-const P1, P2 = (joinpath(GSEA.P1, st) for st in ("set.json", "data.tsv"))
+const P1 = joinpath(GSEA.P1, "set.json")
+
+const P2 = joinpath(GSEA.P1, "data.tsv")
 
 for st in filter!(!=(".keep"), readdir(GSEA.P2))
 
@@ -116,15 +118,15 @@ for st in filter!(!=(".keep"), readdir(GSEA.P2))
 
 end
 
-const P3, P4, P5, P6, P7 = (
-    mkpath(joinpath(GSEA.P2, st)) for st in (
-        "data_rank",
-        "user_rank",
-        "metric_rank.sample",
-        "metric_rank.set",
-        "user_rank.metric",
-    )
-)
+const P3 = mkpath(joinpath(GSEA.P2, "data_rank"))
+
+const P4 = mkpath(joinpath(GSEA.P2, "user_rank"))
+
+const P5 = mkpath(joinpath(GSEA.P2, "metric_rank.sample"))
+
+const P6 = mkpath(joinpath(GSEA.P2, "metric_rank.set"))
+
+const P7 = mkpath(joinpath(GSEA.P2, "user_rank.metric"))
 
 function read(pa, st = "enrichment")
 
@@ -199,8 +201,9 @@ for (pa, permutation) in ((P5, "sample"), (P6, "set"))
 
 end
 
-const (S1, _, S5_, N3), (S2, _, S6_, N4) =
-    (read(pa, "metric") for pa in (P5, P6))
+const S1, _, S5_, N3 = read(P5, "metric")
+
+const S2, _, S6_, N4 = read(P6, "metric")
 
 @test S1 === S2 === "Gene"
 
@@ -210,7 +213,9 @@ const (S1, _, S5_, N3), (S2, _, S6_, N4) =
 
 @test sort!(vec(N4))[[1, 1000]] == [-1.8372355409610066, 1.7411005104346835]
 
-const (_, S7_, _, N5), (_, S8_, _, N6) = (read(pa) for pa in (P5, P6))
+const _, S7_, _, N5 = read(P5)
+
+const _, S8_, _, N6 = read(P6)
 
 @test S7_ == S8_
 
