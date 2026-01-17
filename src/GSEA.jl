@@ -646,7 +646,10 @@ function number_random!(um, nu, al, st_, fu, in_, N1, st__; ke_...)
         N2[:, nd] = number_enrichment(
             al,
             st_,
-            map(nu_ -> Public.make_function(fu, shuffle!(in_), nu_), eachrow(N1)),
+            map(
+                nu_ -> Public.make_function(fu, shuffle!(in_), nu_),
+                eachrow(N1),
+            ),
             st__;
             ke_...,
         )

@@ -2,10 +2,10 @@
 
 This is the new GSEA.
 
-We have reimplemented the `S0` and `S0a` algorithms.
+We have reimplemented the S0 and S0a algorithms.
 They run 1,000 times faster, reproduce all results, and create prettier plots.
 
-We also developed a new `D2` algorithm.
+We also developed a new D2 algorithm.
 It uses information theory to provide the most accurate, interpretable, and robust gene-set scores.
 
 ## Install
