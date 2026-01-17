@@ -635,7 +635,7 @@ function number_random(u1, nu, al, s1_, nu_, st__; ke_...)
 
 end
 
-function number_random!(um, nu, al, st_, fu, bo_, N1, st__; ke_...)
+function number_random!(um, nu, al, st_, fu, in_, N1, st__; ke_...)
 
     N2 = Matrix{Float64}(undef, length(st__), um)
 
@@ -646,10 +646,7 @@ function number_random!(um, nu, al, st_, fu, bo_, N1, st__; ke_...)
         N2[:, nd] = number_enrichment(
             al,
             st_,
-            map(
-                nu_ -> Public.make_function(fu, shuffle!(bo_), nu_),
-                eachrow(N1),
-            ),
+            map(nu_ -> Public.make_function(fu, shuffle!(in_), nu_), eachrow(N1)),
             st__;
             ke_...,
         )
@@ -839,7 +836,7 @@ Run metric-rank (standard) GSEA.
 
     _, _, s1_, N1 = Public.make_part(Public.read_table(tsv1))
 
-    bo_::BitVector = N1[1, :]
+    i1_ = N1[1, :]
 
     st, s2_, s3_, N1 = Public.make_part(Public.read_table(tsv2))
 
@@ -859,7 +856,9 @@ Run metric-rank (standard) GSEA.
 
     end
 
-    n1_ = map(n2_ -> Public.make_function(fu, bo_, n2_), eachrow(N2))
+    i2_, i3_ = Public.index_12(i1_)
+
+    n1_ = map(n2_ -> fu(n2_[i2_], n2_[i3_]), eachrow(N2))
 
     Public.write_table(
         joinpath(directory, "metric.tsv"),
@@ -900,7 +899,7 @@ Run metric-rank (standard) GSEA.
                 al,
                 s2_,
                 fu,
-                bo_,
+                i1_,
                 N2,
                 st__;
                 ke_...,
