@@ -8,17 +8,11 @@ using Test: @test
 
 using Public
 
-########################################
-
 const AL_ = GSEA.S0(), GSEA.S0a(), GSEA.D2(), GSEA.D2w(), GSEA.DD()
-
-########################################
 
 const S1_, N1_ = GSEA.make_score(
     eachcol(Public.read_table(joinpath(GSEA.P1, "metric.tsv"))[!, 1:2])...,
 )
-
-########################################
 
 const B1_ = map(
     in((
@@ -71,8 +65,6 @@ for (nd, re) in (
 
 end
 
-########################################
-
 for ch_ in (['_', 'A', 'I'], ['D', 'E', 'F', '_']), al in AL_
 
     GSEA.write_enrichment(
@@ -85,8 +77,6 @@ for ch_ in (['_', 'A', 'I'], ['D', 'E', 'F', '_']), al in AL_
     )
 
 end
-
-########################################
 
 const S2_, ST__ = GSEA.read_pair(joinpath(GSEA.P1, "set.json"))
 
@@ -105,8 +95,6 @@ for al in AL_
     @btime GSEA.number_enrichment($al, S1_, N1_, ST__)
 
 end
-
-########################################
 
 const P1 = joinpath(GSEA.P1, "set.json")
 
@@ -134,8 +122,6 @@ function read(pa, st = "enrichment")
 
 end
 
-########################################
-
 GSEA.data_rank(P3, P2, P1; minimum = 15, maximum = 500)
 
 const _, S3_, _, N1 = read(P3)
@@ -154,8 +140,6 @@ const B2_ = map(nu_ -> any(isfinite, nu_), eachrow(N1))
 ]
 
 @test findmax(N1[B2_, :]) === (0.756249206577638, CartesianIndex(2, 2))
-
-########################################
 
 GSEA.user_rank(P4, joinpath(GSEA.P1, "metric.tsv"), P1)
 
@@ -191,8 +175,6 @@ for (nd, r1, r2) in (
 
 end
 
-########################################
-
 const P8 = joinpath(GSEA.P1, "target.tsv")
 
 for (pa, permutation) in ((P5, "sample"), (P6, "set"))
@@ -220,8 +202,6 @@ const _, S8_, _, N6 = read(P6)
 @test S7_ == S8_
 
 @test N5[:, 1] == N6[:, 1]
-
-########################################
 
 GSEA.user_rank(P7, joinpath(P6, "metric.tsv"), P1)
 
