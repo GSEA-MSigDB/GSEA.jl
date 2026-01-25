@@ -327,7 +327,7 @@ end
 
 ########################################
 
-function write_enrichment(pa, al, s1_, n1_, s2_, d1 = Dict{String, Any}())
+function write_enrichment(pa, al, s1_, n1_, s2_, d1 = Dict())
 
     s3_, n2_ = make_score(s1_, n1_)
 
