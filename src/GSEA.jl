@@ -167,7 +167,7 @@ function number_enrichment!(al::D2, n1_, bo_, n2_ = nothing)
 
     um = length(n1_)
 
-    p1, _ = number_weight(al, n1_, bo_)
+    p1, = number_weight(al, n1_, bo_)
 
     p2 = p3 = eps()
 
