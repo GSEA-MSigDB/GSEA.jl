@@ -1,16 +1,17 @@
 name = "GSEA"
 uuid = "bd9f3ef8-f702-4565-b67d-e40b2ce581fe"
-version = "0.31.0"
+version = "0.32.0"
 authors = ["KwatMDPhD"]
 
 [deps]
 BenchmarkTools = "6e4b80f9-dd63-53aa-95a3-0cdb28fa8baf"
+CSV = "336ed68f-0bac-5ca0-87d4-7b16caf5d00b"
 Comonicon = "863f3e99-da2a-4334-8734-de3dacbe5542"
+DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
+JSON = "682c06a0-de6a-54ab-a142-c8b1cf79cde6"
+MultipleTesting = "f8716d33-7c4a-5097-896f-ce0ecbd3ef6b"
+Printf = "de0858da-6303-5e67-8744-51eddeeeb8d7"
 ProgressMeter = "92933f4c-e287-5a05-a399-4b506db050ca"
-Public = "c947c6f8-4499-4aba-9a07-9ad9f868b827"
 Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
 StatsBase = "2913bbd2-ae8a-5f71-8c99-4fb6c76f3a91"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
-
-[sources]
-Public = { url = "https://github.com/KwatMDPhD/Public.jl" }

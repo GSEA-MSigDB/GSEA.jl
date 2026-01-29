@@ -6,12 +6,10 @@ using BenchmarkTools: @btime
 
 using Test: @test
 
-using Public
-
 const AL_ = GSEA.S0(), GSEA.S0a(), GSEA.D2(), GSEA.D2w(), GSEA.DD()
 
 const S1_, N1_ = GSEA.make_score(
-    eachcol(Public.read_table(joinpath(GSEA.P1, "metric.tsv"))[!, 1:2])...,
+    eachcol(GSEA.read_table(joinpath(GSEA.P1, "metric.tsv"))[!, 1:2])...,
 )
 
 const B1_ = map(
@@ -44,11 +42,11 @@ const B1_ = map(
     S1_,
 )
 
-# 19.292 μs (0 allocations: 0 bytes)
-# 19.417 μs (0 allocations: 0 bytes)
-# 135.375 μs (0 allocations: 0 bytes)
-# 145.583 μs (0 allocations: 0 bytes)
-# 227.000 μs (0 allocations: 0 bytes)
+# 19.250 μs (0 allocations: 0 bytes)
+# 19.416 μs (0 allocations: 0 bytes)
+# 129.709 μs (0 allocations: 0 bytes)
+# 138.917 μs (0 allocations: 0 bytes)
+# 225.500 μs (0 allocations: 0 bytes)
 for (nd, re) in (
     (1, 0.7651927829281453),
     (2, 0.41482514169516305),
@@ -67,24 +65,17 @@ end
 
 for ch_ in (['_', 'A', 'I'], ['D', 'E', 'F', '_']), al in AL_
 
-    GSEA.write_enrichment(
-        "",
-        al,
-        'A':'I',
-        -4:4,
-        ch_,
-        Dict(Public.pair_title(al)),
-    )
+    GSEA.write_enrichment("", al, 'A':'I', -4:4, ch_, GSEA.pair_title(al))
 
 end
 
 const S2_, ST__ = GSEA.read_pair(joinpath(GSEA.P1, "set.json"))
 
-# 2.037 ms (31 allocations: 1.90 MiB)
-# 2.051 ms (31 allocations: 1.90 MiB)
-# 8.208 ms (31 allocations: 1.90 MiB)
-# 8.755 ms (31 allocations: 1.90 MiB)
-# 13.426 ms (31 allocations: 1.90 MiB)
+# 1.950 ms (31 allocations: 1.90 MiB)
+# 1.922 ms (31 allocations: 1.90 MiB)
+# 8.021 ms (31 allocations: 1.90 MiB)
+# 8.650 ms (31 allocations: 1.90 MiB)
+# 13.264 ms (31 allocations: 1.90 MiB)
 for al in AL_
 
     @test S2_[partialsortperm(
@@ -118,7 +109,7 @@ const P7 = mkpath(joinpath(GSEA.P2, "user_rank.metric"))
 
 function read(pa, st = "enrichment")
 
-    Public.make_part(Public.read_table(joinpath(pa, "$st.tsv")))
+    GSEA.make_part(GSEA.read_table(joinpath(pa, "$st.tsv")))
 
 end
 

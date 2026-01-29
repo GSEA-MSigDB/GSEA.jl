@@ -6,16 +6,351 @@ const P2 = pkgdir(GSEA, "ou")
 
 # ------------------------------------ #
 
+using CSV: read, write as write2
+
 using Comonicon: @cast, @main
+
+using DataFrames: DataFrame, insertcols!
+
+using JSON: json, parsefile
+
+using MultipleTesting: BenjaminiHochberg, adjust
+
+using Printf: @sprintf
 
 using ProgressMeter: @showprogress
 
-using Random: seed!, shuffle!
+using Random: randstring, seed!, shuffle!
 
-using StatsBase: mean, sample
+using StatsBase: mean, mean_and_std, sample
 
-using Public
+########################################
+# Number
+########################################
 
+function text_2(nu)
+
+    @sprintf "%.2g" nu
+
+end
+
+function text_4(nu)
+
+    @sprintf "%.4g" nu
+
+end
+
+########################################
+# Number Number
+########################################
+
+function number_divergence(n1, n2)
+
+    n1 * log2(n1 / n2)
+
+end
+
+function number_divergence(fu, n1, n2, n3, n4)
+
+    fu(number_divergence(n1, n2), number_divergence(n3, n4))
+
+end
+
+########################################
+# Any_
+########################################
+
+function index_extreme(an_, u1)
+
+    u2 = length(an_)
+
+    sortperm(an_)[if u2 <= 2 * u1
+
+        1:u2
+
+    else
+
+        vcat(1:u1, (u2 - u1 + 1):u2)
+
+    end]
+
+end
+
+########################################
+# Number_
+########################################
+
+function number_sign(n1_)
+
+    ty = eltype(n1_)
+
+    n2_ = ty[]
+
+    n3_ = ty[]
+
+    for nu in n1_
+
+        push!(ifelse(nu < 0, n2_, n3_), nu)
+
+    end
+
+    n2_, n3_
+
+end
+
+########################################
+# Index_
+########################################
+
+function index_12(i1_)
+
+    i2_ = Int[]
+
+    i3_ = Int[]
+
+    for nd in eachindex(i1_)
+
+        push!(ifelse(isone(i1_[nd]), i2_, i3_), nd)
+
+    end
+
+    i2_, i3_
+
+end
+
+function make_function(i1_, an_, fu)
+
+    i2_, i3_ = index_12(i1_)
+
+    fu(an_[i2_], an_[i3_])
+
+end
+
+########################################
+# Number_ Number_
+########################################
+
+function number_difference(n1_, n2_)
+
+    mean(n2_) - mean(n1_)
+
+end
+
+function number_ratio(n1_, n2_)
+
+    log2(mean(n2_) / mean(n1_))
+
+end
+
+function number_signal(n1_, n2_)
+
+    n1, n2 = mean_and_std(n1_)
+
+    n3, n4 = mean_and_std(n2_)
+
+    (n3 - n1) / (max(0.2 * abs(n1), n2) + max(0.2 * abs(n3), n4))
+
+end
+
+function number_significance(n1_, n2_, fu)
+
+    u1 = length(n1_)
+
+    u2 = length(n2_)
+
+    if iszero(u1) || iszero(u2)
+
+        return fill(NaN, u1), fill(NaN, u1)
+
+    end
+
+    pr_ = map(nu -> max(1, count(fu(nu), n2_)) / u2, n1_)
+
+    pr_, adjust(pr_, BenjaminiHochberg())
+
+end
+
+# TODO: Consider comparing against both signs
+function number_significance(n1_, n2_)
+
+    i1_ = findall(<(0), n1_)
+
+    i2_ = findall(>=(0), n1_)
+
+    n3_, n4_ = number_sign(n2_)
+
+    n5_, n6_ = number_significance(n1_[i1_], n3_, <=)
+
+    n7_, n8_ = number_significance(n1_[i2_], n4_, >=)
+
+    vcat(i1_, i2_), vcat(n5_, n7_), vcat(n6_, n8_)
+
+end
+
+########################################
+# Path
+########################################
+
+function read_path(pa)
+
+    try
+
+        run(`open --background $pa`)
+
+    catch
+
+        @warn "Failed to open $pa"
+
+    end
+
+end
+
+########################################
+# Table
+########################################
+
+function read_table(pa; ke_...)
+
+    read(pa, DataFrame; ke_...)
+
+end
+
+function write_table(pa, D)
+
+    write2(pa, D; delim = '\t')
+
+end
+
+function make_part(D)
+
+    st_ = names(D)
+
+    st_[1], D[!, 1], st_[2:end], Matrix(D[!, 2:end])
+
+end
+
+function make_table(st, s1_, s2_, A)
+
+    insertcols!(DataFrame(A, s2_), 1, st => s1_)
+
+end
+
+########################################
+# HTML
+########################################
+
+function write_html(p1, pa_, s1, he = "#27221f")
+
+    p2 = if isempty(p1)
+
+        s2 = randstring()
+
+        joinpath(tempdir(), "$s2.html")
+
+    else
+
+        p1
+
+    end
+
+    s3 = join("<script src=\"$p3\"></script>\n" for p3 in pa_)
+
+    write(
+        p2,
+        """
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+          <meta charset="utf-8">
+        </head>
+        $s3
+        <body style="margin:0; background:$he; min-height:100vh; display:flex; justify-content:center; align-items:center">
+          <div id="write_html" style="height:88vh; width:88vw"></div>
+        </body>
+        <script>
+        $s1
+        </script>
+        </html>""",
+    )
+
+    read_path(p2)
+
+end
+
+########################################
+# Plotly
+########################################
+
+function pair_font(nu)
+
+    "font" => Dict("size" => nu)
+
+end
+
+function pair_title(st)
+
+    "title" => Dict("text" => st)
+
+end
+
+function pair_title(s1, s2)
+
+    "title" => Dict("text" => s1, "subtitle" => Dict("text" => s2))
+
+end
+
+function write_plotly(pa, di_, d1 = Dict(), d2 = Dict())
+
+    s1 = json(di_; allownan = true)
+
+    d3 = Dict(
+        "automargin" => true,
+        "title" => Dict(pair_font(24)),
+        "zeroline" => false,
+        "showgrid" => false,
+    )
+
+    s2 = json(
+        merge(
+            Dict(
+                "template" => Dict(
+                    "data" => Dict(
+                        "scatter" => (Dict("cliponaxis" => false),),
+                        "heatmap" => (
+                            Dict(
+                                "colorbar" => Dict(
+                                    "lenmode" => "pixels",
+                                    "len" => 240,
+                                    "thickness" => 16,
+                                    "outlinewidth" => 0,
+                                ),
+                            ),
+                        ),
+                    ),
+                    "layout" => Dict(
+                        "title" => Dict(pair_font(32)),
+                        "yaxis" => d3,
+                        "xaxis" => d3,
+                        "legend" => Dict(pair_font(16)),
+                    ),
+                ),
+            ),
+            d1,
+        ),
+    )
+
+    s3 = json(d2)
+
+    write_html(
+        pa,
+        ("https://cdn.plot.ly/plotly-3.3.0.min.js",),
+        "Plotly.newPlot(\"write_html\", $s1, $s2, $s3)",
+    )
+
+end
+
+########################################
+# Enrichment
 ########################################
 
 struct S0 end
@@ -27,8 +362,6 @@ struct D2 end
 struct D2w end
 
 struct DD end
-
-########################################
 
 function number_weight(::Union{S0, S0a}, nu_, bo_)
 
@@ -79,8 +412,6 @@ function number_weight(p1, p2)
     inv(inv(p2) - inv(p1))
 
 end
-
-########################################
 
 function number_enrichment!(al::S0, n1_, bo_, n2_ = nothing)
 
@@ -152,16 +483,12 @@ function number_enrichment!(al::S0a, n1_, bo_, n2_ = nothing)
 
 end
 
-########################################
-
 # TODO: Avoid
 function number_eps(nu)
 
     max(eps(), nu)
 
 end
-
-########################################
 
 function number_enrichment!(al::D2, n1_, bo_, n2_ = nothing)
 
@@ -195,7 +522,7 @@ function number_enrichment!(al::D2, n1_, bo_, n2_ = nothing)
 
         p3 += p7
 
-        n1 += n2 = Public.number_divergence(-, p2, p3, p4, p5)
+        n1 += n2 = number_divergence(-, p2, p3, p4, p5)
 
         if !isnothing(n2_)
 
@@ -239,7 +566,7 @@ function number_enrichment!(al::D2w, n1_, bo_, n2_ = nothing)
 
         p4 += p8 = p2 * n2
 
-        n1 += n3 = Public.number_divergence(-, p3, p4, p5, p6)
+        n1 += n3 = number_divergence(-, p3, p4, p5, p6)
 
         if !isnothing(n2_)
 
@@ -252,8 +579,6 @@ function number_enrichment!(al::D2w, n1_, bo_, n2_ = nothing)
     n1 / length(n1_)
 
 end
-
-########################################
 
 function number_enrichment!(al::DD, n1_, bo_, n2_ = nothing)
 
@@ -295,8 +620,8 @@ function number_enrichment!(al::DD, n1_, bo_, n2_ = nothing)
 
         n1 +=
             n3 =
-                Public.number_divergence(-, r2, r3, r1, r3) -
-                Public.number_divergence(-, l2, l3, l1, l3)
+                number_divergence(-, r2, r3, r1, r3) -
+                number_divergence(-, l2, l3, l1, l3)
 
         if !isnothing(n2_)
 
@@ -309,8 +634,6 @@ function number_enrichment!(al::DD, n1_, bo_, n2_ = nothing)
     n1 / length(n1_)
 
 end
-
-########################################
 
 function make_score(an_, n1_)
 
@@ -325,9 +648,7 @@ function make_score(an_, n1_)
 
 end
 
-########################################
-
-function write_enrichment(pa, al, s1_, n1_, s2_, d1 = Dict())
+function write_enrichment(pa, al, s1_, n1_, s2_, s1 = "")
 
     s3_, n2_ = make_score(s1_, n1_)
 
@@ -337,9 +658,9 @@ function write_enrichment(pa, al, s1_, n1_, s2_, d1 = Dict())
 
     n3_ = Vector{Float64}(undef, um)
 
-    st = Public.text_4(number_enrichment!(al, n2_, bo_, n3_))
+    s2 = text_4(number_enrichment!(al, n2_, bo_, n3_))
 
-    d2 = Dict(
+    di = Dict(
         "mode" => "lines",
         "line" => Dict("width" => 0),
         "fill" => "tozeroy",
@@ -349,11 +670,11 @@ function write_enrichment(pa, al, s1_, n1_, s2_, d1 = Dict())
 
     i2_ = findall(>=(0), n2_)
 
-    Public.write_plotly(
+    write_plotly(
         pa,
         (
             merge(
-                d2,
+                di,
                 Dict(
                     "yaxis" => "y3",
                     "y" => n3_,
@@ -369,60 +690,49 @@ function write_enrichment(pa, al, s1_, n1_, s2_, d1 = Dict())
                 "marker" => Dict(
                     "symbol" => "line-ns",
                     "size" => 24,
-                    "line" => Dict(
-                        "width" => 2,
-                        "color" => Public.text_hex(Public.IN, 0.8),
-                    ),
+                    "line" => Dict("width" => 2, "color" => "#4e40d8b8"),
                 ),
             ),
             merge(
-                d2,
+                di,
                 Dict(
                     "y" => n2_[i1_],
                     "x" => s3_[i1_],
-                    "fillcolor" => Public.BL,
+                    "fillcolor" => "#1992ff",
                 ),
             ),
             merge(
-                d2,
+                di,
                 Dict(
                     "y" => n2_[i2_],
                     "x" => s3_[i2_],
-                    "fillcolor" => Public.RE,
+                    "fillcolor" => "#ff1993",
                 ),
             ),
         ),
-        Public.pair_merge(
-            Dict(
-                "showlegend" => false,
-                Public.pair_title("", "Enrichment = <b>$st</b>"),
-                "yaxis3" => Dict(
-                    "domain" => (0.328, 1),
-                    Public.pair_title("Δ Enrichment"),
-                ),
-                "yaxis2" => Dict(
-                    "domain" => (0.248, 0.32),
-                    Public.pair_title("Set"),
-                    "tickvals" => (),
-                ),
-                "yaxis" =>
-                    Dict("domain" => (0, 0.24), Public.pair_title("Score")),
-                "xaxis" => Dict(
-                    Public.pair_title("Feature ($um)"),
-                    "showspikes" => true,
-                    "spikemode" => "across",
-                    "spikedash" => "solid",
-                    "spikethickness" => -1,
-                    "spikecolor" => Public.DA,
-                ),
+        Dict(
+            "showlegend" => false,
+            pair_title(s1, "Enrichment = <b>$s2</b>"),
+            "yaxis3" =>
+                Dict("domain" => (0.328, 1), pair_title("Δ Enrichment")),
+            "yaxis2" => Dict(
+                "domain" => (0.248, 0.32),
+                pair_title("Set"),
+                "tickvals" => (),
             ),
-            d1,
+            "yaxis" => Dict("domain" => (0, 0.24), pair_title("Score")),
+            "xaxis" => Dict(
+                pair_title("Feature ($um)"),
+                "showspikes" => true,
+                "spikemode" => "across",
+                "spikedash" => "solid",
+                "spikethickness" => -1,
+                "spikecolor" => "#27221f",
+            ),
         ),
     )
 
 end
-
-########################################
 
 function number_enrichment(al, s1_, n1_, st__; u1 = 1, u2 = 1000, pr = 0)
 
@@ -473,6 +783,8 @@ function number_enrichment(al, s1_, n1_, st__; u1 = 1, u2 = 1000, pr = 0)
 end
 
 ########################################
+# Command-line interface
+########################################
 
 function make_algorithm(st)
 
@@ -502,7 +814,7 @@ end
 
 function read_pair(pa)
 
-    di::Dict{String, Vector{String}} = Public.read_pair(pa)
+    di::Dict{String, Vector{String}} = parsefile(pa)
 
     st_ = collect(keys(di))
 
@@ -511,8 +823,6 @@ function read_pair(pa)
     st_[in_], collect(values(di))[in_]
 
 end
-
-########################################
 
 """
 Run data-rank (single-sample) GSEA.
@@ -542,7 +852,7 @@ Run data-rank (single-sample) GSEA.
     number_of_plots::Int = 2,
 )
 
-    _, s1_, s2_, N1 = Public.make_part(Public.read_table(tsv))
+    _, s1_, s2_, N1 = make_part(read_table(tsv))
 
     s3_, s1__ = read_pair(json)
 
@@ -563,19 +873,7 @@ Run data-rank (single-sample) GSEA.
 
     pa = joinpath(directory, "enrichment")
 
-    Public.write_table("$pa.tsv", Public.make_table("Set", s3_, s2_, N2))
-
-    Public.write_heat(
-        "$pa.html",
-        s3_,
-        s2_,
-        N2,
-        Dict(
-            Public.pair_title("Enrichment"),
-            "yaxis" => Dict(Public.pair_title("Set")),
-            "xaxis" => Dict(Public.pair_title("Sample")),
-        ),
-    )
+    write_table("$pa.tsv", make_table("Set", s3_, s2_, N2))
 
     bo_ = map(nu_ -> any(isfinite, nu_), eachrow(N2))
 
@@ -585,8 +883,7 @@ Run data-rank (single-sample) GSEA.
 
     N3 = N2[bo_, :]
 
-    for in_ in
-        CartesianIndices(N3)[Public.index_extreme(vec(N3), number_of_plots)]
+    for in_ in CartesianIndices(N3)[index_extreme(vec(N3), number_of_plots)]
 
         i1, i2 = Tuple(in_)
 
@@ -594,7 +891,7 @@ Run data-rank (single-sample) GSEA.
 
         s2 = s2_[i2]
 
-        s3 = Public.text_2(N3[in_])
+        s3 = text_2(N3[in_])
 
         write_enrichment(
             "$pa.$s1.$s2.$s3.html",
@@ -602,14 +899,12 @@ Run data-rank (single-sample) GSEA.
             s1_,
             N1[:, i2],
             s2__[i1],
-            Dict(Public.pair_title(s1)),
+            Dict(pair_title(s1)),
         )
 
     end
 
 end
-
-########################################
 
 function number_random(u1, nu, al, s1_, nu_, st__; ke_...)
 
@@ -646,10 +941,7 @@ function number_random!(um, nu, al, st_, fu, in_, N1, st__; ke_...)
         N2[:, nd] = number_enrichment(
             al,
             st_,
-            map(
-                nu_ -> Public.make_function(fu, shuffle!(in_), nu_),
-                eachrow(N1),
-            ),
+            map(nu_ -> make_function(shuffle!(in_), nu_, fu), eachrow(N1)),
             st__;
             ke_...,
         )
@@ -659,8 +951,6 @@ function number_random!(um, nu, al, st_, fu, in_, N1, st__; ke_...)
     N2
 
 end
-
-########################################
 
 function write_table(di, al, s1_, n1_, s2_, s1__, n2_, N1, u1, s3_)
 
@@ -672,7 +962,7 @@ function write_table(di, al, s1_, n1_, s2_, s1__, n2_, N1, u1, s3_)
 
     for i1 in 1:u2
 
-        n1, n2 = (mean(n6_) for n6_ in Public.number_sign(N1[i1, :]))
+        n1, n2 = (mean(n6_) for n6_ in number_sign(N1[i1, :]))
 
         n3 = -n1
 
@@ -688,15 +978,15 @@ function write_table(di, al, s1_, n1_, s2_, s1__, n2_, N1, u1, s3_)
 
     N2[:, 2] = n2_
 
-    in_, n3_, n4_ = Public.number_significance(n2_, N1)
+    in_, n3_, n4_ = number_significance(n2_, N1)
 
     N2[in_, 3] = n3_
 
     N2[in_, 4] = n4_
 
-    Public.write_table(
+    write_table(
         joinpath(di, "enrichment.tsv"),
-        Public.make_table(
+        make_table(
             "Set",
             s2_,
             ["Enrichment", "Normalized enrichment", "P value", "Q value"],
@@ -713,15 +1003,12 @@ function write_table(di, al, s1_, n1_, s2_, s1__, n2_, N1, u1, s3_)
     n5_ = n2_[bo_]
 
     for nd in unique!(
-        vcat(
-            Public.index_extreme(n5_, u1),
-            filter!(!isnothing, indexin(s3_, s4_)),
-        ),
+        vcat(index_extreme(n5_, u1), filter!(!isnothing, indexin(s3_, s4_))),
     )
 
         s1 = s4_[nd]
 
-        s2 = Public.text_2(n5_[nd])
+        s2 = text_2(n5_[nd])
 
         write_enrichment(
             joinpath(di, "$s1.$s2.html"),
@@ -729,14 +1016,12 @@ function write_table(di, al, s1_, n1_, s2_, s1__, n2_, N1, u1, s3_)
             s1_,
             n1_,
             s2__[nd],
-            Dict(Public.pair_title(s1)),
+            Dict(pair_title(s1)),
         )
 
     end
 
 end
-
-########################################
 
 """
 Run user-rank (pre-rank) GSEA.
@@ -774,7 +1059,7 @@ Run user-rank (pre-rank) GSEA.
 
     al = make_algorithm(algorithm)
 
-    s1_, nu_ = eachcol(Public.read_table(tsv)[!, 1:2])
+    s1_, nu_ = eachcol(read_table(tsv)[!, 1:2])
 
     s2_, st__ = read_pair(json)
 
@@ -794,8 +1079,6 @@ Run user-rank (pre-rank) GSEA.
     )
 
 end
-
-########################################
 
 """
 Run metric-rank (standard) GSEA.
@@ -837,35 +1120,35 @@ Run metric-rank (standard) GSEA.
     more_plots = "",
 )
 
-    _, _, s1_, N1 = Public.make_part(Public.read_table(tsv1))
+    _, _, s1_, N1 = make_part(read_table(tsv1))
 
     i1_ = N1[1, :]
 
-    st, s2_, s3_, N1 = Public.make_part(Public.read_table(tsv2))
+    st, s2_, s3_, N1 = make_part(read_table(tsv2))
 
     N2 = N1[:, indexin(s1_, s3_)]
 
     fu = if metric == "mean-difference"
 
-        Public.number_difference
+        number_difference
 
     elseif metric == "log-ratio"
 
-        Public.number_ratio
+        number_ratio
 
     elseif metric == "signal-to-noise-ratio"
 
-        Public.number_signal
+        number_signal
 
     end
 
-    i2_, i3_ = Public.index_12(i1_)
+    i2_, i3_ = index_12(i1_)
 
     n1_ = map(n2_ -> fu(n2_[i2_], n2_[i3_]), eachrow(N2))
 
-    Public.write_table(
+    write_table(
         joinpath(directory, "metric.tsv"),
-        Public.make_table(st, s2_, [metric], reshape(n1_, :, 1)),
+        make_table(st, s2_, [metric], reshape(n1_, :, 1)),
     )
 
     al = make_algorithm(algorithm)
