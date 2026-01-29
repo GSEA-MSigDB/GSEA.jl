@@ -69,7 +69,7 @@ for ch_ in (['_', 'A', 'I'], ['D', 'E', 'F', '_']), al in AL_
 
 end
 
-const S2_, ST__ = GSEA.read_pair(joinpath(GSEA.P1, "set.json"))
+const S2_, ST__ = GSEA.read_set(joinpath(GSEA.P1, "set.json"))
 
 # 1.922 ms (31 allocations: 1.90 MiB)
 # 1.933 ms (31 allocations: 1.90 MiB)

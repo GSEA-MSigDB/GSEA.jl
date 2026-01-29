@@ -306,7 +306,7 @@ function write_plotly(pa, di_, d1 = Dict(), d2 = Dict())
 end
 
 ########################################
-# Enrichment
+# Enriching
 ########################################
 
 struct S0 end
@@ -591,7 +591,7 @@ function number_enrichment!(al::DD, n1_, bo_, n2_ = nothing)
 
 end
 
-function make_score(an_, n1_)
+function make_score(st_, n1_)
 
     bo_ = map(isfinite, n1_)
 
@@ -600,11 +600,11 @@ function make_score(an_, n1_)
     # TODO: Remove rev
     in_ = sortperm(n2_; rev = true)
 
-    an_[bo_][in_], n2_[in_]
+    st_[bo_][in_], n2_[in_]
 
 end
 
-function write_enrichment(pa, al, s1_, n1_, s2_, s1 = "")
+function write_enrichment(pa, al, s1_, n1_, s2_, s1 = "Mountain plot")
 
     s3_, n2_ = make_score(s1_, n1_)
 
@@ -768,7 +768,7 @@ function make_algorithm(st)
 
 end
 
-function read_pair(pa)
+function read_set(pa)
 
     di::Dict{String, Vector{String}} = parsefile(pa)
 
@@ -810,7 +810,7 @@ Run data-rank (single-sample) GSEA.
 
     _, s1_, s2_, N1 = table_part(read_table(tsv))
 
-    s3_, s1__ = read_pair(json)
+    s3_, s1__ = read_set(json)
 
     al = make_algorithm(algorithm)
 
@@ -862,7 +862,7 @@ Run data-rank (single-sample) GSEA.
 
 end
 
-function number_random(u1, nu, al, s1_, nu_, st__; ke_...)
+function table_random(u1, nu, al, s1_, nu_, st__; ke_...)
 
     N = Matrix{Float64}(undef, length(st__), u1)
 
@@ -886,7 +886,7 @@ function number_random(u1, nu, al, s1_, nu_, st__; ke_...)
 
 end
 
-function number_random!(um, nu, al, st_, fu, in_, N1, st__; ke_...)
+function table_random!(um, nu, al, st_, fu, in_, N1, st__; ke_...)
 
     N2 = Matrix{Float64}(undef, length(st__), um)
 
@@ -1021,7 +1021,7 @@ Run user-rank (pre-rank) GSEA.
 
     s1_, nu_ = eachcol(read_table(tsv)[!, 1:2])
 
-    s2_, st__ = read_pair(json)
+    s2_, st__ = read_set(json)
 
     ke_ = (u1 = minimum, u2 = maximum, pr = fraction)
 
@@ -1033,7 +1033,7 @@ Run user-rank (pre-rank) GSEA.
         s2_,
         st__,
         number_enrichment(al, s1_, nu_, st__; ke_...),
-        number_random(number_of_permutations, seed, al, s1_, nu_, st__; ke_...),
+        table_random(number_of_permutations, seed, al, s1_, nu_, st__; ke_...),
         number_of_plots,
         split(more_plots, ';'),
     )
@@ -1114,7 +1114,7 @@ Run metric-rank (standard) GSEA.
 
     al = make_algorithm(algorithm)
 
-    s4_, st__ = read_pair(json)
+    s4_, st__ = read_set(json)
 
     ke_ = (u1 = minimum, u2 = maximum, pr = fraction)
 
@@ -1128,7 +1128,7 @@ Run metric-rank (standard) GSEA.
         number_enrichment(al, s2_, n1_, st__; ke_...),
         if permutation == "set"
 
-            number_random(
+            table_random(
                 number_of_permutations,
                 seed,
                 al,
@@ -1140,7 +1140,7 @@ Run metric-rank (standard) GSEA.
 
         elseif permutation == "sample"
 
-            number_random!(
+            table_random!(
                 number_of_permutations,
                 seed,
                 al,
