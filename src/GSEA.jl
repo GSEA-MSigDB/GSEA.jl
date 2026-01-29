@@ -20,12 +20,12 @@ using Printf: @sprintf
 
 using ProgressMeter: @showprogress
 
-using Random: randstring, seed!, shuffle!
+using Random: seed!, shuffle!
 
 using StatsBase: mean, mean_and_std, sample
 
 ########################################
-# Number
+# nu
 ########################################
 
 function text_2(nu)
@@ -41,23 +41,23 @@ function text_4(nu)
 end
 
 ########################################
-# Number Number
+# pr
 ########################################
 
-function number_divergence(n1, n2)
+function number_divergence(p1, p2)
 
-    n1 * log2(n1 / n2)
+    p1 * log2(p1 / p2)
 
 end
 
-function number_divergence(fu, n1, n2, n3, n4)
+function number_divergence(p1, p2, p3, p4, fu)
 
-    fu(number_divergence(n1, n2), number_divergence(n3, n4))
+    fu(number_divergence(p1, p2), number_divergence(p3, p4))
 
 end
 
 ########################################
-# Any_
+# an_
 ########################################
 
 function index_extreme(an_, u1)
@@ -77,80 +77,8 @@ function index_extreme(an_, u1)
 end
 
 ########################################
-# Number_
+# nu_
 ########################################
-
-function number_sign(n1_)
-
-    ty = eltype(n1_)
-
-    n2_ = ty[]
-
-    n3_ = ty[]
-
-    for nu in n1_
-
-        push!(ifelse(nu < 0, n2_, n3_), nu)
-
-    end
-
-    n2_, n3_
-
-end
-
-########################################
-# Index_
-########################################
-
-function index_12(i1_)
-
-    i2_ = Int[]
-
-    i3_ = Int[]
-
-    for nd in eachindex(i1_)
-
-        push!(ifelse(isone(i1_[nd]), i2_, i3_), nd)
-
-    end
-
-    i2_, i3_
-
-end
-
-function make_function(i1_, an_, fu)
-
-    i2_, i3_ = index_12(i1_)
-
-    fu(an_[i2_], an_[i3_])
-
-end
-
-########################################
-# Number_ Number_
-########################################
-
-function number_difference(n1_, n2_)
-
-    mean(n2_) - mean(n1_)
-
-end
-
-function number_ratio(n1_, n2_)
-
-    log2(mean(n2_) / mean(n1_))
-
-end
-
-function number_signal(n1_, n2_)
-
-    n1, n2 = mean_and_std(n1_)
-
-    n3, n4 = mean_and_std(n2_)
-
-    (n3 - n1) / (max(0.2 * abs(n1), n2) + max(0.2 * abs(n3), n4))
-
-end
 
 function number_significance(n1_, n2_, fu)
 
@@ -177,21 +105,51 @@ function number_significance(n1_, n2_)
 
     i2_ = findall(>=(0), n1_)
 
-    n3_, n4_ = number_sign(n2_)
+    n3_, n4_ = number_significance(n1_[i1_], filter(<(0), n2_), <=)
 
-    n5_, n6_ = number_significance(n1_[i1_], n3_, <=)
+    n5_, n6_ = number_significance(n1_[i2_], filter(!<(0), n2_), >=)
 
-    n7_, n8_ = number_significance(n1_[i2_], n4_, >=)
+    vcat(i1_, i2_), vcat(n3_, n5_), vcat(n4_, n6_)
 
-    vcat(i1_, i2_), vcat(n5_, n7_), vcat(n6_, n8_)
+end
+
+function number_difference(n1_, n2_)
+
+    mean(n2_) - mean(n1_)
+
+end
+
+function number_ratio(n1_, n2_)
+
+    log2(mean(n2_) / mean(n1_))
+
+end
+
+function number_signal(n1_, n2_)
+
+    n1, n2 = mean_and_std(n1_)
+
+    n3, n4 = mean_and_std(n2_)
+
+    (n3 - n1) / (max(0.2 * abs(n1), n2) + max(0.2 * abs(n3), n4))
 
 end
 
 ########################################
-# Path
+# in_
 ########################################
 
-function read_path(pa)
+function make_function(in_, an_, fu)
+
+    fu(an_[findall(isone, in_)], an_[findall(==(2), in_)])
+
+end
+
+########################################
+# pa
+########################################
+
+function read_open(pa)
 
     try
 
@@ -221,7 +179,7 @@ function write_table(pa, D)
 
 end
 
-function make_part(D)
+function table_part(D)
 
     st_ = names(D)
 
@@ -229,7 +187,7 @@ function make_part(D)
 
 end
 
-function make_table(st, s1_, s2_, A)
+function table_part(st, s1_, s2_, A)
 
     insertcols!(DataFrame(A, s2_), 1, st => s1_)
 
@@ -243,9 +201,7 @@ function write_html(p1, pa_, s1, he = "#27221f")
 
     p2 = if isempty(p1)
 
-        s2 = randstring()
-
-        joinpath(tempdir(), "$s2.html")
+        tempname(; suffix = ".html")
 
     else
 
@@ -253,7 +209,7 @@ function write_html(p1, pa_, s1, he = "#27221f")
 
     end
 
-    s3 = join("<script src=\"$p3\"></script>\n" for p3 in pa_)
+    s2 = join("<script src=\"$p3\"></script>\n" for p3 in pa_)
 
     write(
         p2,
@@ -263,7 +219,7 @@ function write_html(p1, pa_, s1, he = "#27221f")
         <head>
           <meta charset="utf-8">
         </head>
-        $s3
+        $s2
         <body style="margin:0; background:$he; min-height:100vh; display:flex; justify-content:center; align-items:center">
           <div id="write_html" style="height:88vh; width:88vw"></div>
         </body>
@@ -273,7 +229,7 @@ function write_html(p1, pa_, s1, he = "#27221f")
         </html>""",
     )
 
-    read_path(p2)
+    read_open(p2)
 
 end
 
@@ -522,7 +478,7 @@ function number_enrichment!(al::D2, n1_, bo_, n2_ = nothing)
 
         p3 += p7
 
-        n1 += n2 = number_divergence(-, p2, p3, p4, p5)
+        n1 += n2 = number_divergence(p2, p3, p4, p5, -)
 
         if !isnothing(n2_)
 
@@ -566,7 +522,7 @@ function number_enrichment!(al::D2w, n1_, bo_, n2_ = nothing)
 
         p4 += p8 = p2 * n2
 
-        n1 += n3 = number_divergence(-, p3, p4, p5, p6)
+        n1 += n3 = number_divergence(p3, p4, p5, p6, -)
 
         if !isnothing(n2_)
 
@@ -620,8 +576,8 @@ function number_enrichment!(al::DD, n1_, bo_, n2_ = nothing)
 
         n1 +=
             n3 =
-                number_divergence(-, r2, r3, r1, r3) -
-                number_divergence(-, l2, l3, l1, l3)
+                number_divergence(r2, r3, r1, r3, -) -
+                number_divergence(l2, l3, l1, l3, -)
 
         if !isnothing(n2_)
 
@@ -852,7 +808,7 @@ Run data-rank (single-sample) GSEA.
     number_of_plots::Int = 2,
 )
 
-    _, s1_, s2_, N1 = make_part(read_table(tsv))
+    _, s1_, s2_, N1 = table_part(read_table(tsv))
 
     s3_, s1__ = read_pair(json)
 
@@ -873,7 +829,7 @@ Run data-rank (single-sample) GSEA.
 
     pa = joinpath(directory, "enrichment")
 
-    write_table("$pa.tsv", make_table("Set", s3_, s2_, N2))
+    write_table("$pa.tsv", table_part("Set", s3_, s2_, N2))
 
     bo_ = map(nu_ -> any(isfinite, nu_), eachrow(N2))
 
@@ -962,7 +918,11 @@ function write_table(di, al, s1_, n1_, s2_, s1__, n2_, N1, u1, s3_)
 
     for i1 in 1:u2
 
-        n1, n2 = (mean(n6_) for n6_ in number_sign(N1[i1, :]))
+        n6_ = N1[i1, :]
+
+        n1 = mean(filter(<(0), n6_))
+
+        n2 = mean(filter(!<(0), n6_))
 
         n3 = -n1
 
@@ -986,7 +946,7 @@ function write_table(di, al, s1_, n1_, s2_, s1__, n2_, N1, u1, s3_)
 
     write_table(
         joinpath(di, "enrichment.tsv"),
-        make_table(
+        table_part(
             "Set",
             s2_,
             ["Enrichment", "Normalized enrichment", "P value", "Q value"],
@@ -1120,11 +1080,11 @@ Run metric-rank (standard) GSEA.
     more_plots = "",
 )
 
-    _, _, s1_, N1 = make_part(read_table(tsv1))
+    _, _, s1_, N1 = table_part(read_table(tsv1))
 
-    i1_ = N1[1, :]
+    in_ = N1[1, :]
 
-    st, s2_, s3_, N1 = make_part(read_table(tsv2))
+    st, s2_, s3_, N1 = table_part(read_table(tsv2))
 
     N2 = N1[:, indexin(s1_, s3_)]
 
@@ -1142,13 +1102,14 @@ Run metric-rank (standard) GSEA.
 
     end
 
-    i2_, i3_ = index_12(i1_)
-
-    n1_ = map(n2_ -> fu(n2_[i2_], n2_[i3_]), eachrow(N2))
+    n1_ = map(
+        n2_ -> fu(n2_[findall(isone, in_)], n2_[findall(==(2), in_)]),
+        eachrow(N2),
+    )
 
     write_table(
         joinpath(directory, "metric.tsv"),
-        make_table(st, s2_, [metric], reshape(n1_, :, 1)),
+        table_part(st, s2_, [metric], reshape(n1_, :, 1)),
     )
 
     al = make_algorithm(algorithm)
@@ -1185,7 +1146,7 @@ Run metric-rank (standard) GSEA.
                 al,
                 s2_,
                 fu,
-                i1_,
+                in_,
                 N2,
                 st__;
                 ke_...,

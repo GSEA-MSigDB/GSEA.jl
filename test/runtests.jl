@@ -42,11 +42,11 @@ const B1_ = map(
     S1_,
 )
 
-# 19.250 μs (0 allocations: 0 bytes)
-# 19.416 μs (0 allocations: 0 bytes)
-# 129.709 μs (0 allocations: 0 bytes)
-# 138.917 μs (0 allocations: 0 bytes)
-# 225.500 μs (0 allocations: 0 bytes)
+# 19.291 μs (0 allocations: 0 bytes)
+# 19.500 μs (0 allocations: 0 bytes)
+# 129.750 μs (0 allocations: 0 bytes)
+# 139.208 μs (0 allocations: 0 bytes)
+# 224.042 μs (0 allocations: 0 bytes)
 for (nd, re) in (
     (1, 0.7651927829281453),
     (2, 0.41482514169516305),
@@ -71,11 +71,11 @@ end
 
 const S2_, ST__ = GSEA.read_pair(joinpath(GSEA.P1, "set.json"))
 
-# 1.950 ms (31 allocations: 1.90 MiB)
 # 1.922 ms (31 allocations: 1.90 MiB)
-# 8.021 ms (31 allocations: 1.90 MiB)
-# 8.650 ms (31 allocations: 1.90 MiB)
-# 13.264 ms (31 allocations: 1.90 MiB)
+# 1.933 ms (31 allocations: 1.90 MiB)
+# 8.108 ms (31 allocations: 1.90 MiB)
+# 8.606 ms (31 allocations: 1.90 MiB)
+# 13.416 ms (31 allocations: 1.90 MiB)
 for al in AL_
 
     @test S2_[partialsortperm(
@@ -109,7 +109,7 @@ const P7 = mkpath(joinpath(GSEA.P2, "user_rank.metric"))
 
 function read(pa, st = "enrichment")
 
-    GSEA.make_part(GSEA.read_table(joinpath(pa, "$st.tsv")))
+    GSEA.table_part(GSEA.read_table(joinpath(pa, "$st.tsv")))
 
 end
 
