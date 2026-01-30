@@ -363,12 +363,6 @@ function number_weight(::Union{D2, D2w, DD}, nu_, bo_)
 
 end
 
-function number_weight(p1, p2)
-
-    inv(inv(p2) - inv(p1))
-
-end
-
 function number_enrichment!(al::S0, n1_, bo_, n2_ = nothing)
 
     p1, p2 = number_weight(al, n1_, bo_)
@@ -540,7 +534,7 @@ function number_enrichment!(al::DD, n1_, bo_, n2_ = nothing)
 
     p1, p2 = number_weight(al, n1_, bo_)
 
-    p3 = number_weight(p1, p2)
+    p3 = inv(inv(p2) - inv(p1))
 
     r1 = r2 = r3 = eps()
 

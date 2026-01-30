@@ -42,11 +42,11 @@ const B1_ = map(
     S1_,
 )
 
-# 19.291 μs (0 allocations: 0 bytes)
+# 19.333 μs (0 allocations: 0 bytes)
 # 19.500 μs (0 allocations: 0 bytes)
-# 129.750 μs (0 allocations: 0 bytes)
-# 139.208 μs (0 allocations: 0 bytes)
-# 224.042 μs (0 allocations: 0 bytes)
+# 134.667 μs (0 allocations: 0 bytes)
+# 140.292 μs (0 allocations: 0 bytes)
+# 224.291 μs (0 allocations: 0 bytes)
 for (nd, re) in (
     (1, 0.7651927829281453),
     (2, 0.41482514169516305),
@@ -71,11 +71,11 @@ end
 
 const S2_, ST__ = GSEA.read_set(joinpath(GSEA.P1, "set.json"))
 
-# 1.922 ms (31 allocations: 1.90 MiB)
-# 1.933 ms (31 allocations: 1.90 MiB)
-# 8.108 ms (31 allocations: 1.90 MiB)
-# 8.606 ms (31 allocations: 1.90 MiB)
-# 13.416 ms (31 allocations: 1.90 MiB)
+# 2.063 ms (31 allocations: 1.90 MiB)
+# 2.057 ms (31 allocations: 1.90 MiB)
+# 8.206 ms (31 allocations: 1.90 MiB)
+# 8.751 ms (31 allocations: 1.90 MiB)
+# 13.362 ms (31 allocations: 1.90 MiB)
 for al in AL_
 
     @test S2_[partialsortperm(
