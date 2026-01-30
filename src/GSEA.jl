@@ -98,7 +98,7 @@ function number_significance(n1_, n2_, fu)
 
 end
 
-# TODO: Consider comparing against both signs
+# TODO: Compare against both signs
 function number_significance(n1_, n2_)
 
     i1_ = findall(<(0), n1_)
@@ -433,7 +433,7 @@ function number_enrichment!(al::S0a, n1_, bo_, n2_ = nothing)
 
 end
 
-# TODO: Avoid
+# TODO: Remove
 function number_eps(nu)
 
     max(eps(), nu)
