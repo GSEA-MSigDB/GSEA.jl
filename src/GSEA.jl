@@ -920,11 +920,27 @@ function write_table(di, al, s1_, n1_, s2_, s1__, n2_, N1, u1, s3_)
 
         n3 = -n1
 
-        n2_[i1] /= ifelse(n2_[i1] < 0, n3, n2)
+        n2_[i1] /= if n2_[i1] < 0
+
+            n3
+
+        else
+
+            n2
+
+        end
 
         for i2 in 1:u3
 
-            N1[i1, i2] /= ifelse(N1[i1, i2] < 0, n3, n2)
+            N1[i1, i2] /= if N1[i1, i2] < 0
+
+                n3
+
+            else
+
+                n2
+
+            end
 
         end
 
