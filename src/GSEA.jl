@@ -98,7 +98,7 @@ function number_significance(n1_, n2_, fu)
 
 end
 
-# TODO: Compare against both signs
+# TODO: Use both signs
 function number_significance(n1_, n2_)
 
     i1_ = findall(<(0), n1_)
@@ -433,7 +433,7 @@ function number_enrichment!(al::S0a, n1_, bo_, n2_ = nothing)
 
 end
 
-# TODO: Remove
+# TODO: Delete
 function number_eps(nu)
 
     max(eps(), nu)
@@ -591,7 +591,7 @@ function make_score(st_, n1_)
 
     n2_ = n1_[bo_]
 
-    # TODO: Remove rev
+    # TODO: Delete rev
     in_ = sortperm(n2_; rev = true)
 
     st_[bo_][in_], n2_[in_]
