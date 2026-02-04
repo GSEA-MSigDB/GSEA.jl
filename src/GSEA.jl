@@ -25,8 +25,6 @@ using Random: seed!, shuffle!
 using StatsBase: mean, mean_and_std, sample
 
 ########################################
-# nu
-########################################
 
 function text_2(nu)
 
@@ -41,8 +39,6 @@ function text_4(nu)
 end
 
 ########################################
-# pr
-########################################
 
 function number_divergence(p1, p2)
 
@@ -56,8 +52,6 @@ function number_divergence(p1, p2, p3, p4, fu)
 
 end
 
-########################################
-# an_
 ########################################
 
 function index_extreme(an_, u1)
@@ -76,8 +70,6 @@ function index_extreme(an_, u1)
 
 end
 
-########################################
-# nu_
 ########################################
 
 function number_significance(n1_, n2_, fu)
@@ -136,8 +128,6 @@ function number_signal(n1_, n2_)
 end
 
 ########################################
-# in_
-########################################
 
 function make_function(in_, an_, fu)
 
@@ -145,8 +135,6 @@ function make_function(in_, an_, fu)
 
 end
 
-########################################
-# pa
 ########################################
 
 function read_open(pa)
@@ -163,8 +151,6 @@ function read_open(pa)
 
 end
 
-########################################
-# Table
 ########################################
 
 function read_table(pa; ke_...)
@@ -194,14 +180,12 @@ function table_part(st, s1_, s2_, A)
 end
 
 ########################################
-# HTML
-########################################
 
 function write_html(p1, pa_, s1, he = "#27221f")
 
     p2 = if isempty(p1)
 
-        tempname(; suffix = ".html")
+        tempname(; cleanup = false, suffix = ".html")
 
     else
 
@@ -233,8 +217,6 @@ function write_html(p1, pa_, s1, he = "#27221f")
 
 end
 
-########################################
-# Plotly
 ########################################
 
 function pair_font(nu)
@@ -306,8 +288,6 @@ function write_plotly(pa, di_, d1 = Dict(), d2 = Dict())
 end
 
 ########################################
-# Enriching
-########################################
 
 struct S0 end
 
@@ -318,6 +298,8 @@ struct D2 end
 struct D2w end
 
 struct DD end
+
+########################################
 
 function number_weight(::Union{S0, S0a}, nu_, bo_)
 
@@ -362,6 +344,8 @@ function number_weight(::Union{D2, D2w, DD}, nu_, bo_)
     inv(n1), inv(n2)
 
 end
+
+########################################
 
 function number_enrichment!(al::S0, n1_, bo_, n2_ = nothing)
 
@@ -432,6 +416,8 @@ function number_enrichment!(al::S0a, n1_, bo_, n2_ = nothing)
     n2 / length(n1_)
 
 end
+
+########################################
 
 # TODO: Delete
 function number_eps(nu)
@@ -585,6 +571,8 @@ function number_enrichment!(al::DD, n1_, bo_, n2_ = nothing)
 
 end
 
+########################################
+
 function make_score(st_, n1_)
 
     bo_ = map(isfinite, n1_)
@@ -733,8 +721,18 @@ function number_enrichment(al, s1_, n1_, st__; u1 = 1, u2 = 1000, pr = 0)
 end
 
 ########################################
-# Command-line interface
-########################################
+
+function read_set(pa)
+
+    di::Dict{String, Vector{String}} = parsefile(pa)
+
+    st_ = collect(keys(di))
+
+    in_ = sortperm(st_)
+
+    st_[in_], collect(values(di))[in_]
+
+end
 
 function make_algorithm(st)
 
@@ -762,17 +760,7 @@ function make_algorithm(st)
 
 end
 
-function read_set(pa)
-
-    di::Dict{String, Vector{String}} = parsefile(pa)
-
-    st_ = collect(keys(di))
-
-    in_ = sortperm(st_)
-
-    st_[in_], collect(values(di))[in_]
-
-end
+########################################
 
 """
 Run data-rank (single-sample) GSEA.
@@ -856,6 +844,8 @@ Run data-rank (single-sample) GSEA.
 
 end
 
+########################################
+
 function table_random(u1, nu, al, s1_, nu_, st__; ke_...)
 
     N = Matrix{Float64}(undef, length(st__), u1)
@@ -901,6 +891,8 @@ function table_random!(um, nu, al, st_, fu, in_, N1, st__; ke_...)
     N2
 
 end
+
+########################################
 
 function write_table(di, al, s1_, n1_, s2_, s1__, n2_, N1, u1, s3_)
 
@@ -993,6 +985,8 @@ function write_table(di, al, s1_, n1_, s2_, s1__, n2_, N1, u1, s3_)
 
 end
 
+########################################
+
 """
 Run user-rank (pre-rank) GSEA.
 
@@ -1049,6 +1043,8 @@ Run user-rank (pre-rank) GSEA.
     )
 
 end
+
+########################################
 
 """
 Run metric-rank (standard) GSEA.
