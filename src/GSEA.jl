@@ -145,7 +145,7 @@ function read_open(pa)
 
     catch
 
-        @warn "Failed to open $pa"
+        @info "⚠️ Failed to open $pa"
 
     end
 
