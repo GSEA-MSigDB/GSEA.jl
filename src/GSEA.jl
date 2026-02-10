@@ -1023,7 +1023,7 @@ Run user-rank (pre-rank) GSEA.
 
     al = make_algorithm(algorithm)
 
-    s1_, nu_ = eachcol(read_table(tsv)[!, 1:2])
+    s1_, nu_ = eachcol(read_table(tsv; select = 1:2))
 
     s2_, st__ = read_set(json)
 
