@@ -181,7 +181,9 @@ end
 
 ########################################
 
-function write_html(p1, pa_, s1, he = "#27221f")
+const DA = "#27221f"
+
+function write_html(p1, pa_, s1, he = DA)
 
     p2 = if isempty(p1)
 
@@ -205,7 +207,7 @@ function write_html(p1, pa_, s1, he = "#27221f")
         </head>
         $s2
         <body style="margin:0; background:$he; min-height:100vh; display:flex; justify-content:center; align-items:center">
-          <div id="write_html" style="height:88vh; width:88vw"></div>
+          <div id="write_html" style="height:96vh; width:96vw"></div>
         </body>
         <script>
         $s1
@@ -219,31 +221,13 @@ end
 
 ########################################
 
-function pair_font(nu)
-
-    "font" => Dict("size" => nu)
-
-end
-
-function pair_title(st)
-
-    "title" => Dict("text" => st)
-
-end
-
-function pair_title(s1, s2)
-
-    "title" => Dict("text" => s1, "subtitle" => Dict("text" => s2))
-
-end
-
 function write_plotly(pa, di_, d1 = Dict(), d2 = Dict())
 
     s1 = json(di_; allownan = true)
 
     d3 = Dict(
         "automargin" => true,
-        "title" => Dict(pair_font(24)),
+        "title" => Dict("font" => Dict("size" => 24)),
         "zeroline" => false,
         "showgrid" => false,
     )
@@ -266,10 +250,10 @@ function write_plotly(pa, di_, d1 = Dict(), d2 = Dict())
                         ),
                     ),
                     "layout" => Dict(
-                        "title" => Dict(pair_font(32)),
+                        "title" => Dict("font" => Dict("size" => 32)),
                         "yaxis" => d3,
                         "xaxis" => d3,
-                        "legend" => Dict(pair_font(16)),
+                        "legend" => Dict("font" => Dict("size" => 16)),
                     ),
                 ),
             ),
@@ -650,22 +634,28 @@ function write_enrichment(pa, al, s1_, n1_, s2_, s1 = "Mountain plot")
         ),
         Dict(
             "showlegend" => false,
-            pair_title(s1, "Enrichment = <b>$s2</b>"),
-            "yaxis3" =>
-                Dict("domain" => (0.328, 1), pair_title("Δ Enrichment")),
+            "title" => Dict(
+                "text" => s1,
+                "subtitle" => Dict("text" => "Enrichment = <b>$s2</b>"),
+            ),
+            "yaxis3" => Dict(
+                "domain" => (0.328, 1),
+                "title" => Dict("text" => "Δ Enrichment"),
+            ),
             "yaxis2" => Dict(
                 "domain" => (0.248, 0.32),
-                pair_title("Set"),
+                "title" => Dict("text" => "Set"),
                 "tickvals" => (),
             ),
-            "yaxis" => Dict("domain" => (0, 0.24), pair_title("Score")),
+            "yaxis" =>
+                Dict("domain" => (0, 0.24), "title" => Dict("text" => "Score")),
             "xaxis" => Dict(
-                pair_title("Feature ($um)"),
+                "title" => Dict("text" => "Feature ($um)"),
                 "showspikes" => true,
                 "spikemode" => "across",
                 "spikedash" => "solid",
                 "spikethickness" => -1,
-                "spikecolor" => "#27221f",
+                "spikecolor" => DA,
             ),
         ),
     )
@@ -837,7 +827,7 @@ Run data-rank (single-sample) GSEA.
             s1_,
             N1[:, i2],
             s2__[i1],
-            Dict(pair_title(s1)),
+            Dict("title" => Dict("text" => s1)),
         )
 
     end
@@ -978,7 +968,7 @@ function write_table(di, al, s1_, n1_, s2_, s1__, n2_, N1, u1, s3_)
             s1_,
             n1_,
             s2__[nd],
-            Dict(pair_title(s1)),
+            Dict("title" => Dict("text" => s1)),
         )
 
     end

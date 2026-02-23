@@ -42,11 +42,11 @@ const B1_ = map(
     S1_,
 )
 
-# 19.750 μs (0 allocations: 0 bytes)
-# 19.625 μs (0 allocations: 0 bytes)
-# 139.042 μs (0 allocations: 0 bytes)
-# 141.542 μs (0 allocations: 0 bytes)
-# 226.625 μs (0 allocations: 0 bytes)
+# 19.375 μs (0 allocations: 0 bytes)
+# 19.542 μs (0 allocations: 0 bytes)
+# 130.250 μs (0 allocations: 0 bytes)
+# 142.541 μs (0 allocations: 0 bytes)
+# 243.292 μs (0 allocations: 0 bytes)
 for (nd, re) in (
     (1, 0.7651927829281453),
     (2, 0.41482514169516305),
@@ -65,17 +65,24 @@ end
 
 for ch_ in (['_', 'A', 'I'], ['D', 'E', 'F', '_']), al in AL_
 
-    GSEA.write_enrichment("", al, 'A':'I', -4:4, ch_, GSEA.pair_title(al))
+    GSEA.write_enrichment(
+        "",
+        al,
+        'A':'I',
+        -4:4,
+        ch_,
+        "title" => Dict("text" => al),
+    )
 
 end
 
 const S2_, ST__ = GSEA.read_set(joinpath(GSEA.P1, "set.json"))
 
-# 2.064 ms (31 allocations: 1.90 MiB)
-# 2.065 ms (31 allocations: 1.90 MiB)
-# 8.206 ms (31 allocations: 1.90 MiB)
-# 8.778 ms (31 allocations: 1.90 MiB)
-# 13.352 ms (31 allocations: 1.90 MiB)
+# 2.073 ms (31 allocations: 1.90 MiB)
+# 2.062 ms (31 allocations: 1.90 MiB)
+# 8.227 ms (31 allocations: 1.90 MiB)
+# 8.789 ms (31 allocations: 1.90 MiB)
+# 13.463 ms (31 allocations: 1.90 MiB)
 for al in AL_
 
     @test S2_[partialsortperm(
