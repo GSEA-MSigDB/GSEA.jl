@@ -226,10 +226,11 @@ function write_plotly(pa, di_, d1 = Dict(), d2 = Dict())
     s1 = json(di_; allownan = true)
 
     d3 = Dict(
-        "automargin" => true,
-        "title" => Dict("font" => Dict("size" => 24)),
-        "zeroline" => false,
+        "ticks" => "",
+        "ticklabelstandoff" => 8,
         "showgrid" => false,
+        "zeroline" => false,
+        "automargin" => true,
     )
 
     s2 = json(
@@ -249,12 +250,7 @@ function write_plotly(pa, di_, d1 = Dict(), d2 = Dict())
                             ),
                         ),
                     ),
-                    "layout" => Dict(
-                        "title" => Dict("font" => Dict("size" => 32)),
-                        "yaxis" => d3,
-                        "xaxis" => d3,
-                        "legend" => Dict("font" => Dict("size" => 16)),
-                    ),
+                    "layout" => Dict("yaxis" => d3, "xaxis" => d3),
                 ),
             ),
             d1,
