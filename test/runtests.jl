@@ -6,6 +6,12 @@ using BenchmarkTools: @btime
 
 using Test: @test
 
+function read(pa, st = "enrichment")
+
+    GSEA.table_part(GSEA.read_table(joinpath(pa, "$st.tsv")))
+
+end
+
 const AL_ = GSEA.S0(), GSEA.S0a(), GSEA.D2(), GSEA.D2w(), GSEA.DD()
 
 const S1_, N1_ = GSEA.make_score(
@@ -113,12 +119,6 @@ const P5 = mkpath(joinpath(GSEA.P2, "metric_rank.sample"))
 const P6 = mkpath(joinpath(GSEA.P2, "metric_rank.set"))
 
 const P7 = mkpath(joinpath(GSEA.P2, "user_rank.metric"))
-
-function read(pa, st = "enrichment")
-
-    GSEA.table_part(GSEA.read_table(joinpath(pa, "$st.tsv")))
-
-end
 
 GSEA.data_rank(P3, P2, P1; minimum = 15, maximum = 500)
 
