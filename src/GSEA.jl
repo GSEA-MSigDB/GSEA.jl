@@ -90,16 +90,15 @@ function number_significance(n1_, n2_, fu)
 
 end
 
-# TODO: Use both signs
 function number_significance(n1_, n2_)
 
     i1_ = findall(<(0), n1_)
 
     i2_ = findall(>=(0), n1_)
 
-    n3_, n4_ = number_significance(n1_[i1_], filter(<(0), n2_), <=)
+    n3_, n4_ = number_significance(n1_[i1_], filter(<=(0), n2_), <=)
 
-    n5_, n6_ = number_significance(n1_[i2_], filter(!<(0), n2_), >=)
+    n5_, n6_ = number_significance(n1_[i2_], filter(>=(0), n2_), >=)
 
     vcat(i1_, i2_), vcat(n3_, n5_), vcat(n4_, n6_)
 
