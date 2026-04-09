@@ -164,7 +164,7 @@ function write_table(pa, D)
 
 end
 
-function table_part(D)
+function make_table(D)
 
     st_ = names(D)
 
@@ -172,7 +172,7 @@ function table_part(D)
 
 end
 
-function table_part(st, s1_, s2_, A)
+function make_table(st, s1_, s2_, A)
 
     insertcols!(DataFrame(A, s2_), 1, st => s1_)
 
@@ -775,7 +775,7 @@ Run data-rank (single-sample) GSEA.
     number_of_plots::Int = 2,
 )
 
-    _, s1_, s2_, N1 = table_part(read_table(tsv))
+    _, s1_, s2_, N1 = make_table(read_table(tsv))
 
     s3_, s1__ = read_set(json)
 
@@ -796,7 +796,7 @@ Run data-rank (single-sample) GSEA.
 
     pa = joinpath(directory, "enrichment")
 
-    write_table("$pa.tsv", table_part("Set", s3_, s2_, N2))
+    write_table("$pa.tsv", make_table("Set", s3_, s2_, N2))
 
     bo_ = map(nu_ -> any(isfinite, nu_), eachrow(N2))
 
@@ -933,7 +933,7 @@ function write_table(di, al, s1_, n1_, s2_, s1__, n2_, N1, u1, s3_)
 
     write_table(
         joinpath(di, "enrichment.tsv"),
-        table_part(
+        make_table(
             "Set",
             s2_,
             ["Enrichment", "Normalized enrichment", "P value", "Q value"],
@@ -1071,11 +1071,11 @@ Run metric-rank (standard) GSEA.
     more_plots = "",
 )
 
-    _, _, s1_, N1 = table_part(read_table(tsv1))
+    _, _, s1_, N1 = make_table(read_table(tsv1))
 
     in_ = N1[1, :]
 
-    st, s2_, s3_, N1 = table_part(read_table(tsv2))
+    st, s2_, s3_, N1 = make_table(read_table(tsv2))
 
     N2 = N1[:, indexin(s1_, s3_)]
 
@@ -1100,7 +1100,7 @@ Run metric-rank (standard) GSEA.
 
     write_table(
         joinpath(directory, "metric.tsv"),
-        table_part(st, s2_, [metric], reshape(n1_, :, 1)),
+        make_table(st, s2_, [metric], reshape(n1_, :, 1)),
     )
 
     al = make_algorithm(algorithm)

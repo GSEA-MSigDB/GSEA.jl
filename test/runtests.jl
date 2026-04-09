@@ -8,7 +8,7 @@ using Test: @test
 
 function read(pa, st = "enrichment")
 
-    GSEA.table_part(GSEA.read_table(joinpath(pa, "$st.tsv")))
+    GSEA.make_table(GSEA.read_table(joinpath(pa, "$st.tsv")))
 
 end
 
