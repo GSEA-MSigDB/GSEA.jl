@@ -24,7 +24,7 @@ using Random: seed!, shuffle!
 
 using StatsBase: mean, mean_and_std, sample
 
-########################################
+#
 
 function text_2(nu)
 
@@ -38,7 +38,7 @@ function text_4(nu)
 
 end
 
-########################################
+#
 
 function number_divergence(p1, p2)
 
@@ -52,7 +52,7 @@ function number_divergence(p1, p2, p3, p4, fu)
 
 end
 
-########################################
+#
 
 function index_extreme(an_, u1)
 
@@ -70,7 +70,7 @@ function index_extreme(an_, u1)
 
 end
 
-########################################
+#
 
 function number_significance(n1_, n2_, fu)
 
@@ -126,7 +126,7 @@ function number_signal(n1_, n2_)
 
 end
 
-########################################
+#
 
 function make_function(in_, an_, fu)
 
@@ -134,7 +134,7 @@ function make_function(in_, an_, fu)
 
 end
 
-########################################
+#
 
 function read_open(pa)
 
@@ -150,7 +150,7 @@ function read_open(pa)
 
 end
 
-########################################
+#
 
 function read_table(pa; ke_...)
 
@@ -178,7 +178,7 @@ function make_table(st, s1_, s2_, A)
 
 end
 
-########################################
+#
 
 const DA = "#27221f"
 
@@ -218,7 +218,7 @@ function write_html(p1, pa_, s1, he = DA)
 
 end
 
-########################################
+#
 
 function write_plotly(pa, di_, d1 = Dict(), d2 = Dict())
 
@@ -266,7 +266,7 @@ function write_plotly(pa, di_, d1 = Dict(), d2 = Dict())
 
 end
 
-########################################
+#
 
 struct S0 end
 
@@ -278,7 +278,7 @@ struct D2w end
 
 struct DD end
 
-########################################
+#
 
 function number_weight(::Union{S0, S0a}, nu_, bo_)
 
@@ -324,7 +324,7 @@ function number_weight(::Union{D2, D2w, DD}, nu_, bo_)
 
 end
 
-########################################
+#
 
 function number_enrichment!(al::S0, n1_, bo_, n2_ = nothing)
 
@@ -396,7 +396,7 @@ function number_enrichment!(al::S0a, n1_, bo_, n2_ = nothing)
 
 end
 
-########################################
+#
 
 # TODO: Delete
 function number_eps(nu)
@@ -550,7 +550,7 @@ function number_enrichment!(al::DD, n1_, bo_, n2_ = nothing)
 
 end
 
-########################################
+#
 
 function make_score(st_, n1_)
 
@@ -705,7 +705,7 @@ function number_enrichment(al, s1_, n1_, st__; u1 = 1, u2 = 1000, pr = 0)
 
 end
 
-########################################
+#
 
 function read_set(pa)
 
@@ -745,7 +745,7 @@ function make_algorithm(st)
 
 end
 
-########################################
+#
 
 """
 Run data-rank (single-sample) GSEA.
@@ -829,7 +829,7 @@ Run data-rank (single-sample) GSEA.
 
 end
 
-########################################
+#
 
 function table_random(u1, nu, al, s1_, nu_, st__; ke_...)
 
@@ -877,7 +877,7 @@ function table_random!(um, nu, al, st_, fu, in_, N1, st__; ke_...)
 
 end
 
-########################################
+#
 
 function write_table(di, al, s1_, n1_, s2_, s1__, n2_, N1, u1, s3_)
 
@@ -970,7 +970,7 @@ function write_table(di, al, s1_, n1_, s2_, s1__, n2_, N1, u1, s3_)
 
 end
 
-########################################
+#
 
 """
 Run user-rank (pre-rank) GSEA.
@@ -1029,7 +1029,7 @@ Run user-rank (pre-rank) GSEA.
 
 end
 
-########################################
+#
 
 """
 Run metric-rank (standard) GSEA.
