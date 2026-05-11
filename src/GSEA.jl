@@ -94,7 +94,7 @@ function number_significance(n1_, n2_)
 
     i1_ = findall(<(0), n1_)
 
-    i2_ = findall(>=(0), n1_)
+    i2_ = findall(!<(0), n1_)
 
     n3_, n4_ = number_significance(n1_[i1_], filter(<=(0), n2_), <=)
 
@@ -220,11 +220,11 @@ end
 
 #
 
-function write_plotly(pa, di_, d1 = Dict(), d2 = Dict())
+function write_plotly(pa, di_, d1 = Dict())
 
     s1 = json(di_; allownan = true)
 
-    d3 = Dict(
+    d2 = Dict(
         "ticks" => "",
         "ticklabelstandoff" => 8,
         "showgrid" => false,
@@ -249,18 +249,24 @@ function write_plotly(pa, di_, d1 = Dict(), d2 = Dict())
                             ),
                         ),
                     ),
-                    "layout" => Dict("yaxis" => d3, "xaxis" => d3),
+                    "layout" => Dict("yaxis" => d2, "xaxis" => d2),
                 ),
             ),
             d1,
         ),
     )
 
-    s3 = json(d2)
+    s3 = json(
+        Dict(
+            "displaylogo" => false,
+            "toImageButtonOptions" =>
+                Dict("filename" => splitext(basename(pa))[1], "scale" => 2),
+        ),
+    )
 
     write_html(
         pa,
-        ("https://cdn.plot.ly/plotly-3.3.0.min.js",),
+        ("https://cdn.plot.ly/plotly-3.5.1.min.js",),
         "Plotly.newPlot(\"write_html\", $s1, $s2, $s3)",
     )
 
@@ -585,7 +591,7 @@ function write_enrichment(pa, al, s1_, n1_, s2_, s1 = "Mountain plot")
 
     i1_ = findall(<(0), n2_)
 
-    i2_ = findall(>=(0), n2_)
+    i2_ = findall(!<(0), n2_)
 
     write_plotly(
         pa,
