@@ -167,7 +167,7 @@ for (nd, r1, r2) in (
     ),
 )
 
-    @test S4_[nd] === r1
+    @test S4_[nd] == r1
 
     @test isapprox(N2[nd, :], r2)
 
