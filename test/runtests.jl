@@ -2,7 +2,7 @@ using GSEA
 
 # ------------------------------------ #
 
-using BenchmarkTools: @btime
+#using BenchmarkTools: @btime
 
 using Test: @test
 
@@ -65,7 +65,7 @@ for (nd, re) in (
 
     @test GSEA.number_enrichment!(al, N1_, B1_) === re
 
-    @btime GSEA.number_enrichment!($al, N1_, B1_)
+    #@btime GSEA.number_enrichment!($al, N1_, B1_)
 
 end
 
@@ -96,7 +96,7 @@ for al in AL_
         49:50,
     )] == ["HALLMARK_MYC_TARGETS_V1", "HALLMARK_MYC_TARGETS_V2"]
 
-    @btime GSEA.number_enrichment($al, S1_, N1_, ST__)
+    #@btime GSEA.number_enrichment($al, S1_, N1_, ST__)
 
 end
 
